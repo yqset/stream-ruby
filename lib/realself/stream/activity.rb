@@ -1,6 +1,5 @@
 require 'json-schema'
-
-require_relative 'objekt'
+require 'realself/stream/objekt'
 
 module RealSelf
   module Stream

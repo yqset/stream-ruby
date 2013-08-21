@@ -1,7 +1,7 @@
-require "stream/activity"
-require "stream/error"
-require "stream/objekt"
-require "stream/version"
+require "realself/stream/activity"
+require "realself/stream/error"
+require "realself/stream/objekt"
+require "realself/stream/version"
 
 module Realself
   module Stream
