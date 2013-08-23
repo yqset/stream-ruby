@@ -12,6 +12,8 @@ module RealSelf
         {:type => @type, :message => @message}
       end
 
+      alias :to_hash :to_h
+
       def to_s
         MultiJson::encode(to_h)
       end

@@ -3,24 +3,27 @@ require 'multi_json'
 module RealSelf
   module Stream
     class Objekt
-      attr_accessor :type, :id, :followers
-
-      def initialize(type, id, followers = nil)
-        @type = type.to_s
-        @id = id.to_s
-        @followers = followers.to_ary if followers    
-      end
-
-      def to_h
-        hash = {:type => @type,:id => @id}
-
-        unless @followers.nil?
-          hash[:followers] = @followers.map {|follower| follower.to_h}
+      class << self
+        def from_json(json)
+          hash = MultiJson.decode(json)
+          Objekt.new(hash['type'], hash['id'])
         end
-        return hash
       end
 
-      def eql?(other)
+      attr_accessor :type, :id
+
+      def initialize(type, id)
+        @type = type.to_s
+        @id = id.to_s   
+      end
+
+      def to_h        
+        {:type => @type,:id => @id}
+      end
+
+      alias :to_hash :to_h
+
+      def ==(other)
         self.to_h == other.to_h
       end
 

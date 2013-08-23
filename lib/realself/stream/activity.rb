@@ -6,31 +6,44 @@ module RealSelf
     class Activity
 
       class << self   
-        @@activity_schema = MultiJson.decode(open(File.join(File.dirname(__FILE__), 'activity-schema.json')).read)
+        @@schema = MultiJson.decode(open(File.join(File.dirname(__FILE__), 'activity-schema.json')).read)
+
+        def from_json(json)
+          JSON::Validator.validate!(@@schema, json)
+          hash = MultiJson.decode(json)
+
+          title = hash['title']
+          published = DateTime.parse(hash['published'])
+          actor = Objekt.new(hash['actor']['type'], hash['actor']['id'])      
+          verb = hash['verb'].to_s
+          object = Objekt.new(hash['object']['type'], hash['object']['id'])
+          target = Objekt.new(hash['target']['type'], hash['target']['id']) if hash['target']
+          relatives = []
+
+          relatives = hash['relatives'].map {|rel| Objekt.new(rel['type'], rel['id'])} if hash['relatives']
+
+          return Activity.new(title, published, actor, verb, object, target, relatives)         
+        end
       end
 
       attr_accessor :title, :published, :actor, :verb, :object, :target, :relatives 
 
-      def initialize(json)
-        JSON::Validator.validate!(@@activity_schema, json)
-        hash = MultiJson.decode(json)
+      def initialize(title, published, actor, verb, object, target, relatives)
+        @title = title.to_s
+        @published = published.to_datetime
+        @actor = actor
+        @verb = verb.to_s
+        @object = object
+        @target = target
+        @relatives = relatives.to_ary
 
-        @title = hash['title']
-        @published = DateTime.parse(hash['published'])
-        @actor = Objekt.new(hash['actor']['type'], hash['actor']['id'])      
-        @verb = hash['verb'].to_s
-        @object = Objekt.new(hash['object']['type'], hash['object']['id']) if hash['object']          
-        @target = Objekt.new(hash['target']['type'], hash['target']['id']) if hash['target']
-        @relatives = []
+        self.to_s  # invoke validation
 
-        hash['relatives'].each do |objekt|
-          @relatives << Objekt.new(objekt['type'], objekt['id'])
-        end
-
+        self
       end
 
-      def eql?(other)
-        @hash == other.to_h
+      def ==(other)
+        self.to_h == other.to_h
       end
 
       def to_h      
@@ -45,8 +58,12 @@ module RealSelf
         }
       end
 
+      alias :to_hash :to_h
+
       def to_s    
-        MultiJson.encode(to_h)
+        json = MultiJson.encode(to_h)
+        JSON::Validator.validate!(@@schema, json)
+        return json
       end
     end
   end
