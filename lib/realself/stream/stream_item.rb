@@ -24,6 +24,12 @@ module RealSelf
 
       alias :to_hash :to_h
 
+      def ==(other)
+        self.to_h == other.to_h
+      end
+
+      alias :eql? :==
+
       def to_s
         MultiJson.encode(self.to_h)
       end
