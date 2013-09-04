@@ -28,7 +28,7 @@ module RealSelf
         hash = super
 
         unless @followers.nil?
-          hash['followers'] = @followers.map {|follower| follower.to_h}
+          hash[:followers] = @followers.map {|follower| follower.to_h}
         end
 
         return hash

@@ -46,6 +46,8 @@ module RealSelf
         self.to_h == other.to_h
       end
 
+      alias :eql? :==
+
       def to_h      
         {
           :title => @title,
