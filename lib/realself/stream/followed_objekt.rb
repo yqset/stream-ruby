@@ -3,7 +3,7 @@ require 'realself/stream/objekt'
 
 module RealSelf
   module Stream
-    class QueueObjekt < Objekt
+    class FollowedObjekt < Objekt
 
       class << self
 
@@ -13,7 +13,7 @@ module RealSelf
           followers = []
           followers = hash['followers'].map { |obj| Objekt.new(obj['type'], obj['id']) } if hash['followers']
 
-          return QueueObjekt.new(hash['type'], hash['id'], followers)
+          return FollowedObjekt.new(hash['type'], hash['id'], followers)
         end
       end
 

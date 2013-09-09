@@ -1,12 +1,12 @@
 require 'json-schema'
 require 'realself/stream/activity'
 require 'realself/stream/objekt'
-require 'realself/stream/queue_objekt'
+require 'realself/stream/followed_objekt'
 require 'realself/stream/stream_activity'
 
 module RealSelf
   module Stream
-    class QueueItem < Activity
+    class FollowedActivity < Activity
 
       class << self   
         @@schema = MultiJson.decode(open(File.join(File.dirname(__FILE__), 'queue-item-schema.json')).read)
@@ -17,13 +17,13 @@ module RealSelf
 
           title = hash['title']
           published = DateTime.parse(hash['published'])          
-          actor = QueueObjekt.from_json(MultiJson.encode(hash['actor'])) 
+          actor = FollowedObjekt.from_json(MultiJson.encode(hash['actor'])) 
           verb = hash['verb'].to_s
-          object = QueueObjekt.from_json(MultiJson.encode(hash['object']))
-          target = QueueObjekt.from_json(MultiJson.encode(hash['target'])) if hash['target']
-          relatives = hash['relatives'].map {|rel| QueueObjekt.from_json(MultiJson.encode(rel))} if hash['relatives']
+          object = FollowedObjekt.from_json(MultiJson.encode(hash['object']))
+          target = FollowedObjekt.from_json(MultiJson.encode(hash['target'])) if hash['target']
+          relatives = hash['relatives'].map {|rel| FollowedObjekt.from_json(MultiJson.encode(rel))} if hash['relatives']
 
-          return QueueItem.new(title, published, actor, verb, object, target, relatives) 
+          return FollowedActivity.new(title, published, actor, verb, object, target, relatives)
         end
       end
 
@@ -96,6 +96,6 @@ module RealSelf
 
       end # map_followers  
 
-    end # QueueItem
+    end # FollowedActivity
   end # Stream
 end # RealSelf

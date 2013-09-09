@@ -1,9 +1,9 @@
 require 'multi_json'
 require 'spec_helper'
 
-describe RealSelf::Stream::QueueItem do
+describe RealSelf::Stream::FollowedActivity do
 
-  def queue_item(i)
+  def followed_activity(i)
   {
     "published" => "2013-08-13T16:36:59Z",
     "title" => "QUEUE ITEM - dr(57433) author answer(1050916) about question(1048591)",
@@ -74,24 +74,24 @@ describe RealSelf::Stream::QueueItem do
   end
 
   before :each do
-    @queue_item = RealSelf::Stream::QueueItem.from_json(MultiJson.encode(queue_item(1234)))
+    @followed_activity = RealSelf::Stream::FollowedActivity.from_json(MultiJson.encode(followed_activity(1234)))
   end
 
   describe "#to_activity" do
-    it "creates an Activity object from a QueueItem" do
-      activity = @queue_item.to_activity
+    it "creates an Activity object from a FollowedActivity" do
+      activity = @followed_activity.to_activity
       activity.should be_an_instance_of RealSelf::Stream::Activity
 
-      @queue_item.title.should eql activity.title
-      @queue_item.published.should eql activity.published
-      (@queue_item.actor.to_objekt == activity.actor).should be_true
-      @queue_item.verb.should eql activity.verb
-      (@queue_item.object.to_objekt == activity.object).should be_true
-      (@queue_item.target.to_objekt == activity.target).should be_true
-      @queue_item.relatives.length.should eql activity.relatives.length
+      @followed_activity.title.should eql activity.title
+      @followed_activity.published.should eql activity.published
+      (@followed_activity.actor.to_objekt == activity.actor).should be_true
+      @followed_activity.verb.should eql activity.verb
+      (@followed_activity.object.to_objekt == activity.object).should be_true
+      (@followed_activity.target.to_objekt == activity.target).should be_true
+      @followed_activity.relatives.length.should eql activity.relatives.length
 
-      @queue_item.relatives.each_index do |index|
-        (@queue_item.relatives[index].to_objekt == activity.relatives[index]).should be_true
+      @followed_activity.relatives.each_index do |index|
+        (@followed_activity.relatives[index].to_objekt == activity.relatives[index]).should be_true
       end
     end
   end
@@ -99,7 +99,7 @@ describe RealSelf::Stream::QueueItem do
   describe "#map_followers" do
     it "enumerates all followers of the activity and describes the reason the follower was included" do
       followers_map = {}
-      @queue_item.map_followers do |follower, reason|
+      @followed_activity.map_followers do |follower, reason|
         followers_map[reason] = [] if followers_map[reason].nil?
         followers_map[reason] << follower
       end
@@ -142,9 +142,9 @@ describe RealSelf::Stream::QueueItem do
   end
 
   describe "::from_json" do
-    it "takes a JSON string and returns a QueueItem" do
-      @queue_item.should be_an_instance_of RealSelf::Stream::QueueItem
-      @queue_item.should be_an_kind_of RealSelf::Stream::Activity
+    it "takes a JSON string and returns a FollowedActivity" do
+      @followed_activity.should be_an_instance_of RealSelf::Stream::FollowedActivity
+      @followed_activity.should be_an_kind_of RealSelf::Stream::Activity
     end
   end
 
