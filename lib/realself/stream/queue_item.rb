@@ -2,7 +2,7 @@ require 'json-schema'
 require 'realself/stream/activity'
 require 'realself/stream/objekt'
 require 'realself/stream/queue_objekt'
-require 'realself/stream/stream_item'
+require 'realself/stream/stream_activity'
 
 module RealSelf
   module Stream

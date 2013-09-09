@@ -4,7 +4,7 @@ require 'realself/stream/objekt'
 
 module RealSelf
   module Stream
-    class StreamItem
+    class StreamActivity
 
       attr_accessor :object, :activity, :reasons
 
