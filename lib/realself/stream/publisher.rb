@@ -16,7 +16,7 @@ module RealSelf
 
           @@publisher_exchange.publish(
             item.to_s,
-            :content_type => 'appliaction/json',
+            :content_type => 'application/json',
             :persistent => true,
             :routing_key => "#{item.actor.type}.#{item.verb}.#{item.object.type}"
           )
