@@ -9,5 +9,8 @@ require "realself/stream/version"
 
 module Realself
   module Stream
+    module Coho
+
+    end
   end
 end
