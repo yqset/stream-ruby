@@ -21,6 +21,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "bunny"
   gem.add_dependency "json-schema"
   gem.add_dependency "multi_json"
+  gem.add_dependency "httparty"
 
   gem.add_development_dependency "rspec"
 end
