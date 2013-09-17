@@ -5,8 +5,9 @@ require 'net/http'
 
 module RealSelf
   module Stream
-    class Client
-        module Coho
+    module Coho
+      class Client
+
         include HTTParty
 
         class << self
