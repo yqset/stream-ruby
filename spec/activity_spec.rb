@@ -15,6 +15,18 @@ describe RealSelf::Stream::Activity do
     )
   end
 
+  def example_activity_without_target_or_relatives
+    RealSelf::Stream::Activity.new(
+      'sample activity title',
+      DateTime.parse('1970-01-01T00:00:00Z'),
+      RealSelf::Stream::Objekt.new('dr', 1234),
+      'author',
+      RealSelf::Stream::Objekt.new('answer', 2345),
+      nil,
+      nil
+    )
+  end
+
   before :each do
     @activity = RealSelf::Stream::Activity.from_json(example_activity.to_s)
   end
@@ -80,6 +92,12 @@ describe RealSelf::Stream::Activity do
       json = MultiJson.encode(@activity.to_h)
       activity = RealSelf::Stream::Activity.from_json(json)  
       (@activity == activity).should be_true
+
+      # test with activity that is missing target and relations
+      hash = example_activity_without_target_or_relatives.to_h
+      json = MultiJson.encode(hash)
+      activity_2 = RealSelf::Stream::Activity.from_json(json)
+      (activity_2 == example_activity_without_target_or_relatives).should be_true
     end
   end
 

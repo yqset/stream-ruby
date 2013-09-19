@@ -35,7 +35,7 @@ module RealSelf
         @verb = verb.to_s
         @object = object
         @target = target
-        @relatives = relatives.to_ary
+        @relatives = (relatives && relatives.to_ary) || []
 
         self.to_s  # invoke validation
 
@@ -49,15 +49,18 @@ module RealSelf
       alias :eql? :==
 
       def to_h      
-        {
-          :title => @title,
-          :published => @published.to_s,
-          :actor => @actor.to_h,
-          :verb => @verb,
-          :object => @object.to_h,
-          :target => @target.to_h,
-          :relatives => @relatives.map {|relative| relative.to_h}
-        }
+        hash = {
+                :title => @title,
+                :published => @published.to_s,
+                :actor => @actor.to_h,
+                :verb => @verb,
+                :object => @object.to_h,
+                :relatives => @relatives.map {|relative| relative.to_h}
+              }
+
+        hash[:target] = @target.to_h unless @target.nil?
+        
+        return hash
       end
 
       alias :to_hash :to_h
