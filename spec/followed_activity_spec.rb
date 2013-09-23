@@ -1,5 +1,6 @@
 require 'multi_json'
 require 'spec_helper'
+require 'securerandom'
 
 describe RealSelf::Stream::FollowedActivity do
 
@@ -69,7 +70,8 @@ describe RealSelf::Stream::FollowedActivity do
           }          
         ]   
       }
-    ]
+    ], 
+    "uuid" => SecureRandom.uuid
   }  
   end
 
@@ -89,6 +91,7 @@ describe RealSelf::Stream::FollowedActivity do
       (@followed_activity.object.to_objekt == activity.object).should be_true
       (@followed_activity.target.to_objekt == activity.target).should be_true
       @followed_activity.relatives.length.should eql activity.relatives.length
+      @followed_activity.uuid.should eql activity.uuid
 
       @followed_activity.relatives.each_index do |index|
         (@followed_activity.relatives[index].to_objekt == activity.relatives[index]).should be_true

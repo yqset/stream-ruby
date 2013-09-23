@@ -12,7 +12,8 @@ describe RealSelf::Stream::StreamActivity do
       'author',
       RealSelf::Stream::Objekt.new('answer', 2345),
       RealSelf::Stream::Objekt.new('question', 3456),
-      [RealSelf::Stream::Objekt.new('topic', 4567)]
+      [RealSelf::Stream::Objekt.new('topic', 4567)],
+      'f364c40c-6e91-4064-a825-faae79c10254'
     )
   end
 

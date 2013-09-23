@@ -22,8 +22,9 @@ module RealSelf
           object = FollowedObjekt.from_json(MultiJson.encode(hash['object']))
           target = FollowedObjekt.from_json(MultiJson.encode(hash['target'])) if hash['target']
           relatives = hash['relatives'].map {|rel| FollowedObjekt.from_json(MultiJson.encode(rel))} if hash['relatives']
+          uuid = hash['uuid'] || SecureRandom.uuid
 
-          return FollowedActivity.new(title, published, actor, verb, object, target, relatives)
+          return FollowedActivity.new(title, published, actor, verb, object, target, relatives, uuid)
         end
       end
 
@@ -35,8 +36,9 @@ module RealSelf
         object = Objekt.new(@object.type, @object.id)
         target = Objekt.new(@target.type, @target.id) if @target
         relatives = @relatives.map { |rel| Objekt.new(rel.type, rel.id) } if @relatives
+        uuid = self.uuid
 
-        return Activity.new(title, published, actor, verb, object, target, relatives)
+        return Activity.new(title, published, actor, verb, object, target, relatives, uuid)
       end
 
       # yeields follower, reason

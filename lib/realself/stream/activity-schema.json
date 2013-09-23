@@ -29,6 +29,10 @@
         "items" : {"$ref" : "#/definitions/activity-object"},
         "minItems" : 0,
         "uniqueItems" : true
+    },
+    "uuid" : {
+      "type" : "string",
+      "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
     }        
   },
   "definitions" : {

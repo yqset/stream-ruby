@@ -11,6 +11,19 @@ describe RealSelf::Stream::Activity do
       'author',
       RealSelf::Stream::Objekt.new('answer', 2345),
       RealSelf::Stream::Objekt.new('question', 3456),
+      [RealSelf::Stream::Objekt.new('topic', 4567)],
+      "f364c40c-6e91-4064-a825-faae79c10254"
+    )
+  end
+
+  def example_activity_without_uuid
+    RealSelf::Stream::Activity.new(
+      'sample activity title',
+      DateTime.parse('1970-01-01T00:00:00Z'),
+      RealSelf::Stream::Objekt.new('dr', 1234),
+      'author',
+      RealSelf::Stream::Objekt.new('answer', 2345),
+      RealSelf::Stream::Objekt.new('question', 3456),
       [RealSelf::Stream::Objekt.new('topic', 4567)]
     )
   end
@@ -23,7 +36,8 @@ describe RealSelf::Stream::Activity do
       'author',
       RealSelf::Stream::Objekt.new('answer', 2345),
       nil,
-      nil
+      nil,
+      "f364c40c-6e91-4064-a825-faae79c10254"
     )
   end
 
@@ -81,6 +95,22 @@ describe RealSelf::Stream::Activity do
       @activity.relatives.length.should eql 1
       ((@activity.relatives)[0]).should be_an_instance_of RealSelf::Stream::Objekt
       (@activity.relatives[0] == RealSelf::Stream::Objekt.new('topic', 4567)).should be_true
+    end
+  end
+
+  describe "#uuid" do
+    it "returns the UUID of the activity" do
+      @activity.uuid.should_not be_nil
+      (/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/ =~ @activity.uuid).should eql 0
+      (@activity.uuid == example_activity.uuid).should be_true
+    end
+
+    it "generates a UUID if one is not supplied" do
+      activity = example_activity_without_uuid
+      (/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/ =~ activity.uuid).should eql 0
+      activity2 = example_activity_without_uuid
+      (activity.uuid == activity2.uuid).should be_false
+      (activity == activity2).should be_false
     end
   end
 

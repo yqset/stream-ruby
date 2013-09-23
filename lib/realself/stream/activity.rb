@@ -1,5 +1,6 @@
 require 'json-schema'
 require 'realself/stream/objekt'
+require 'securerandom'
 
 module RealSelf
   module Stream
@@ -22,13 +23,15 @@ module RealSelf
 
           relatives = hash['relatives'].map {|rel| Objekt.new(rel['type'], rel['id'])} if hash['relatives']
 
-          return Activity.new(title, published, actor, verb, object, target, relatives)         
+          uuid = hash['uuid'] || SecureRandom.uuid
+
+          return Activity.new(title, published, actor, verb, object, target, relatives, uuid)         
         end
       end
 
-      attr_accessor :title, :published, :actor, :verb, :object, :target, :relatives 
+      attr_reader :title, :published, :actor, :verb, :object, :target, :relatives, :uuid
 
-      def initialize(title, published, actor, verb, object, target, relatives)
+      def initialize(title, published, actor, verb, object, target, relatives, uuid = SecureRandom.uuid)
         @title = title.to_s
         @published = published.to_datetime
         @actor = actor
@@ -36,6 +39,7 @@ module RealSelf
         @object = object
         @target = target
         @relatives = (relatives && relatives.to_ary) || []
+        @uuid = uuid.to_s
 
         self.to_s  # invoke validation
 
@@ -55,7 +59,8 @@ module RealSelf
                 :actor => @actor.to_h,
                 :verb => @verb,
                 :object => @object.to_h,
-                :relatives => @relatives.map {|relative| relative.to_h}
+                :relatives => @relatives.map {|relative| relative.to_h},
+                :uuid => @uuid.to_s
               }
 
         hash[:target] = @target.to_h unless @target.nil?
