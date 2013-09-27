@@ -9,8 +9,9 @@ module RealSelf
       class << self   
         @@schema = MultiJson.decode(open(File.join(File.dirname(__FILE__), 'activity-schema.json')).read)
 
-        def from_json(json)
-          JSON::Validator.validate!(@@schema, json)
+        def from_json(json, validate = true)
+          JSON::Validator.validate!(@@schema, json) if validate
+          
           hash = MultiJson.decode(json)
 
           title = hash['title']
@@ -71,9 +72,7 @@ module RealSelf
       alias :to_hash :to_h
 
       def to_s    
-        json = MultiJson.encode(to_h)
-        JSON::Validator.validate!(@@schema, json)
-        return json
+        MultiJson.encode(to_h)
       end
     end
   end
