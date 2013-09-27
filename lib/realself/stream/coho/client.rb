@@ -45,7 +45,7 @@ module RealSelf
 
           def get_followers(activity)
 
-            followed_activity = RealSelf::Stream::FollowedActivity.from_json(activity.to_s)
+            followed_activity = RealSelf::Stream::FollowedActivity.from_json(activity.to_s, false)
 
             #actor followers
             followed_activity.actor.followers = Coho::Client.followersof(activity.actor)

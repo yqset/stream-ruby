@@ -11,8 +11,9 @@ module RealSelf
       class << self   
         @@schema = MultiJson.decode(open(File.join(File.dirname(__FILE__), 'queue-item-schema.json')).read)
 
-        def from_json(json)
-          JSON::Validator.validate!(@@schema, json)
+        def from_json(json, validate = true)
+          JSON::Validator.validate!(@@schema, json) if validate
+          
           hash = MultiJson.decode(json)
 
           title = hash['title']
