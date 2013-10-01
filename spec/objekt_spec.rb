@@ -55,7 +55,7 @@ describe RealSelf::Stream::Objekt do
       json = MultiJson.encode(example_hash)
       objekt = RealSelf::Stream::Objekt.from_json(json)
       objekt.should be_an_instance_of RealSelf::Stream::Objekt
-      (objekt == @objekt).should be_true
+      objekt.should eql @objekt
     end
   end
 end
