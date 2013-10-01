@@ -75,14 +75,14 @@ describe RealSelf::Stream::StreamActivity do
       
       other = example_stream_activity
       other.object.id = '0000'
-      (@stream_activity == other).should be_false
+      @stream_activity.should_not eql other
     end
   end
 
   describe "#to_s" do
     it "returns a JSON string" do
       json = @stream_activity.to_s
-      hash = MultiJson::encode(json) 
+      MultiJson::encode(json)
     end
   end
 
