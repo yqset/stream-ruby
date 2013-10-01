@@ -86,15 +86,15 @@ describe RealSelf::Stream::FollowedActivity do
 
       @followed_activity.title.should eql activity.title
       @followed_activity.published.should eql activity.published
-      (@followed_activity.actor.to_objekt == activity.actor).should be_true
+      @followed_activity.actor.to_objekt.should eql activity.actor
       @followed_activity.verb.should eql activity.verb
-      (@followed_activity.object.to_objekt == activity.object).should be_true
-      (@followed_activity.target.to_objekt == activity.target).should be_true
+      @followed_activity.object.to_objekt.should eql activity.object
+      @followed_activity.target.to_objekt.should eql activity.target
       @followed_activity.relatives.length.should eql activity.relatives.length
       @followed_activity.uuid.should eql activity.uuid
 
       @followed_activity.relatives.each_index do |index|
-        (@followed_activity.relatives[index].to_objekt == activity.relatives[index]).should be_true
+        @followed_activity.relatives[index].to_objekt.should eql activity.relatives[index]
       end
     end
   end
