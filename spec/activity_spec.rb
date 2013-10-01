@@ -65,8 +65,8 @@ describe RealSelf::Stream::Activity do
 
   describe "#actor" do
     it "returns the actor" do
-     (@activity.actor == example_activity.actor).should be_true
-     (@activity.actor == example_activity.object).should be_false
+      @activity.actor.should eql example_activity.actor
+      @activity.actor.should_not eql example_activity.object
     end
   end
 
@@ -78,23 +78,23 @@ describe RealSelf::Stream::Activity do
 
   describe "#objekt" do
     it "returns the object of the activity" do
-     (@activity.object == example_activity.object).should be_true
-     (@activity.object == example_activity.actor).should be_false
+      @activity.object.should eql example_activity.object
+      @activity.object.should_not eql example_activity.actor
     end
   end
 
   describe "#target" do
     it "returns the target of the activity" do
-     (@activity.target == example_activity.target).should be_true
-     (@activity.target == example_activity.actor).should be_false
+      @activity.target.should eql example_activity.target
+      @activity.target.should_not eql example_activity.actor
     end
   end
 
   describe "#relatives" do
     it "returns the activity relatives collection" do
       @activity.relatives.length.should eql 1
-      ((@activity.relatives)[0]).should be_an_instance_of RealSelf::Stream::Objekt
-      (@activity.relatives[0] == RealSelf::Stream::Objekt.new('topic', 4567)).should be_true
+      @activity.relatives.first.should be_an_instance_of RealSelf::Stream::Objekt
+      @activity.relatives.first.should eql RealSelf::Stream::Objekt.new('topic', 4567)
     end
   end
 
@@ -120,22 +120,22 @@ describe RealSelf::Stream::Activity do
       @activity.to_h.should eql hash
 
       json = MultiJson.encode(@activity.to_h)
-      activity = RealSelf::Stream::Activity.from_json(json)  
-      (@activity == activity).should be_true
+      activity = RealSelf::Stream::Activity.from_json(json)
+      @activity.should eql activity
 
       # test with activity that is missing target and relations
       hash = example_activity_without_target_or_relatives.to_h
       json = MultiJson.encode(hash)
       activity_2 = RealSelf::Stream::Activity.from_json(json)
-      (activity_2 == example_activity_without_target_or_relatives).should be_true
+      activity_2.should eql example_activity_without_target_or_relatives
     end
   end
 
   describe "::from_json" do
     it "creates an activity from a JSON string" do
       json = MultiJson.encode(@activity.to_h)
-      activity = RealSelf::Stream::Activity.from_json(json)  
-      (@activity == activity).should be_true
+      activity = RealSelf::Stream::Activity.from_json(json)
+      @activity.should eql activity
     end
   end
 end
