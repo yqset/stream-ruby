@@ -23,13 +23,11 @@ describe RealSelf::Stream::Error do
     it "compares two errors" do
       other = RealSelf::Stream::Error.new('TestError', 'sample error message')
 
-      (@error == other).should be_true
       @error.should eql other
 
       other = RealSelf::Stream::Error.new('TestError2', 'sample error message 2')
 
-      (@error == other).should be_false
-      @error.should_not eql other      
+      @error.should_not eql other
     end
   end
 
