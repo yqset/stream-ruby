@@ -3,6 +3,19 @@ require 'spec_helper'
 
 describe RealSelf::Stream::Activity do
 
+  def example_hash
+    {
+      :title => "sample activity title",
+      :published => "1970-01-01T00:00:00+00:00",
+      :actor => {:type => "dr", :id => "1234"},
+      :verb => "author",
+      :object => {:type => "answer", :id => "2345"},
+      :relatives => [{:type => "topic", :id => "4567"}],
+      :uuid => "f364c40c-6e91-4064-a825-faae79c10254",
+      :target => {:type => "question", :id => "3456"}
+    }
+  end
+
   def example_activity
     RealSelf::Stream::Activity.new(
       'sample activity title',
@@ -43,6 +56,12 @@ describe RealSelf::Stream::Activity do
 
   before :each do
     @activity = RealSelf::Stream::Activity.from_json(example_activity.to_s)
+  end
+
+  describe '::from_hash' do
+    it 'takes a hash and returns a new instance' do
+      @activity.should eql RealSelf::Stream::Activity.from_hash(example_hash)
+    end
   end
 
   describe "#new" do
@@ -133,8 +152,7 @@ describe RealSelf::Stream::Activity do
 
   describe "::from_json" do
     it "creates an activity from a JSON string" do
-      json = MultiJson.encode(@activity.to_h)
-      activity = RealSelf::Stream::Activity.from_json(json)
+      activity = RealSelf::Stream::Activity.from_json(MultiJson::encode(example_hash))
       @activity.should eql activity
     end
   end

@@ -5,8 +5,12 @@ module RealSelf
     class Objekt
       class << self
         def from_json(json)
-          hash = MultiJson.decode(json)
-          Objekt.new(hash['type'], hash['id'])
+          hash = MultiJson.decode(json, { :symbolize_keys => true })
+          from_hash(hash)
+        end
+
+        def from_hash(hash)
+          Objekt.new(hash[:type], hash[:id])
         end
       end
 

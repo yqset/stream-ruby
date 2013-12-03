@@ -6,6 +6,21 @@ module RealSelf
   module Stream
     class StreamActivity
 
+      class << self
+        def from_hash(hash)
+          object = Objekt.from_hash(hash[:object])
+          activity = Activity.from_hash(hash[:activity])
+          reasons = hash[:reasons].map { |reason| Objekt.from_hash(reason) }
+
+          StreamActivity.new(object, activity, reasons)
+        end
+
+        def from_json(json)
+          hash = MultiJson::decode(json, { :symbolize_keys => true })
+          from_hash(hash)
+        end
+      end
+
       attr_accessor :object, :activity, :reasons
 
       def initialize(object, activity, reasons = [])

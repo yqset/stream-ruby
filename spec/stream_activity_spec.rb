@@ -4,6 +4,27 @@ require 'pp'
 
 describe RealSelf::Stream::StreamActivity do
 
+  def example_hash
+    {
+        :object => {:type => "dr", :id => "1234"},
+        :activity => {:title => "sample activity title",
+                      :published => "1970-01-01T00:00:00+00:00",
+                      :actor => {:type => "dr", :id => "1234"},
+                      :verb => "author",
+                      :object => {:type => "answer", :id => "2345"},
+                      :relatives => [{:type => "topic", :id => "4567"}],
+                      :uuid => "f364c40c-6e91-4064-a825-faae79c10254",
+                      :target => {:type => "question", :id => "3456"}},
+        :reasons => [
+            {:type => "dr", :id => "1234"},
+            {:type => "topic", :id => "4567"}]
+    }
+  end
+
+  def example_json
+    MultiJson::encode(example_hash)
+  end
+
   def example_activity
     RealSelf::Stream::Activity.new(
       'sample activity title',
@@ -28,6 +49,18 @@ describe RealSelf::Stream::StreamActivity do
 
   before :each do
     @stream_activity = example_stream_activity
+  end
+
+  describe '::from_hash' do
+    it 'takes a hash and returns a new instance' do
+      @stream_activity.should eql RealSelf::Stream::StreamActivity.from_hash(example_hash)
+    end
+  end
+
+  describe '::from_json' do
+    it 'takes a JSON string and returns a new instance' do
+      @stream_activity.should eql RealSelf::Stream::StreamActivity.from_json(example_json)
+    end
   end
 
   describe "#new" do

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    realself-stream (0.0.8)
+    realself-stream (0.0.9)
       bunny
       httparty
       json-schema

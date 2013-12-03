@@ -9,24 +9,26 @@ module RealSelf
       class << self   
         @@schema = MultiJson.decode(open(File.join(File.dirname(__FILE__), 'activity-schema.json')).read)
 
-        def from_json(json, validate = true)
-          JSON::Validator.validate!(@@schema, json) if validate
-          
-          hash = MultiJson.decode(json)
-
-          title = hash['title']
-          published = DateTime.parse(hash['published'])
-          actor = Objekt.new(hash['actor']['type'], hash['actor']['id'])      
-          verb = hash['verb'].to_s
-          object = Objekt.new(hash['object']['type'], hash['object']['id'])
-          target = Objekt.new(hash['target']['type'], hash['target']['id']) if hash['target']
+        def from_hash(hash)
+          title = hash[:title]
+          published = DateTime.parse(hash[:published])
+          actor = Objekt.new(hash[:actor][:type], hash[:actor][:id])
+          verb = hash[:verb].to_s
+          object = Objekt.new(hash[:object][:type], hash[:object][:id])
+          target = Objekt.new(hash[:target][:type], hash[:target][:id]) if hash[:target]
           relatives = []
 
-          relatives = hash['relatives'].map {|rel| Objekt.new(rel['type'], rel['id'])} if hash['relatives']
+          relatives = hash[:relatives].map {|rel| Objekt.new(rel[:type], rel[:id])} if hash[:relatives]
 
-          uuid = hash['uuid'] || SecureRandom.uuid
+          uuid = hash[:uuid] || SecureRandom.uuid
 
-          return Activity.new(title, published, actor, verb, object, target, relatives, uuid)         
+          Activity.new(title, published, actor, verb, object, target, relatives, uuid)
+        end
+
+        def from_json(json, validate = true)
+          JSON::Validator.validate!(@@schema, json) if validate
+          hash = MultiJson.decode(json, { :symbolize_keys => true })
+          from_hash(hash)
         end
       end
 
@@ -66,7 +68,7 @@ module RealSelf
 
         hash[:target] = @target.to_h unless @target.nil?
         
-        return hash
+        hash
       end
 
       alias :to_hash :to_h
