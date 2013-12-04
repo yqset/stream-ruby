@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    realself-stream (0.0.9)
+    realself-stream (0.0.10)
       bunny
       httparty
       json-schema
@@ -10,9 +10,9 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    amq-protocol (1.8.0)
-    bunny (0.10.7)
-      amq-protocol (>= 1.6.0)
+    amq-protocol (1.9.0)
+    bunny (1.0.5)
+      amq-protocol (>= 1.9.0)
     diff-lcs (1.2.4)
     httparty (0.11.0)
       multi_json (~> 1.0)
