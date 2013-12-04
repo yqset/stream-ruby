@@ -1,4 +1,4 @@
-module Realself
+module RealSelf
   module Stream
     class RoutingKey
 
