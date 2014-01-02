@@ -23,7 +23,8 @@ describe RealSelf::Stream::Coho::Client do
       RealSelf::Stream::Coho::Client.logger = logger
       RealSelf::Stream::Coho::Client.wait_interval = 0.00001 # Short wait time for fast tests
       RealSelf::Stream::Coho::Client.should_receive(:get).exactly(4).times.and_raise('something broke')
-      RealSelf::Stream::Coho::Client.stubborn_get(test_url)
+
+      expect { RealSelf::Stream::Coho::Client.stubborn_get(test_url) }.to raise_error('something broke')
     end
   end
 
