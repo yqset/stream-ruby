@@ -7,6 +7,7 @@ require 'realself/stream/publisher'
 require 'realself/stream/stream_activity'
 require 'realself/stream/routing_key'
 require 'realself/stream/version'
+require 'realself/stream/coho/client'
 
 module Realself
   module Stream

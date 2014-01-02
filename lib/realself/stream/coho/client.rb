@@ -11,7 +11,25 @@ module RealSelf
         include HTTParty
 
         class << self
-          attr_accessor :logger
+          attr_accessor :logger, :wait_interval
+
+          def stubborn_get(*args)
+            max = 3
+            tries ||= 1
+            self.get(*args)
+          rescue => e
+            if tries <= max
+              wait = tries * (@wait_interval || 10)
+              @logger.error "Encountered the following exception, retrying in #{wait} secs"
+              @logger.error e.message
+              sleep wait
+              tries += 1
+              retry
+            else
+              @logger.error 'Encountered the following exception, exhausted all retry attempts'
+              @logger.error e.message
+            end
+          end
 
           def base_uri=(uri)
             base_uri(uri) # pass on the URI to HTTParty
@@ -26,14 +44,14 @@ module RealSelf
           end
 
           def followedby(objekt)
-            response = self.get("/followedby/#{objekt.type}/#{objekt.id}")
+            response = self.stubborn_get("/followedby/#{objekt.type}/#{objekt.id}")
             validate_response(response)
             parse_objekts(response.body)
           end
 
           def followersof(objekt)
             begin
-              response = self.get("/followersof/#{objekt.type}/#{objekt.id}")
+              response = self.stubborn_get("/followersof/#{objekt.type}/#{objekt.id}")
             rescue StandardError => e
               puts e.message
               puts e.backtrace.join("\n")
