@@ -13,6 +13,7 @@ module RealSelf
         class << self
           attr_accessor :logger, :wait_interval
 
+          # Upon failure wait exponentially longer between retries
           def stubborn_get(*args)
             max = 3
             tries ||= 1

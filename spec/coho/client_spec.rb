@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'byebug'
 
 describe RealSelf::Stream::Coho::Client do
 

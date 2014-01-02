@@ -13,11 +13,6 @@ GEM
     amq-protocol (1.9.0)
     bunny (1.0.6)
       amq-protocol (>= 1.9.0)
-    byebug (2.5.0)
-      columnize (~> 0.3.6)
-      debugger-linecache (~> 1.2.0)
-    columnize (0.3.6)
-    debugger-linecache (1.2.0)
     diff-lcs (1.2.4)
     httparty (0.11.0)
       multi_json (~> 1.0)
@@ -38,6 +33,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  byebug
   realself-stream!
   rspec
