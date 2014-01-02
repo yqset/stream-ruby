@@ -22,13 +22,13 @@ module RealSelf
             if tries <= max
               wait = tries * (@wait_interval || 10)
               @logger.error "Encountered the following exception, retrying in #{wait} secs"
-              @logger.error "#{e.message} - #{e.backtrace}"
+              @logger.error e.message
               sleep wait
               tries += 1
               retry
             else
               @logger.error 'Encountered the following exception, exhausted all retry attempts'
-              @logger.error "#{e.message} - #{e.backtrace}"
+              @logger.error e.message
               raise e
             end
           end
