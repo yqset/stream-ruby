@@ -9,7 +9,7 @@ module RealSelf
     class FollowedActivity < Activity
 
       class << self   
-        @@schema = MultiJson.decode(open(File.join(File.dirname(__FILE__), 'queue-item-schema.json')).read)
+        @@schema = MultiJson.decode(open(File.join(File.dirname(__FILE__), 'followed-activity-schema.json')).read)
 
         def from_json(json, validate = true)
           JSON::Validator.validate!(@@schema, json) if validate
@@ -24,8 +24,9 @@ module RealSelf
           target = FollowedObjekt.from_json(MultiJson.encode(hash['target'])) if hash['target']
           relatives = hash['relatives'].map {|rel| FollowedObjekt.from_json(MultiJson.encode(rel))} if hash['relatives']
           uuid = hash['uuid'] || SecureRandom.uuid
+          prototype = hash[:prototype] || nil
 
-          return FollowedActivity.new(title, published, actor, verb, object, target, relatives, uuid)
+          return FollowedActivity.new(title, published, actor, verb, object, target, relatives, uuid, prototype)
         end
       end
 
@@ -38,8 +39,9 @@ module RealSelf
         target = Objekt.new(@target.type, @target.id) if @target
         relatives = @relatives.map { |rel| Objekt.new(rel.type, rel.id) } if @relatives
         uuid = self.uuid
+        prototype = self.prototype
 
-        return Activity.new(title, published, actor, verb, object, target, relatives, uuid)
+        return Activity.new(title, published, actor, verb, object, target, relatives, uuid, prototype)
       end
 
       # yeields follower, reason

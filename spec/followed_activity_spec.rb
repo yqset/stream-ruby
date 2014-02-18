@@ -71,7 +71,8 @@ describe RealSelf::Stream::FollowedActivity do
         ]   
       }
     ], 
-    "uuid" => SecureRandom.uuid
+    "uuid" => SecureRandom.uuid,
+    "prototype" => "explicit.prototype.value"
   }  
   end
 
@@ -92,6 +93,7 @@ describe RealSelf::Stream::FollowedActivity do
       @followed_activity.target.to_objekt.should eql activity.target
       @followed_activity.relatives.length.should eql activity.relatives.length
       @followed_activity.uuid.should eql activity.uuid
+      @followed_activity.prototype.should eql activity.prototype
 
       @followed_activity.relatives.each_index do |index|
         @followed_activity.relatives[index].to_objekt.should eql activity.relatives[index]

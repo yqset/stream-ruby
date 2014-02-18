@@ -29,6 +29,9 @@
         "items" : {"$ref" : "#/definitions/activity-object"},
         "minItems" : 0,
         "uniqueItems" : true
+    },
+    "prototype" : {
+      "type" : "string"
     }        
   },
   "definitions" : {

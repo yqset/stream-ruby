@@ -22,7 +22,9 @@ module RealSelf
 
           uuid = hash[:uuid] || SecureRandom.uuid
 
-          Activity.new(title, published, actor, verb, object, target, relatives, uuid)
+          prototype = hash[:prototype] || nil
+
+          Activity.new(title, published, actor, verb, object, target, relatives, uuid, prototype)
         end
 
         def from_json(json, validate = true)
@@ -32,9 +34,9 @@ module RealSelf
         end
       end
 
-      attr_reader :title, :published, :actor, :verb, :object, :target, :relatives, :uuid
+      attr_reader :title, :published, :actor, :verb, :object, :target, :relatives, :uuid, :prototype
 
-      def initialize(title, published, actor, verb, object, target, relatives, uuid = SecureRandom.uuid)
+      def initialize(title, published, actor, verb, object, target, relatives, uuid = SecureRandom.uuid, prototype = nil)
         @title = title.to_s
         @published = published.to_datetime
         @actor = actor
@@ -43,6 +45,7 @@ module RealSelf
         @target = target
         @relatives = (relatives && relatives.to_ary) || []
         @uuid = uuid.to_s
+        @prototype = prototype ? prototype.to_s : "#{actor.type.to_s}.#{verb.to_s}.#{object.type.to_s}"
 
         self.to_s  # invoke validation
 
@@ -63,7 +66,8 @@ module RealSelf
                 :verb => @verb,
                 :object => @object.to_h,
                 :relatives => @relatives.map {|relative| relative.to_h},
-                :uuid => @uuid.to_s
+                :uuid => @uuid.to_s,
+                :prototype => @prototype.to_s
               }
 
         hash[:target] = @target.to_h unless @target.nil?

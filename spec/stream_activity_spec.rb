@@ -14,7 +14,8 @@ describe RealSelf::Stream::StreamActivity do
                       :object => {:type => "answer", :id => "2345"},
                       :relatives => [{:type => "topic", :id => "4567"}],
                       :uuid => "f364c40c-6e91-4064-a825-faae79c10254",
-                      :target => {:type => "question", :id => "3456"}},
+                      :target => {:type => "question", :id => "3456"},
+                      :prototype => "explicit.prototype.value"},
         :reasons => [
             {:type => "dr", :id => "1234"},
             {:type => "topic", :id => "4567"}]
@@ -34,7 +35,8 @@ describe RealSelf::Stream::StreamActivity do
       RealSelf::Stream::Objekt.new('answer', 2345),
       RealSelf::Stream::Objekt.new('question', 3456),
       [RealSelf::Stream::Objekt.new('topic', 4567)],
-      'f364c40c-6e91-4064-a825-faae79c10254'
+      'f364c40c-6e91-4064-a825-faae79c10254',
+      'explicit.prototype.value'
     )
   end
 
