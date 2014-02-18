@@ -7,7 +7,7 @@ module RealSelf
       end
 
       def to_s
-        "#{@activity.actor.type}.#{@activity.verb}.#{@activity.object.type}"
+        activity.prototype
       end
 
     end
