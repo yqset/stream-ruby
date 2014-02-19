@@ -7,7 +7,7 @@ module RealSelf
       end
 
       def to_s
-        activity.prototype
+        @activity.prototype
       end
 
     end
