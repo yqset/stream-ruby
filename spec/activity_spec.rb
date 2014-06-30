@@ -183,4 +183,14 @@ describe RealSelf::Stream::Activity do
       @activity.should eql activity
     end
   end
+
+  describe "#to_version" do
+    it "returns itself when the same version is requested" do
+      @activity.to_version(1).should eql @activity
+    end
+
+    it "raises an error when a conversion is not possible" do
+      expect{@activity.to_version(2)}.to raise_error
+    end
+  end
 end
