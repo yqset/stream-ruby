@@ -80,6 +80,15 @@ module RealSelf
       def to_s    
         MultiJson.encode(to_h)
       end
+
+      def to_version(version)
+        case version.to_i
+        when 1
+          return self
+        else
+          raise ArgumentError, "unsupported activity version:  #{version.to_s}"
+        end
+      end
     end
   end
 end
