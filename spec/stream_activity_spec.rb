@@ -55,40 +55,40 @@ describe RealSelf::Stream::StreamActivity do
 
   describe '::from_hash' do
     it 'takes a hash and returns a new instance' do
-      @stream_activity.should eql RealSelf::Stream::StreamActivity.from_hash(example_hash)
+      expect(@stream_activity).to eql RealSelf::Stream::StreamActivity.from_hash(example_hash)
     end
   end
 
   describe '::from_json' do
     it 'takes a JSON string and returns a new instance' do
-      @stream_activity.should eql RealSelf::Stream::StreamActivity.from_json(example_json)
+      expect(@stream_activity).to eql RealSelf::Stream::StreamActivity.from_json(example_json)
     end
   end
 
   describe "#new" do
     it "takes two or three parameters and returns an Objekt object" do
-      @stream_activity.should be_an_instance_of RealSelf::Stream::StreamActivity
+      expect(@stream_activity).to be_an_instance_of RealSelf::Stream::StreamActivity
     end
   end
 
   describe "#object" do
     it "returns an Objekt" do
-     @stream_activity.object.should be_an_instance_of RealSelf::Stream::Objekt
+     expect(@stream_activity.object).to be_an_instance_of RealSelf::Stream::Objekt
     end
   end
 
   describe "#activity" do
     it "returns an Activity" do
-      @stream_activity.activity.should be_an_instance_of RealSelf::Stream::Activity
+      expect(@stream_activity.activity).to be_an_instance_of RealSelf::Stream::Activity
     end
   end 
 
   describe "#reasons" do
     it "returns an array of Objekts" do
-      @stream_activity.reasons.length.should eql 2
+      expect(@stream_activity.reasons.length).to eql 2
 
       @stream_activity.reasons.each do |reason|
-        reason.should be_an_instance_of RealSelf::Stream::Objekt
+        expect(reason).to be_an_instance_of RealSelf::Stream::Objekt
       end
     end
   end 
@@ -97,27 +97,27 @@ describe RealSelf::Stream::StreamActivity do
     it "returns a hash" do
       hash = @stream_activity.to_h
 
-      hash[:object].should eql ({:type => 'dr', :id => '1234'})
-      hash[:activity].should eql @stream_activity.activity.to_h
-      hash[:reasons].length.should eql 2
-      hash[:reasons].should include({:type => 'dr', :id => '1234'}, {:type => 'topic', :id => '4567'})
+      expect(hash[:object]).to eql ({:type => 'dr', :id => '1234'})
+      expect(hash[:activity]).to eql @stream_activity.activity.to_h
+      expect(hash[:reasons].length).to eql 2
+      expect(hash[:reasons]).to include({:type => 'dr', :id => '1234'}, {:type => 'topic', :id => '4567'})
     end
   end
 
   describe "#==" do
     it "compares two stream items" do
-      (@stream_activity == example_stream_activity).should be_true
+      expect(@stream_activity).to eql example_stream_activity
       
       other = example_stream_activity
       other.object.id = '0000'
-      @stream_activity.should_not eql other
+      expect(@stream_activity).to_not eql other
     end
   end
 
   describe "#to_s" do
     it "returns a JSON string" do
       json = @stream_activity.to_s
-      MultiJson::encode(json)
+      expect{MultiJson::encode(json)}.to_not raise_error
     end
   end
 

@@ -75,112 +75,122 @@ describe RealSelf::Stream::Activity do
 
   describe '::from_hash' do
     it 'takes a hash and returns a new instance' do
-      @activity.should eql RealSelf::Stream::Activity.from_hash(example_hash)
+      expect(@activity).to eql RealSelf::Stream::Activity.from_hash(example_hash)
     end
   end
 
   describe "#new" do
     it "takes two parameters and returns an Objekt object" do
-      @activity.should be_an_instance_of RealSelf::Stream::Activity
+      expect(@activity).to be_an_instance_of RealSelf::Stream::Activity
     end
   end
 
   describe "#title" do
     it "returns the correct title" do
-      @activity.title.should eql example_activity.title
+      expect(@activity.title).to eql example_activity.title
     end
   end
 
   describe "#published" do
     it "returns the correct published date" do
-      @activity.published.should eql example_activity.published
+      expect(@activity.published).to eql example_activity.published
     end
   end 
 
   describe "#actor" do
     it "returns the actor" do
-      @activity.actor.should eql example_activity.actor
-      @activity.actor.should_not eql example_activity.object
+      expect(@activity.actor).to eql example_activity.actor
+      expect(@activity.actor).to_not eql example_activity.object
     end
   end
 
   describe "#verb" do
     it "returns the verb" do
-      @activity.verb.should eql example_activity.verb
+      expect(@activity.verb).to eql example_activity.verb
     end
   end
 
   describe "#objekt" do
     it "returns the object of the activity" do
-      @activity.object.should eql example_activity.object
-      @activity.object.should_not eql example_activity.actor
+      expect(@activity.object).to eql example_activity.object
+      expect(@activity.object).to_not eql example_activity.actor
     end
   end
 
   describe "#target" do
     it "returns the target of the activity" do
-      @activity.target.should eql example_activity.target
-      @activity.target.should_not eql example_activity.actor
+      expect(@activity.target).to eql example_activity.target
+      expect(@activity.target).to_not eql example_activity.actor
     end
   end
 
   describe "#relatives" do
     it "returns the activity relatives collection" do
-      @activity.relatives.length.should eql 1
-      @activity.relatives.first.should be_an_instance_of RealSelf::Stream::Objekt
-      @activity.relatives.first.should eql RealSelf::Stream::Objekt.new('topic', 4567)
+      expect(@activity.relatives.length).to eql 1
+      expect(@activity.relatives.first).to be_an_instance_of RealSelf::Stream::Objekt
+      expect(@activity.relatives.first).to eql RealSelf::Stream::Objekt.new('topic', 4567)
     end
   end
 
   describe "#uuid" do
     it "returns the UUID of the activity" do
-      @activity.uuid.should_not be_nil
-      (/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/ =~ @activity.uuid).should eql 0
-      (@activity.uuid == example_activity.uuid).should be_true
+      expect(@activity.uuid).to_not be_nil
+      expect(/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/ =~ @activity.uuid).to eql 0
+      expect(@activity.uuid).to eql example_activity.uuid
     end
 
     it "generates a UUID if one is not supplied" do
       activity = example_activity_without_uuid
-      (/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/ =~ activity.uuid).should eql 0
+      expect(/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/ =~ activity.uuid).to eql 0
       activity2 = example_activity_without_uuid
-      (activity.uuid == activity2.uuid).should be_false
-      (activity == activity2).should be_false
+      expect(activity.uuid).to_not eql activity2.uuid
+      expect(activity).to_not eql activity2
     end
   end
 
   describe "#prototype" do
     it "returns the prototype of the activity" do
-      @activity.prototype.should_not be_nil
-      (@activity.prototype == example_activity.prototype).should be_true
+      expect(@activity.prototype).to_not be_nil
+      expect(@activity.prototype).to eql example_activity.prototype
     end
 
     it "generates a prototype if one is not supplied" do
-      activity = example_activity_without_prototype      
-      (activity.prototype == "#{activity.actor.type}.#{activity.verb}.#{activity.object.type}").should be_true
+      activity = example_activity_without_prototype
+      expect(activity.prototype).to eql "#{activity.actor.type}.#{activity.verb}.#{activity.object.type}"  
     end
   end
 
   describe "#to_h" do
     it "returns a hash representation of the activity" do
       hash = example_activity.to_h
-      @activity.to_h.should eql hash
+      expect(@activity.to_h).to eql hash
 
       json = MultiJson.encode(@activity.to_h)
       activity = RealSelf::Stream::Activity.from_json(json)
-      @activity.should eql activity
+      expect(@activity).to eql activity
 
       # test with activity that is missing target and relations
       hash = example_activity_without_target_or_relatives.to_h
       json = MultiJson.encode(hash)
       activity_2 = RealSelf::Stream::Activity.from_json(json)
-      activity_2.should eql example_activity_without_target_or_relatives
+      expect(activity_2).to eql example_activity_without_target_or_relatives
     end
   end
 
   describe "::from_json" do
     it "creates an activity from a JSON string" do
       activity = RealSelf::Stream::Activity.from_json(MultiJson::encode(example_hash))
-      @activity.should eql activity
+      expect(@activity).to eql activity
+    end
+  end
+
+  describe "#to_version" do
+    it "returns itself when the same version is requested" do
+      expect(@activity.to_version(1)).to eql @activity
+    end
+
+    it "raises an error when a conversion is not possible" do
+      expect{@activity.to_version(2)}.to raise_error
     end
   end
 end
