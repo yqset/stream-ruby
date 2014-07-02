@@ -1,13 +1,16 @@
-require 'realself/stream/activity'
-require 'realself/stream/error'
-require 'realself/stream/objekt'
-require 'realself/stream/followed_activity'
-require 'realself/stream/followed_objekt'
+require 'realself/stream/activity/activity'
+require 'realself/stream/activity/error'
+require 'realself/stream/activity/objekt'
+require 'realself/stream/activity/followed_activity'
+require 'realself/stream/activity/followed_objekt'
 require 'realself/stream/publisher'
-require 'realself/stream/stream_activity'
-require 'realself/stream/routing_key'
+require 'realself/stream/activity/stream_activity'
+require 'realself/stream/activity/routing_key'
 require 'realself/stream/version'
 require 'realself/stream/coho/client'
+
+require 'realself/stream/activity/v1/activity_v1'
+require 'realself/stream/activity/v1/followed_activity_v1'
 
 module Realself
   module Stream

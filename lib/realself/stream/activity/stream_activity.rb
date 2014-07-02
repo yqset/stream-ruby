@@ -1,6 +1,6 @@
 require 'multi_json'
-require 'realself/stream/activity'
-require 'realself/stream/objekt'
+# require 'realself/stream/activity'
+# require 'realself/stream/objekt'
 
 module RealSelf
   module Stream

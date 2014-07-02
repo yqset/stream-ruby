@@ -6,7 +6,7 @@ describe RealSelf::Stream::FollowedActivity do
 
   def followed_activity(i)
   {
-    "published" => "2013-08-13T16:36:59Z",
+    "published" => "1970-01-01T00:00:00+00:00",
     "title" => "QUEUE ITEM - dr(57433) author answer(1050916) about question(1048591)",
     "actor" => 
     {
@@ -71,7 +71,7 @@ describe RealSelf::Stream::FollowedActivity do
         ]   
       }
     ], 
-    "uuid" => SecureRandom.uuid,
+    "uuid" => 'f364c40c-6e91-4064-a825-faae79c10254',
     "prototype" => "explicit.prototype.value"
   }  
   end
@@ -83,7 +83,7 @@ describe RealSelf::Stream::FollowedActivity do
   describe "#to_activity" do
     it "creates an Activity object from a FollowedActivity" do
       activity = @followed_activity.to_activity
-      expect(activity).to be_an_instance_of RealSelf::Stream::Activity
+      expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV1
 
       expect(@followed_activity.title).to eql activity.title
       expect(@followed_activity.published).to eql activity.published
@@ -148,8 +148,29 @@ describe RealSelf::Stream::FollowedActivity do
 
   describe "::from_json" do
     it "takes a JSON string and returns a FollowedActivity" do
-      expect(@followed_activity).to be_an_instance_of RealSelf::Stream::FollowedActivity
+      expect(@followed_activity).to be_an_instance_of RealSelf::Stream::FollowedActivityV1
+      expect(@followed_activity).to be_an_kind_of RealSelf::Stream::FollowedActivity
       expect(@followed_activity).to be_an_kind_of RealSelf::Stream::Activity
+    end
+  end
+
+  describe "#to_h" do
+    it "returns a hash representation of the followed activity" do
+      hash = @followed_activity.to_h
+      json = MultiJson.encode(followed_activity(1234))
+      hash2 = MultiJson.decode(json, { :symbolize_keys => true })
+
+      expect(hash).to eql hash2
+    end
+  end
+
+  describe "#to_version" do
+    it "takes a followed activity and asks to convert it to version 1 format" do
+      expect(@followed_activity.to_version(1)).to eql @followed_activity
+    end
+
+    it "takes a followed activity and raises an error when trying to convert to an unknown version" do
+      expect{@followed_activity.to_version(2)}.to raise_error
     end
   end
 

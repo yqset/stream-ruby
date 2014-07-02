@@ -1,5 +1,5 @@
 {
-  "id" : "http://realself.com/queue-item-schema#",
+  "id" : "http://realself.com/queue-item-schema-v1#",
   "$schema" : "http://json-schema.org/draft-04/schema#",
   "description" : "schema for items places on the ingestor queue",
   "type" : "object",

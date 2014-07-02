@@ -27,7 +27,7 @@ describe RealSelf::Stream::StreamActivity do
   end
 
   def example_activity
-    RealSelf::Stream::Activity.new(
+    RealSelf::Stream::Activity.create(1,
       'sample activity title',
       DateTime.parse('1970-01-01T00:00:00Z'),
       RealSelf::Stream::Objekt.new('dr', 1234),
@@ -79,7 +79,9 @@ describe RealSelf::Stream::StreamActivity do
 
   describe "#activity" do
     it "returns an Activity" do
-      expect(@stream_activity.activity).to be_an_instance_of RealSelf::Stream::Activity
+      expect(@stream_activity.activity).to be_an_kind_of RealSelf::Stream::Activity
+      expect(@stream_activity.activity).to be_an_instance_of RealSelf::Stream::ActivityV1
+
     end
   end 
 

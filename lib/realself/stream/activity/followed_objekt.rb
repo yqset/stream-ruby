@@ -1,5 +1,5 @@
 require 'multi_json'
-require 'realself/stream/objekt'
+# require 'realself/stream/objekt'
 
 module RealSelf
   module Stream
