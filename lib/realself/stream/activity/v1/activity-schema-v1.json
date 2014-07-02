@@ -1,5 +1,5 @@
 {
-  "id" : "http://realself.com/activity-schema#",
+  "id" : "http://realself.com/activity-schema-v1#",
   "$schema" : "http://json-schema.org/draft-04/schema#",
   "description" : "Activity schema for activity stream items",
   "type" : "object",

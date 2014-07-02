@@ -18,7 +18,7 @@ describe RealSelf::Stream::Activity do
   end
 
   def example_activity
-    RealSelf::Stream::Activity.new(
+    RealSelf::Stream::Activity.create(1,
       'sample activity title',
       DateTime.parse('1970-01-01T00:00:00Z'),
       RealSelf::Stream::Objekt.new('dr', 1234),
@@ -32,7 +32,7 @@ describe RealSelf::Stream::Activity do
   end
 
   def example_activity_without_uuid
-    RealSelf::Stream::Activity.new(
+    RealSelf::Stream::Activity.create(1,
       'sample activity title',
       DateTime.parse('1970-01-01T00:00:00Z'),
       RealSelf::Stream::Objekt.new('dr', 1234),
@@ -44,7 +44,7 @@ describe RealSelf::Stream::Activity do
   end
 
   def example_activity_without_prototype
-    RealSelf::Stream::Activity.new(
+    RealSelf::Stream::Activity.create(1,
       'sample activity title',
       DateTime.parse('1970-01-01T00:00:00Z'),
       RealSelf::Stream::Objekt.new('dr', 1234),
@@ -57,7 +57,7 @@ describe RealSelf::Stream::Activity do
   end  
 
   def example_activity_without_target_or_relatives
-    RealSelf::Stream::Activity.new(
+    RealSelf::Stream::Activity.create(1,
       'sample activity title',
       DateTime.parse('1970-01-01T00:00:00Z'),
       RealSelf::Stream::Objekt.new('dr', 1234),
@@ -71,6 +71,7 @@ describe RealSelf::Stream::Activity do
 
   before :each do
     @activity = RealSelf::Stream::Activity.from_json(example_activity.to_s)
+    @activity.to_version(1)
   end
 
   describe '::from_hash' do
@@ -81,7 +82,7 @@ describe RealSelf::Stream::Activity do
 
   describe "#new" do
     it "takes two parameters and returns an Objekt object" do
-      expect(@activity).to be_an_instance_of RealSelf::Stream::Activity
+      expect(@activity).to be_an_instance_of RealSelf::Stream::ActivityV1
     end
   end
 
