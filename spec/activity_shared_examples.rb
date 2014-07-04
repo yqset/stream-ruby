@@ -114,5 +114,9 @@ shared_examples "an activity" do |activity_version|
       converted_activity = RealSelf::Stream::Activity.from_json(activity_v1.to_s)
       expect(converted_activity).to be_an_instance_of RealSelf::Stream::ActivityV1
     end
+
+    it "raises an error when trying to convert to an unknown version" do
+      expect{@activity.to_version(0)}.to raise_error
+    end    
   end
 end

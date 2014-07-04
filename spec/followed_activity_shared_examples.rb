@@ -32,7 +32,7 @@ shared_examples "a followed activity" do |activity_version|
       expect(converted_activity).to be_an_instance_of RealSelf::Stream::FollowedActivityV1
     end
 
-    it "takes a followed activity and raises an error when trying to convert to an unknown version" do
+    it "raises an error when trying to convert to an unknown version" do
       expect{@followed_activity.to_version(0)}.to raise_error
     end
   end  
