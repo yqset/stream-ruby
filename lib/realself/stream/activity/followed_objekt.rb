@@ -8,12 +8,15 @@ module RealSelf
       class << self
 
         def from_json(json)
-          hash = MultiJson.decode(json)
+          hash = MultiJson.decode(json, {:symbolize_keys => true})
+          from_hash(hash)
+        end
 
+        def from_hash(hash)
           followers = []
-          followers = hash['followers'].map { |obj| Objekt.new(obj['type'], obj['id']) } if hash['followers']
+          followers = hash[:followers].map { |obj| Objekt.new(obj[:type], obj[:id]) } if hash[:followers]
 
-          return FollowedObjekt.new(hash['type'], hash['id'], followers)
+          return FollowedObjekt.new(hash[:type], hash[:id], followers)
         end
       end
 

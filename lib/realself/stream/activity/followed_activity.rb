@@ -9,6 +9,8 @@ module RealSelf
           case version.to_i
           when 1
             FollowedActivityV1
+          when 2
+            FollowedActivityV2
           else
             raise ArgumentError, "unsupported followed-activity version:  #{version.to_s}"
           end

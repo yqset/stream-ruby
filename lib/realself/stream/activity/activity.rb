@@ -39,6 +39,8 @@ module RealSelf
           case version.to_i
           when 1
             ActivityV1
+          when 2
+            ActivityV2
           else
             raise ArgumentError, "unsupported activity version:  #{version.to_s}"
           end          
