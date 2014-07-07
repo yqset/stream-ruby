@@ -23,6 +23,8 @@ module Helpers
     when 2
       hash[:version] = 2
       hash[:extensions] = {:topic => {:type => "topic", :id => "4567"}}
+    else
+      hash[:version] = @@activity_version
     end
 
     return hash
@@ -217,6 +219,8 @@ module Helpers
       }
 
       hash[:version] = 2
+    else
+      hash[:version] = @@activity_version
     end
 
     return hash

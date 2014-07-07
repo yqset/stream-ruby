@@ -84,6 +84,11 @@ describe RealSelf::Stream::Activity do
       activity = RealSelf::Stream::Activity.from_hash(example_hash)
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV2
       expect(activity.version).to eql 2
-    end     
+    end
+
+    it "raises an error when trying to create an unknown version" do
+      Helpers.init(0)
+      expect{RealSelf::Stream::Activity.from_hash(example_hash)}.to raise_error
+    end
   end
 end

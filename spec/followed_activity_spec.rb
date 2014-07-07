@@ -37,6 +37,12 @@ describe RealSelf::Stream::FollowedActivity do
       expect(followed_activity).to be_an_instance_of RealSelf::Stream::FollowedActivityV2
       expect(followed_activity).to be_an_kind_of RealSelf::Stream::FollowedActivity
       expect(followed_activity).to be_an_kind_of RealSelf::Stream::Activity
-    end    
+    end
+
+    it "raises an error when trying to create an unknown version" do
+      Helpers.init(0)
+      hash = followed_activity(1234)
+      expect{RealSelf::Stream::FollowedActivity.from_hash(hash)}.to raise_error
+    end  
   end  
 end
