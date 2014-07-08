@@ -52,13 +52,7 @@ module RealSelf
           end
 
           def followersof(objekt)
-            begin
-              response = self.stubborn_get("/followersof/#{objekt.type}/#{objekt.id}")
-            rescue StandardError => e
-              puts e.message
-              puts e.backtrace.join("\n")
-              raise e
-            end
+            response = self.stubborn_get("/followersof/#{objekt.type}/#{objekt.id}")
             validate_response(response)
             parse_objekts(response.body)
           end
@@ -86,16 +80,10 @@ module RealSelf
 
           private
 
-          def log
-            @logger || @logger = Logger.new(STDOUT)
-          end
-
           def parse_objekts(json)
-            hash = MultiJson.decode(json)
+            hash = MultiJson.decode(json, { :symbolize_keys => true })
 
-            objekts = hash.map { |obj| RealSelf::Stream::Objekt.new(obj['type'], obj['id']) }
-
-            objekts unless objekts.empty?
+            hash.map { |obj| RealSelf::Stream::Objekt.new(obj[:type], obj[:id]) }
           end
 
           def validate_response(response)

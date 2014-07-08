@@ -4,6 +4,13 @@ module Helpers
     @@activity_version = activity_version.to_i
   end
 
+  def objekts_array
+    array = []
+    array.push(RealSelf::Stream::Objekt.new('user', 1234))
+    array.push(RealSelf::Stream::Objekt.new('user', 2345))
+    array
+  end
+
   def example_hash
 
     hash = {
