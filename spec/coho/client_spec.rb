@@ -1,5 +1,5 @@
 require 'spec_helper'
-# require 'stream_spec_helpers'
+require_relative 'client_shared_examples'
 
 include Helpers
 
@@ -91,5 +91,8 @@ describe RealSelf::Stream::Coho::Client do
       user = RealSelf::Stream::Objekt.new('user', 1234)
       expect{RealSelf::Stream::Coho::Client.followersof(user)}.to_not raise_error
     end
-  end     
+  end
+
+  it_should_behave_like "coho client", 1
+  it_should_behave_like "coho client", 2
 end
