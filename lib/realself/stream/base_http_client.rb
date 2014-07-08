@@ -28,11 +28,9 @@ module RealSelf
         protected
 
         def parse_objekts(json)
-          hash = MultiJson.decode(json)
+          hash = MultiJson.decode(json, { :symbolize_keys => true })
 
-          objekts = hash.map { |obj| RealSelf::Stream::Objekt.new(obj['type'], obj['id']) }
-
-          objekts unless objekts.empty?
+          hash.map { |obj| RealSelf::Stream::Objekt.new(obj[:type], obj[:id]) }
         end
 
         def validate_response(response)
