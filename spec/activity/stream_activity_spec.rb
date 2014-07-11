@@ -1,6 +1,6 @@
-require 'multi_json'
+# require 'multi_json'
 require 'spec_helper'
-require 'pp'
+# require 'pp'
 
 describe RealSelf::Stream::StreamActivity do
 

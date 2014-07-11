@@ -1,4 +1,4 @@
-require 'multi_json'
+# require 'multi_json'
 require 'spec_helper'
 
 describe RealSelf::Stream::Objekt do
