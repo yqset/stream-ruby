@@ -19,7 +19,7 @@ module RealSelf
           end
 
           def add(stream_activity)
-            raise ArgumentError, "unsupported activity type: #{stream_activitiy.activity.prototype}"
+            raise ArgumentError, "unsupported activity type: #{stream_activity.activity.prototype}"
           end
 
           def to_array

@@ -184,6 +184,60 @@ module Digest
       )    
     end     
 
+    def user_author_discussion_activity(user_id=nil, discussion_id=nil, topic_id=nil, prototype='user.author.discussion')
+      dr_id = dr_id || Random::rand(1000..9999)
+      discussion_id = discussion_id || Random::rand(1000..9999)
+      topic_id = topic_id || Random::rand(1000..9999)
+
+      RealSelf::Stream::Activity.create(2,
+        'sample activity title',
+        DateTime.parse('1970-01-01T00:00:00Z'),
+        RealSelf::Stream::Objekt.new('user', user_id),
+        'author',
+        RealSelf::Stream::Objekt.new('discussion', discussion_id),
+        RealSelf::Stream::Objekt.new('topic', topic_id),
+        nil,
+        SecureRandom.uuid,
+        prototype
+      )    
+    end
+
+    def user_author_guide_activity(user_id=nil, guide_id=nil, topic_id=nil, prototype='user.author.guide')
+      dr_id = dr_id || Random::rand(1000..9999)
+      guide_id = guide_id || Random::rand(1000..9999)
+      topic_id = topic_id || Random::rand(1000..9999)
+
+      RealSelf::Stream::Activity.create(2,
+        'sample activity title',
+        DateTime.parse('1970-01-01T00:00:00Z'),
+        RealSelf::Stream::Objekt.new('user', user_id),
+        'author',
+        RealSelf::Stream::Objekt.new('guide', guide_id),
+        RealSelf::Stream::Objekt.new('topic', topic_id),
+        nil,
+        SecureRandom.uuid,
+        prototype
+      )    
+    end    
+
+    def user_author_question_activity(user_id=nil, question_id=nil, topic_id=nil, prototype='user.author.question')
+      dr_id = dr_id || Random::rand(1000..9999)
+      question_id = question_id || Random::rand(1000..9999)
+      topic_id = topic_id || Random::rand(1000..9999)
+
+      RealSelf::Stream::Activity.create(2,
+        'sample activity title',
+        DateTime.parse('1970-01-01T00:00:00Z'),
+        RealSelf::Stream::Objekt.new('user', user_id),
+        'author',
+        RealSelf::Stream::Objekt.new('question', question_id),
+        RealSelf::Stream::Objekt.new('topic', topic_id),
+        nil,
+        SecureRandom.uuid,
+        prototype
+      )    
+    end
+
     def user_author_review_activity(user_id=nil, review_id=nil, dr_id=nil, topic_id=nil, prototype='user.author.review')
       dr_id = dr_id || Random::rand(1000..9999)
       review_id = review_id || Random::rand(1000..9999)
@@ -193,7 +247,25 @@ module Digest
         'sample activity title',
         DateTime.parse('1970-01-01T00:00:00Z'),
         RealSelf::Stream::Objekt.new('user', user_id),
-        'upload',
+        'author',
+        RealSelf::Stream::Objekt.new('review', review_id),
+        RealSelf::Stream::Objekt.new('topic', topic_id),
+        {:dr => RealSelf::Stream::Objekt.new('dr', dr_id)},
+        SecureRandom.uuid,
+        prototype
+      )    
+    end
+
+    def user_update_review_activity(user_id=nil, review_id=nil, dr_id=nil, topic_id=nil, prototype='user.update.review')
+      dr_id = dr_id || Random::rand(1000..9999)
+      review_id = review_id || Random::rand(1000..9999)
+      topic_id = topic_id || Random::rand(1000..9999)
+
+      RealSelf::Stream::Activity.create(2,
+        'sample activity title',
+        DateTime.parse('1970-01-01T00:00:00Z'),
+        RealSelf::Stream::Objekt.new('user', user_id),
+        'update',
         RealSelf::Stream::Objekt.new('review', review_id),
         RealSelf::Stream::Objekt.new('topic', topic_id),
         {:dr => RealSelf::Stream::Objekt.new('dr', dr_id)},

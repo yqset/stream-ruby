@@ -152,7 +152,22 @@ shared_examples "a commentable summary" do |commentable_class|
       expect(hash[:comment_reply][parent_comment.to_h][:count]).to eql 1
       expect(hash[:comment_reply][parent_comment.to_h][:last]).to eql comment.to_h
 
-    end   
+    end 
+
+    it "fails to add a stream_activity that doesn't match the summary type"  do
+      owner = RealSelf::Stream::Objekt.new('user', Random::rand(1000..9999))
+      activity = user_author_comment_activity(nil, nil, nil, owner.id) 
+      content = RealSelf::Stream::Objekt.new('video', 1234)
+      stream_activity = stream_activity(activity, owner, [content])
+
+      summary = RealSelf::Stream::Digest::Summary.create(content)
+      expect{summary.add(stream_activity)}.to raise_error
+
+
+      activity = user_reply_comment_activity
+      stream_activity = stream_activity(activity, owner, [content])
+      expect{summary.add(stream_activity)}.to raise_error  
+    end
 
     it "rejects unknown activity types" do
       activity = user_author_comment_activity(nil, nil, nil, nil, 'cron.send.digest')

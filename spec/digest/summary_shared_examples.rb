@@ -10,6 +10,13 @@ shared_examples "a summary" do |summary_class|
     Digest::Helpers.init(summary_class)
   end
 
+  describe "#new" do
+    it "raises an error if instantiated incorrectly" do
+      object = RealSelf::Stream::Objekt.new('bogus', 'object')
+      expect{summary_class.new(object)}.to raise_error
+    end
+  end
+
   describe "::create" do
     it "creates a new summary" do
       object = content_objekt

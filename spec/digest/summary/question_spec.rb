@@ -37,7 +37,7 @@ describe RealSelf::Stream::Digest::Summary::Question do
       expect(hash[:answer][:count]).to eql 1
 
       activity2 = dr_author_answer_activity(nil, nil, 1234, nil)
-      stream_activity = stream_activity(activity2, nil, [activity.target])
+      stream_activity = stream_activity(activity2, nil, [activity2.target])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:answer][:count]).to eql 2

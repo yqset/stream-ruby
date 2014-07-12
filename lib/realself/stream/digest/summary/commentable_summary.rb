@@ -30,10 +30,6 @@ module RealSelf
               unless activity.target.to_h == @object
                 raise ArgumentError, "activity target (discussion) does not match digest object for activity: #{activity.uuid}"
               end
-
-              unless 'comment' == activity.object.type
-                raise ArgumentError, "malformed activity: #{activity.to_s}"
-              end
               
               add_comment_reply(stream_activity)
 

@@ -5,9 +5,8 @@ module RealSelf
     module Digest
       module Summary
         def self.create(object)
-          klass = RealSelf::Stream::Digest::Summary.const_get(object.type.capitalize)
-
           begin
+            klass = RealSelf::Stream::Digest::Summary.const_get(object.type.capitalize)
             klass.new(object)
           rescue Exception => e
             raise "Failed to create unknown summary object type:  #{object.type}"

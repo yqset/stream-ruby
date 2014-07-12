@@ -40,5 +40,105 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       expect(hash[:photo][:count]).to eql 2
       expect(hash[:photo][:last]).to eql activity2.object.to_h
     end
+
+    it "adds questions correctly" do
+      activity = user_author_question_activity()
+      user = activity.actor
+      topic = activity.target
+      stream_activity = stream_activity(activity, nil, [topic])
+
+      summary = RealSelf::Stream::Digest::Summary.create(topic)
+      hash = summary.to_h
+      expect(hash[:question][:count]).to eql 0
+
+      summary.add(stream_activity)
+      hash = summary.to_h
+      expect(hash[:question][:count]).to eql 1
+      expect(hash[:question][:last]).to eql activity.object.to_h
+
+      activity2 = user_author_question_activity(user.id, nil, topic.id)
+      stream_activity = stream_activity(activity2, nil, [topic])
+      summary.add(stream_activity)
+      hash = summary.to_h
+      expect(hash[:question][:count]).to eql 2
+      expect(hash[:question][:last]).to eql activity2.object.to_h
+    end
+
+    it "adds discussions correctly" do
+      activity = user_author_discussion_activity()
+      user = activity.actor
+      topic = activity.target
+      stream_activity = stream_activity(activity, nil, [topic])
+
+      summary = RealSelf::Stream::Digest::Summary.create(topic)
+      hash = summary.to_h
+      expect(hash[:discussion][:count]).to eql 0
+
+      summary.add(stream_activity)
+      hash = summary.to_h
+      expect(hash[:discussion][:count]).to eql 1
+      expect(hash[:discussion][:last]).to eql activity.object.to_h
+
+      activity2 = user_author_discussion_activity(user.id, nil, topic.id)
+      stream_activity = stream_activity(activity2, nil, [topic])
+      summary.add(stream_activity)
+      hash = summary.to_h
+      expect(hash[:discussion][:count]).to eql 2
+      expect(hash[:discussion][:last]).to eql activity2.object.to_h
+    end
+
+    it "adds guides correctly" do
+      activity = user_author_guide_activity()
+      user = activity.actor
+      topic = activity.target
+      stream_activity = stream_activity(activity, nil, [topic])
+
+      summary = RealSelf::Stream::Digest::Summary.create(topic)
+      hash = summary.to_h
+      expect(hash[:guide][:count]).to eql 0
+
+      summary.add(stream_activity)
+      hash = summary.to_h
+      expect(hash[:guide][:count]).to eql 1
+      expect(hash[:guide][:last]).to eql activity.object.to_h
+
+      activity2 = user_author_guide_activity(user.id, nil, topic.id)
+      stream_activity = stream_activity(activity2, nil, [topic])
+      summary.add(stream_activity)
+      hash = summary.to_h
+      expect(hash[:guide][:count]).to eql 2
+      expect(hash[:guide][:last]).to eql activity2.object.to_h
+    end
+
+    it "adds reviews correctly" do
+      activity = user_author_review_activity()
+      user = activity.actor
+      topic = activity.target
+      stream_activity = stream_activity(activity, nil, [topic])
+
+      summary = RealSelf::Stream::Digest::Summary.create(topic)
+      hash = summary.to_h
+      expect(hash[:review][:count]).to eql 0
+
+      summary.add(stream_activity)
+      hash = summary.to_h
+      expect(hash[:review][:count]).to eql 1
+      expect(hash[:review][:last]).to eql activity.object.to_h
+
+      activity2 = user_author_review_activity(user.id, nil, nil, topic.id)
+      stream_activity = stream_activity(activity2, nil, [topic])
+      summary.add(stream_activity)
+      hash = summary.to_h
+      expect(hash[:review][:count]).to eql 2
+      expect(hash[:review][:last]).to eql activity2.object.to_h
+    end
+
+    it "rejects unknown activity types" do
+      activity = user_author_review_activity(nil, nil, nil, nil, 'cron.send.digest')
+      stream_activity = stream_activity(activity, nil, [activity.target])
+
+      summary = RealSelf::Stream::Digest::Summary.create(activity.target)
+      expect{summary.add(stream_activity)}.to raise_error
+    end                  
   end
 end

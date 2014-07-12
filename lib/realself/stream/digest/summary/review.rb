@@ -13,10 +13,7 @@ module RealSelf
           def add(stream_activity)
             activity = stream_activity.activity
             case activity.prototype
-            when 'user.update.reivew'
-              unless activity.target.to_h == @object
-                raise ArgumentError, "activity target (question) does not match digest object for activity: #{activity.uuid}"
-              end
+            when 'user.update.review'
               @activities[:review_entry][:count] += 1
               @activities[:review_entry][:last] = activity.object.to_h
             else

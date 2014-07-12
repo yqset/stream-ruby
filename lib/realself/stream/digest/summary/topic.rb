@@ -29,7 +29,7 @@ module RealSelf
             when 'user.author.discussion'
               @activities[:discussion][:count] += 1
               @activities[:discussion][:last] = activity.object.to_h
-            when 'user.author.fuide'
+            when 'user.author.guide'
               @activities[:guide][:count] += 1
               @activities[:guide][:last] = activity.object.to_h              
             when 'user.author.review'
