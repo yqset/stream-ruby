@@ -56,9 +56,9 @@ module RealSelf
             # comment, treat the comment as a reply.  Otherwise, treat it as
             # just a regular comment
             if( owner == parent_comment_author )
-              @activities[:comment_reply][parent_comment.to_h] = @activities[:comment_reply][parent_comment.to_h] || {:count => 0}
-              @activities[:comment_reply][parent_comment.to_h][:count] += 1
-              @activities[:comment_reply][parent_comment.to_h][:last] = comment.to_h
+              @activities[:comment_reply][parent_comment.id] = @activities[:comment_reply][parent_comment.id] || [parent_comment.to_h, {:count => 0}]
+              @activities[:comment_reply][parent_comment.id][1][:count] += 1
+              @activities[:comment_reply][parent_comment.id][1][:last] = comment.to_h
             else
               add_comment(comment)
             end

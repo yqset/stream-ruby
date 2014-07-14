@@ -90,9 +90,10 @@ shared_examples "a commentable summary" do |commentable_class|
       hash = summary.to_h
       expect(hash[:comment][:count]).to eql 0
       expect(hash[:comment_reply].length).to eql 1
-      expect(hash[:comment_reply][parent_comment.to_h]).to be_an_instance_of(Hash)
-      expect(hash[:comment_reply][parent_comment.to_h][:last]).to eql activity.object.to_h
-      expect(hash[:comment_reply][parent_comment.to_h][:count]).to eql 1
+      expect(hash[:comment_reply][parent_comment.id]).to be_an_instance_of(Array)
+      expect(hash[:comment_reply][parent_comment.id][0]).to eql parent_comment.to_h
+      expect(hash[:comment_reply][parent_comment.id][1][:last]).to eql activity.object.to_h
+      expect(hash[:comment_reply][parent_comment.id][1][:count]).to eql 1
 
       # second reply to same parent comment
       activity = user_reply_comment_activity(nil, nil, parent_content.id, parent_comment.id, parent_comment_author.id, parent_content_author.id, 'user.reply.comment')
@@ -102,9 +103,10 @@ shared_examples "a commentable summary" do |commentable_class|
       hash = summary.to_h
       expect(hash[:comment][:count]).to eql 0
       expect(hash[:comment_reply].length).to eql 1
-      expect(hash[:comment_reply][parent_comment.to_h]).to be_an_instance_of(Hash)
-      expect(hash[:comment_reply][parent_comment.to_h][:last]).to eql activity.object.to_h
-      expect(hash[:comment_reply][parent_comment.to_h][:count]).to eql 2
+      expect(hash[:comment_reply][parent_comment.id]).to be_an_instance_of(Array)
+      expect(hash[:comment_reply][parent_comment.id][0]).to eql parent_comment.to_h
+      expect(hash[:comment_reply][parent_comment.id][1][:last]).to eql activity.object.to_h
+      expect(hash[:comment_reply][parent_comment.id][1][:count]).to eql 2
 
       # first reply to DIFFERENT parent comment
       parent_comment2 = RealSelf::Stream::Objekt.new('comment', Random::rand(1000..9999)) 
@@ -115,9 +117,9 @@ shared_examples "a commentable summary" do |commentable_class|
       hash = summary.to_h
       expect(hash[:comment][:count]).to eql 0
       expect(hash[:comment_reply].length).to eql 2
-      expect(hash[:comment_reply][parent_comment2.to_h]).to be_an_instance_of(Hash)
-      expect(hash[:comment_reply][parent_comment2.to_h][:last]).to eql activity.object.to_h
-      expect(hash[:comment_reply][parent_comment2.to_h][:count]).to eql 1
+      expect(hash[:comment_reply][parent_comment2.id]).to be_an_instance_of(Array)
+      expect(hash[:comment_reply][parent_comment2.id][1][:last]).to eql activity.object.to_h
+      expect(hash[:comment_reply][parent_comment2.id][1][:count]).to eql 1    
     end
 
     it "summarizes comment replies for a user subscribed to (following) a commentable content item" do
@@ -149,9 +151,8 @@ shared_examples "a commentable summary" do |commentable_class|
       hash = summary.to_h
       expect(hash[:comment][:count]).to eql 1
       expect(hash[:comment_reply].length).to eql 1
-      expect(hash[:comment_reply][parent_comment.to_h][:count]).to eql 1
-      expect(hash[:comment_reply][parent_comment.to_h][:last]).to eql comment.to_h
-
+      expect(hash[:comment_reply][parent_comment.id][1][:count]).to eql 1
+      expect(hash[:comment_reply][parent_comment.id][1][:last]).to eql comment.to_h
     end 
 
     it "fails to add a stream_activity that doesn't match the summary type"  do
