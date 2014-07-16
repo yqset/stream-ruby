@@ -5,7 +5,7 @@ require 'realself/stream/activity/followed_activity'
 require 'realself/stream/activity/followed_objekt'
 require 'realself/stream/publisher'
 require 'realself/stream/activity/stream_activity'
-require 'realself/stream/activity/routing_key'
+require 'realself/stream/routing_key'
 require 'realself/stream/version'
 require 'realself/stream/coho/client'
 
