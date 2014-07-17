@@ -1,7 +1,7 @@
 require 'spec_helper'
-require_relative 'client_shared_examples'
+# require_relative 'client_shared_examples'
 
-include Helpers
+include Activity::Helpers
 
 describe RealSelf::Stream::Coho::Client do
 
@@ -44,7 +44,7 @@ describe RealSelf::Stream::Coho::Client do
 
   describe "#followedby" do
     it 'validates a successful response and parses the response body in to an array of Objekts' do
-      Helpers.init(1)
+      Activity::Helpers.init(1)
       objekts = objekts_array.map { |obj| obj.to_h }
 
       response = double('Response', :code => 200, :body => MultiJson.encode(objekts))
@@ -58,7 +58,7 @@ describe RealSelf::Stream::Coho::Client do
 
   describe "#followersof" do
     it 'validates a successful response and parses the response body in to an array of Objekts' do
-      Helpers.init(1)
+      Activity::Helpers.init(1)
       objekts = objekts_array.map { |obj| obj.to_h }
 
       response = double('Response', :code => 200, :body => MultiJson.encode(objekts))
@@ -81,7 +81,7 @@ describe RealSelf::Stream::Coho::Client do
     end
 
     it 'does not an exception when the response code is 200' do
-      Helpers.init(1)
+      Activity::Helpers.init(1)
       objekts = objekts_array.map { |obj| obj.to_h }
 
       response = double('Response', :code => 200, :body => MultiJson.encode(objekts))

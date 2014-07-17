@@ -1,5 +1,5 @@
-require 'multi_json'
-require 'pp'
+# require 'multi_json'
+# require 'pp'
 require 'spec_helper'
 
 describe RealSelf::Stream::FollowedObjekt do

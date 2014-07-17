@@ -1,15 +1,15 @@
-require 'multi_json'
+# require 'multi_json'
 require 'spec_helper'
-require 'stream_spec_helpers'
+# require 'stream_spec_helpers'
 
 RSpec.configure do |c|
-  c.include Helpers
+  c.include Activity::Helpers
 end
 
 shared_examples "a followed activity" do |activity_version|
 
   before :each do
-    Helpers.init(activity_version)
+    Activity::Helpers.init(activity_version)
     @followed_activity = RealSelf::Stream::FollowedActivity.from_json(MultiJson.encode(followed_activity(1234)))
   end
 

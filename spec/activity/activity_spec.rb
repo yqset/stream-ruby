@@ -1,6 +1,6 @@
-require 'multi_json'
+# require 'multi_json'
 require 'spec_helper'
-require 'activity_shared_examples'
+# require 'activity_shared_examples'
 
 describe RealSelf::Stream::Activity do
   describe "::create" do
@@ -55,7 +55,7 @@ describe RealSelf::Stream::Activity do
 
   describe "::from_json" do
     it "can create a version 1 activity" do
-      Helpers.init(1)
+      Activity::Helpers.init(1)
       json = MultiJson.encode(example_hash)
       activity = RealSelf::Stream::Activity.from_json(json)
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV1
@@ -63,7 +63,7 @@ describe RealSelf::Stream::Activity do
     end
 
     it "can create a version 2 activity" do
-      Helpers.init(2)
+      Activity::Helpers.init(2)
       json = MultiJson.encode(example_hash)
       activity = RealSelf::Stream::Activity.from_json(json)
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV2
@@ -73,21 +73,21 @@ describe RealSelf::Stream::Activity do
 
   describe "::from_hash" do
     it "can create a version 1 activity" do
-      Helpers.init(1)
+      Activity::Helpers.init(1)
       activity = RealSelf::Stream::Activity.from_hash(example_hash)
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV1
       expect(activity.version).to eql 1
     end
 
     it "can create a version 2 activity" do
-      Helpers.init(2)
+      Activity::Helpers.init(2)
       activity = RealSelf::Stream::Activity.from_hash(example_hash)
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV2
       expect(activity.version).to eql 2
     end
 
     it "raises an error when trying to create an unknown version" do
-      Helpers.init(0)
+      Activity::Helpers.init(0)
       expect{RealSelf::Stream::Activity.from_hash(example_hash)}.to raise_error
     end
   end

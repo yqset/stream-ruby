@@ -1,6 +1,6 @@
-require 'multi_json'
+# require 'multi_json'
 require 'spec_helper'
-require 'activity_shared_examples'
+# require 'activity_shared_examples'
 
 describe RealSelf::Stream::ActivityV2, "with activity type v2" do
 
@@ -38,26 +38,26 @@ describe RealSelf::Stream::ActivityV2, "with activity type v2" do
 
   describe "version checks" do
     it "returns the extensions collection" do
-      Helpers.init(2)
+      Activity::Helpers.init(2)
       activity = RealSelf::Stream::ActivityV2.from_json(example_activity.to_s)
       expect(activity.extensions[:topic]).to be_an_instance_of RealSelf::Stream::Objekt
       expect(activity.extensions[:topic]).to eql RealSelf::Stream::Objekt.new('topic', 4567)    
     end
 
     it "does not have a relatives collection" do
-      Helpers.init(2)
+      Activity::Helpers.init(2)
       activity = RealSelf::Stream::ActivityV2.from_json(example_activity.to_s)
       expect(activity).to_not respond_to :relatives
     end
 
     it "raises an error when trying to convert to an unknown version" do
-      Helpers.init(2)
+      Activity::Helpers.init(2)
       activity = RealSelf::Stream::ActivityV2.from_json(example_activity.to_s)
       expect{activity.to_version(3)}.to raise_error
     end 
 
     it "raises an error when trying to create an unknown version" do
-      Helpers.init(0)
+      Activity::Helpers.init(0)
       expect{RealSelf::Stream::ActivityV2.from_hash(example_hash)}.to raise_error
     end      
   end
