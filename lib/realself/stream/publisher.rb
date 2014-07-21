@@ -11,12 +11,12 @@ module RealSelf
           @@publisher_exchange = @@publisher_channel.topic(exchange_name, :durable => true)
         end
 
-        def publish(item, routing_key)
+        def publish(item, routing_key, content_type = 'application/json')
           @@publisher_exchange = @@publisher_exchange || self.initialize_publisher
 
           @@publisher_exchange.publish(
             item.to_s,
-            :content_type => 'application/json',
+            :content_type => content_type.to_s,
             :persistent => true,
             :routing_key => routing_key.to_s
           )
