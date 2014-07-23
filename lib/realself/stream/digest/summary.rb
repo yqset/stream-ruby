@@ -1,6 +1,5 @@
 require 'realself/stream/digest/summary/abstract_summary'
 require 'realself/stream/digest/summary/commentable_summary'
-require 'realself/stream/digest/summary/user_message'
 Dir[File.dirname(__FILE__) + '/summary/*.rb'].each {|file| require file }
 
 module RealSelf
