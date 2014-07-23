@@ -8,10 +8,15 @@ module RealSelf
       module Summary
         def self.create(object)
           begin
-            klass = RealSelf::Stream::Digest::Summary.const_get(object.type.capitalize)
+            # convert object type to camel case
+            # http://stackoverflow.com/questions/4072159/classify-a-ruby-string
+            classname = object.type.split('_').collect(&:capitalize).join
+
+            # create an instance of the summary
+            klass = RealSelf::Stream::Digest::Summary.const_get(classname)         
             klass.new(object)
           rescue Exception => e
-            raise "Failed to create unknown summary object type:  #{object.type}"
+            raise "Failed to create unknown summary object type:  #{classname}"
           end
         end
 

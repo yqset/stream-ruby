@@ -10,7 +10,8 @@ module RealSelf
               raise "Cannot instantiate abstract AbstractSummary class"
             end
 
-            unless classname.downcase == object.type
+            #http://stackoverflow.com/questions/1509915/converting-camel-case-to-underscore-case-in-ruby
+            unless classname.gsub(/(.)([A-Z])/,'\1_\2').downcase == object.type
               raise ArgumentError, "invalid object type for this summary:  #{object.type}"
             end
 
