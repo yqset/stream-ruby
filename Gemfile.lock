@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    realself-stream (0.0.19)
+    realself-stream (0.0.21)
       bunny
       httparty
       json-schema
@@ -18,7 +18,7 @@ GEM
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     json (1.8.1)
-    json-schema (2.2.2)
+    json-schema (2.2.3)
     multi_json (1.10.1)
     multi_xml (0.5.5)
     rspec (3.0.0)

@@ -2,7 +2,8 @@ module Digest
   module Helpers
     def self.init(commentable_class)
       @@commentable_class = commentable_class
-      @@commentable_content_type = commentable_class.name.split("::").last.downcase
+      # http://stackoverflow.com/questions/1509915/converting-camel-case-to-underscore-case-in-ruby
+      @@commentable_content_type = commentable_class.name.split("::").last.gsub(/(.)([A-Z])/,'\1_\2').downcase
     end
 
     def content_objekt(content_id = Random::rand(1000..9999))
@@ -60,6 +61,24 @@ module Digest
         prototype
       )    
     end
+
+    def user_send_user_message_activity(user_id=nil, message_id=nil, recipient_id=nil, prototype='user.send.user_message')
+      user_id = user_id || Random::rand(1000..9999)
+      message_id = message_id || Random::rand(1000..9999)
+      recipient_id = recipient_id || Random::rand(1000..9999)
+
+      RealSelf::Stream::Activity.create(2,
+        'sample activity title',
+        DateTime.parse('1970-01-01T00:00:00Z'),
+        RealSelf::Stream::Objekt.new('user', user_id),
+        'send',
+        RealSelf::Stream::Objekt.new('user_message', message_id),
+        RealSelf::Stream::Objekt.new('user', recipient_id),
+        nil,
+        SecureRandom.uuid,
+        prototype
+      )    
+    end    
 
 
     def dr_author_answer_activity(dr_id=nil, answer_id=nil, question_id=nil, topic_id=nil, prototype='dr.author.answer')
