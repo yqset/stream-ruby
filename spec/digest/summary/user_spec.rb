@@ -1,19 +1,19 @@
 require 'spec_helper'
 
-describe RealSelf::Stream::Digest::Summary::UserMessage do
+describe RealSelf::Stream::Digest::Summary::User do
   include Digest::Helpers
 
   before :each do
-    Digest::Helpers.init(RealSelf::Stream::Digest::Summary::UserMessage)
+    Digest::Helpers.init(RealSelf::Stream::Digest::Summary::User)
   end
 
   describe "#new" do
-    it "creates a new user message activity summary" do
+    it "creates a new user activity summary" do
       activity = user_send_user_message_activity
-      user_message = activity.object
+      recipient = activity.target
 
-      summary = RealSelf::Stream::Digest::Summary.create(user_message)
-      expect(summary).to be_an_instance_of(RealSelf::Stream::Digest::Summary::UserMessage)
+      summary = RealSelf::Stream::Digest::Summary.create(recipient)
+      expect(summary).to be_an_instance_of(RealSelf::Stream::Digest::Summary::User)
     end
 
     it "must be initialized with the proper object type" do
@@ -29,7 +29,7 @@ describe RealSelf::Stream::Digest::Summary::UserMessage do
       stream_activity = stream_activity(activity, nil, [recipient])
       user_message = content_objekt(1234)
 
-      summary = RealSelf::Stream::Digest::Summary.create(user_message)
+      summary = RealSelf::Stream::Digest::Summary.create(recipient)
       hash = summary.to_h
       expect(hash[:user_message][:count]).to eql 0
 
@@ -45,13 +45,17 @@ describe RealSelf::Stream::Digest::Summary::UserMessage do
       expect(hash[:user_message][:count]).to eql 2
     end
 
-    it "rejects unknown activity types" do
+    it "silently fails and contniues for unknown activity types" do
       activity = user_author_comment_activity
+      recipient = activity.actor
       stream_activity = stream_activity(activity, nil, [activity.target])
-      user_message = content_objekt(1234)
-      summary = RealSelf::Stream::Digest::Summary.create(user_message)
+      summary = RealSelf::Stream::Digest::Summary.create(recipient)
 
-      expect{summary.add(stream_activity)}.to raise_error
+      expect{summary.add(stream_activity)}.to_not raise_error
+
+      summary2 = RealSelf::Stream::Digest::Summary.create(recipient)
+
+      expect(summary).to eql summary2
     end
   end
 

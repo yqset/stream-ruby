@@ -49,12 +49,8 @@ module RealSelf
           end
 
           stream_activity.reasons.each do |reason|
-            # don't add digest summaries if the stream_activity reason
-            # is the owner of the stream_activity (meaning the owner is following themselves)
-            unless @owner == reason
-              summary = get_summary(reason)
-              summary.add(stream_activity)
-            end
+            summary = get_summary(reason) 
+            summary.add(stream_activity)
           end
         end
 
