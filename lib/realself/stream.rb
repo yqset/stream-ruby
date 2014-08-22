@@ -7,6 +7,7 @@ require 'realself/stream/publisher'
 require 'realself/stream/activity/stream_activity'
 require 'realself/stream/routing_key'
 require 'realself/stream/version'
+require 'realself/stream/content_type'
 require 'realself/stream/coho/client'
 
 require 'realself/stream/activity/v1/activity_v1'
