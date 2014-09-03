@@ -59,7 +59,25 @@ describe RealSelf::Stream::ActivityV2, "with activity type v2" do
     it "raises an error when trying to create an unknown version" do
       Activity::Helpers.init(0)
       expect{RealSelf::Stream::ActivityV2.from_hash(example_hash)}.to raise_error
-    end      
+    end 
+
+    it "converts extensions to relatives when converting to a v1 activity" do
+      activity = RealSelf::Stream::ActivityV2.new(
+        'sample activity title',
+        DateTime.parse('1970-01-01T00:00:00Z'),
+        RealSelf::Stream::Objekt.new('dr', 1234),
+        'author',
+        RealSelf::Stream::Objekt.new('answer', 2345),
+        RealSelf::Stream::Objekt.new('question', 3456),
+        {:topic => RealSelf::Stream::Objekt.new('topic', 4567)},
+        "f364c40c-6e91-4064-a825-faae79c10254",
+        "explicit.prototype.value"
+      )
+
+      activity_v1 = activity.to_version(1)   
+      expect(activity_v1.relatives).to_not eql nil
+      expect(activity_v1.relatives.length).to eql 1
+    end
   end
 
   it_should_behave_like "an activity", 2

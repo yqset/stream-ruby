@@ -13,7 +13,7 @@ module RealSelf
           def add(stream_activity)
             activity = stream_activity.activity
             case activity.prototype
-            when 'user.update.review'
+            when 'user.author.review_entry'
               @activities[:review_entry][:count] += 1
               @activities[:review_entry][:last] = activity.object.to_h
             else

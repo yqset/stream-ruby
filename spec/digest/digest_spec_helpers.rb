@@ -275,7 +275,7 @@ module Digest
       )    
     end
 
-    def user_update_review_activity(user_id=nil, review_id=nil, dr_id=nil, topic_id=nil, prototype='user.update.review')
+    def user_author_review_entry_activity(user_id=nil, review_entry_id=nil, dr_id=nil, review_id=nil, prototype='user.author.review_entry')
       dr_id = dr_id || Random::rand(1000..9999)
       review_id = review_id || Random::rand(1000..9999)
       topic_id = topic_id || Random::rand(1000..9999)
@@ -284,10 +284,10 @@ module Digest
         'sample activity title',
         DateTime.parse('1970-01-01T00:00:00Z'),
         RealSelf::Stream::Objekt.new('user', user_id),
-        'update',
+        'author',
+        RealSelf::Stream::Objekt.new('review_entry', review_entry_id),
         RealSelf::Stream::Objekt.new('review', review_id),
-        RealSelf::Stream::Objekt.new('topic', topic_id),
-        {:dr => RealSelf::Stream::Objekt.new('dr', dr_id)},
+        nil,
         SecureRandom.uuid,
         prototype
       )    
