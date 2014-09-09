@@ -23,6 +23,8 @@ module RealSelf
 
       attr_accessor :object, :activity, :reasons
 
+      alias :owner :object
+
       def initialize(object, activity, reasons = [])
         @object = object
         @activity = activity
