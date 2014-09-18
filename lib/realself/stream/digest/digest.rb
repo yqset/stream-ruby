@@ -18,7 +18,7 @@ module RealSelf
           stats = hash[:stats]
 
           summaries = {}
-          objects = hash[:objects]
+          objects = hash[:summaries]
 
           objects.each do |type, summary_hash|
             summaries[type] = summaries[type] || {}
@@ -60,7 +60,7 @@ module RealSelf
         end
 
         def to_h
-          hash = {:stats => {}, :objects => {}}
+          hash = {:stats => {}, :summaries => {}}
           hash[:type] = @type.to_s
           hash[:owner] = @owner.to_h
           hash [:interval] = @interval.to_i
@@ -71,8 +71,8 @@ module RealSelf
           # collect the stats
           @summaries.each do |type, list|
             hash[:stats][type.to_sym] = list.length
-            hash[:objects][type.to_sym] = hash[:objects][type.to_sym] || {}
-            list.each { |object_id, summary_array| hash[:objects][type.to_sym][object_id.to_sym] = [summary_array[0].to_h,  summary_array[1].to_h] }
+            hash[:summaries][type.to_sym] = hash[:summaries][type.to_sym] || {}
+            list.each { |object_id, summary_array| hash[:summaries][type.to_sym][object_id.to_sym] = [summary_array[0].to_h,  summary_array[1].to_h] }
           end
 
           return hash

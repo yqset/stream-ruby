@@ -29,8 +29,8 @@ describe RealSelf::Stream::Digest::Digest do
       @digest.add(stream_activity)
       hash = @digest.to_h
 
-      expect(hash[:objects][:question].length).to eql 1
-      question = RealSelf::Stream::Objekt.from_hash(hash[:objects][:question].values[0][0])
+      expect(hash[:summaries][:question].length).to eql 1
+      question = RealSelf::Stream::Objekt.from_hash(hash[:summaries][:question].values[0][0])
       expect(question).to eql activity.target
 
       activity2 = user_udpate_question_public_note_activity(nil, 1234)
@@ -38,10 +38,10 @@ describe RealSelf::Stream::Digest::Digest do
       @digest.add(stream_activity2)
       hash = @digest.to_h
 
-      expect(hash[:objects][:question].length).to eql 1
-      question = RealSelf::Stream::Objekt.from_hash(hash[:objects][:question].values[0][0])
+      expect(hash[:summaries][:question].length).to eql 1
+      question = RealSelf::Stream::Objekt.from_hash(hash[:summaries][:question].values[0][0])
       expect(question).to eql activity2.object
-      expect(hash[:objects][:question][question.id.to_sym][1][:public_note]).to eql true
+      expect(hash[:summaries][:question][question.id.to_sym][1][:public_note]).to eql true
     end
 
     it "takes two stream activities and creates two summaries" do
@@ -56,12 +56,12 @@ describe RealSelf::Stream::Digest::Digest do
       hash = @digest.to_h
 
       expect(hash[:stats][:question]).to eql 2
-      expect(hash[:objects][:question].length).to eql 2
+      expect(hash[:summaries][:question].length).to eql 2
 
-      expect(hash[:objects][:question][activity.target.id.to_sym][0]).to eql activity.target.to_h
-      expect(hash[:objects][:question][activity.target.id.to_sym][1]).to be_an_instance_of(Hash)
-      expect(hash[:objects][:question][activity2.target.id.to_sym][0]).to eql activity2.target.to_h      
-      expect(hash[:objects][:question][activity2.target.id.to_sym][1]).to be_an_instance_of(Hash)
+      expect(hash[:summaries][:question][activity.target.id.to_sym][0]).to eql activity.target.to_h
+      expect(hash[:summaries][:question][activity.target.id.to_sym][1]).to be_an_instance_of(Hash)
+      expect(hash[:summaries][:question][activity2.target.id.to_sym][0]).to eql activity2.target.to_h      
+      expect(hash[:summaries][:question][activity2.target.id.to_sym][1]).to be_an_instance_of(Hash)
     end
 
     it "raises an error when the stream_activity owner does not match the digest owner" do
