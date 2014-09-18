@@ -18,7 +18,7 @@ module RealSelf
           stats = hash[:stats]
 
           summaries = {}
-          objects = hash[:objects]
+          objects = hash[:summaries]
 
           objects.each do |type, summary_hash|
             summaries[type] = summaries[type] || {}
@@ -30,16 +30,21 @@ module RealSelf
             end
           end
 
-          self.new(type, owner, interval, summaries)
+          uuid = hash[:uuid] || SecureRandom.uuid
+          prototype = hash[:prototype] || nil
+          
+          self.new(type, owner, interval, summaries, uuid, prototype)
         end
 
-        attr_reader :type, :interval, :owner, :version, :summaries
+        attr_reader :type, :interval, :owner, :version, :summaries, :uuid, :prototype
 
-        def initialize(type, owner, interval, summaries = {})
+        def initialize(type, owner, interval, summaries = {}, uuid = SecureRandom.uuid, prototype = nil)
           @type = type
           @owner = owner
           @interval = interval
           @summaries = summaries
+          @uuid = uuid.to_s
+          @prototype = prototype ? prototype.to_s : "#{owner.type}.digest.#{type}"
           @version = VERSION
         end
 
@@ -55,17 +60,19 @@ module RealSelf
         end
 
         def to_h
-          hash = {:stats => {}, :objects => {}}
+          hash = {:stats => {}, :summaries => {}}
           hash[:type] = @type.to_s
           hash[:owner] = @owner.to_h
           hash [:interval] = @interval.to_i
+          hash[:uuid] = @uuid.to_s
+          hash[:prototype] = @prototype.to_s
           hash[:version] = VERSION
 
           # collect the stats
           @summaries.each do |type, list|
             hash[:stats][type.to_sym] = list.length
-            hash[:objects][type.to_sym] = hash[:objects][type.to_sym] || {}
-            list.each { |object_id, summary_array| hash[:objects][type.to_sym][object_id.to_sym] = [summary_array[0].to_h,  summary_array[1].to_h] }
+            hash[:summaries][type.to_sym] = hash[:summaries][type.to_sym] || {}
+            list.each { |object_id, summary_array| hash[:summaries][type.to_sym][object_id.to_sym] = [summary_array[0].to_h,  summary_array[1].to_h] }
           end
 
           return hash
