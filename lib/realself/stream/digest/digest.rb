@@ -30,16 +30,21 @@ module RealSelf
             end
           end
 
-          self.new(type, owner, interval, summaries)
+          uuid = hash[:uuid] || SecureRandom.uuid
+          prototype = hash[:prototype] || nil
+          
+          self.new(type, owner, interval, summaries, uuid, prototype)
         end
 
-        attr_reader :type, :interval, :owner, :version, :summaries
+        attr_reader :type, :interval, :owner, :version, :summaries, :uuid, :prototype
 
-        def initialize(type, owner, interval, summaries = {})
+        def initialize(type, owner, interval, summaries = {}, uuid = SecureRandom.uuid, prototype = nil)
           @type = type
           @owner = owner
           @interval = interval
           @summaries = summaries
+          @uuid = uuid.to_s
+          @prototype = prototype ? prototype.to_s : "#{owner.type}.digest.#{type}"
           @version = VERSION
         end
 
@@ -59,6 +64,8 @@ module RealSelf
           hash[:type] = @type.to_s
           hash[:owner] = @owner.to_h
           hash [:interval] = @interval.to_i
+          hash[:uuid] = @uuid.to_s
+          hash[:prototype] = @prototype.to_s
           hash[:version] = VERSION
 
           # collect the stats

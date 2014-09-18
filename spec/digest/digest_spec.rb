@@ -12,6 +12,14 @@ describe RealSelf::Stream::Digest::Digest do
     it "takes three parameters and returns a new instance" do
       expect(@digest).to be_an_instance_of RealSelf::Stream::Digest::Digest
     end
+    
+    it "sets protoype when nil" do
+      expect(@digest.prototype).to eq('user.digest.notifications')
+    end
+    
+    it "generates uuid when not provided" do
+      expect(@digest.uuid.length).to eq(36)
+    end
   end
 
   describe "#add" do
@@ -66,8 +74,9 @@ describe RealSelf::Stream::Digest::Digest do
 
   describe "#==" do
     it "compares two identical digests" do
-      digest = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400)
-      digest2 = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400)
+      uuid = SecureRandom.uuid
+      digest = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400, {}, uuid)
+      digest2 = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400, {}, uuid)
 
       activity = dr_author_answer_activity
       stream_activity = stream_activity(activity, @owner, [activity.target])
