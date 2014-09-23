@@ -5,6 +5,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
 
   before :each do
     Digest::Helpers.init(RealSelf::Stream::Digest::Summary::Topic)
+    @owner = objekt('user', Random::rand(1000..9999))
   end
 
   describe "#new" do
@@ -22,7 +23,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       activity = dr_upload_photo_activity()
       dr = activity.actor
       topic = activity.target
-      stream_activity = stream_activity(activity, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [topic])
 
       summary = RealSelf::Stream::Digest::Summary.create(topic)
       hash = summary.to_h
@@ -34,7 +35,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       expect(hash[:photo][:last]).to eql activity.object.to_h
 
       activity2 = dr_upload_photo_activity(dr.id, nil, topic.id)
-      stream_activity = stream_activity(activity2, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [topic])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:photo][:count]).to eql 2
@@ -45,7 +46,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       activity = user_author_question_activity()
       user = activity.actor
       topic = activity.target
-      stream_activity = stream_activity(activity, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [topic])
 
       summary = RealSelf::Stream::Digest::Summary.create(topic)
       hash = summary.to_h
@@ -57,7 +58,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       expect(hash[:question][:last]).to eql activity.object.to_h
 
       activity2 = user_author_question_activity(user.id, nil, topic.id)
-      stream_activity = stream_activity(activity2, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [topic])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:question][:count]).to eql 2
@@ -68,7 +69,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       activity = user_author_discussion_activity()
       user = activity.actor
       topic = activity.target
-      stream_activity = stream_activity(activity, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [topic])
 
       summary = RealSelf::Stream::Digest::Summary.create(topic)
       hash = summary.to_h
@@ -80,7 +81,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       expect(hash[:discussion][:last]).to eql activity.object.to_h
 
       activity2 = user_author_discussion_activity(user.id, nil, topic.id)
-      stream_activity = stream_activity(activity2, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [topic])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:discussion][:count]).to eql 2
@@ -91,7 +92,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       activity = user_author_guide_activity()
       user = activity.actor
       topic = activity.target
-      stream_activity = stream_activity(activity, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [topic])
 
       summary = RealSelf::Stream::Digest::Summary.create(topic)
       hash = summary.to_h
@@ -103,7 +104,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       expect(hash[:guide][:last]).to eql activity.object.to_h
 
       activity2 = user_author_guide_activity(user.id, nil, topic.id)
-      stream_activity = stream_activity(activity2, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [topic])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:guide][:count]).to eql 2
@@ -114,7 +115,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       activity = user_author_review_activity()
       user = activity.actor
       topic = activity.target
-      stream_activity = stream_activity(activity, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [topic])
 
       summary = RealSelf::Stream::Digest::Summary.create(topic)
       hash = summary.to_h
@@ -126,7 +127,7 @@ describe RealSelf::Stream::Digest::Summary::Topic do
       expect(hash[:review][:last]).to eql activity.object.to_h
 
       activity2 = user_author_review_activity(user.id, nil, nil, topic.id)
-      stream_activity = stream_activity(activity2, nil, [topic])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [topic])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:review][:count]).to eql 2
@@ -134,10 +135,11 @@ describe RealSelf::Stream::Digest::Summary::Topic do
     end
 
     it "rejects unknown activity types" do
-      activity = user_author_review_activity(nil, nil, nil, nil, 'cron.send.digest')
-      stream_activity = stream_activity(activity, nil, [activity.target])
+      activity = user_request_change_email
+      topic = objekt('topic', Random::rand(1000..9999))
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [activity.actor])
 
-      summary = RealSelf::Stream::Digest::Summary.create(activity.target)
+      summary = RealSelf::Stream::Digest::Summary.create(topic)
       expect{summary.add(stream_activity)}.to raise_error
     end                  
   end

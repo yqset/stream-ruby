@@ -5,6 +5,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
 
   before :each do
     Digest::Helpers.init(RealSelf::Stream::Digest::Summary::Dr)
+    @owner = objekt('user', Random::rand(1000..9999))
   end
 
   describe "#new" do
@@ -21,7 +22,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
     it "adds answers correctly" do
       activity = dr_author_answer_activity(nil, nil, 1234, nil)
       dr = activity.actor
-      stream_activity = stream_activity(activity, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [dr])
 
       summary = RealSelf::Stream::Digest::Summary.create(dr)
       hash = summary.to_h
@@ -33,7 +34,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
       expect(hash[:answer][:last]).to eql activity.object.to_h
 
       activity2 = dr_author_answer_activity(dr.id)
-      stream_activity = stream_activity(activity2, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [dr])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:answer][:count]).to eql 2
@@ -43,7 +44,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
     it "adds articles correctly" do
       activity = dr_author_article_activity()
       dr = activity.actor
-      stream_activity = stream_activity(activity, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [dr])
 
       summary = RealSelf::Stream::Digest::Summary.create(dr)
       hash = summary.to_h
@@ -55,7 +56,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
       expect(hash[:article][:last]).to eql activity.object.to_h
 
       activity2 = dr_author_article_activity(dr.id)
-      stream_activity = stream_activity(activity2, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [dr])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:article][:count]).to eql 2
@@ -65,7 +66,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
     it "adds videos correctly" do
       activity = dr_author_video_activity()
       dr = activity.actor
-      stream_activity = stream_activity(activity, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [dr])
 
       summary = RealSelf::Stream::Digest::Summary.create(dr)
       hash = summary.to_h
@@ -77,7 +78,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
       expect(hash[:video][:last]).to eql activity.object.to_h
 
       activity2 = dr_author_video_activity(dr.id)
-      stream_activity = stream_activity(activity2, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [dr])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:video][:count]).to eql 2
@@ -87,7 +88,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
     it "adds addresses correctly" do
       activity = dr_create_address_activity()
       dr = activity.actor
-      stream_activity = stream_activity(activity, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [dr])
 
       summary = RealSelf::Stream::Digest::Summary.create(dr)
       hash = summary.to_h
@@ -99,7 +100,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
       expect(hash[:address][:last]).to eql activity.object.to_h
 
       activity2 = dr_create_address_activity(dr.id)
-      stream_activity = stream_activity(activity2, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [dr])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:address][:count]).to eql 2
@@ -109,7 +110,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
     it "adds offers correctly" do
       activity = dr_create_offer_activity()
       dr = activity.actor
-      stream_activity = stream_activity(activity, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [dr])
 
       summary = RealSelf::Stream::Digest::Summary.create(dr)
       hash = summary.to_h
@@ -121,7 +122,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
       expect(hash[:offer][:last]).to eql activity.object.to_h
 
       activity2 = dr_create_offer_activity(dr.id)
-      stream_activity = stream_activity(activity2, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [dr])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:offer][:count]).to eql 2
@@ -131,7 +132,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
     it "handles profile updates correctly" do
       activity = dr_update_dr_activity()
       dr = activity.actor
-      stream_activity = stream_activity(activity, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [dr])
 
       summary = RealSelf::Stream::Digest::Summary.create(dr)
       hash = summary.to_h
@@ -145,7 +146,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
     it "adds photos correctly" do
       activity = dr_upload_photo_activity()
       dr = activity.actor
-      stream_activity = stream_activity(activity, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [dr])
 
       summary = RealSelf::Stream::Digest::Summary.create(dr)
       hash = summary.to_h
@@ -157,7 +158,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
       expect(hash[:photo][:last]).to eql activity.object.to_h
 
       activity2 = dr_upload_photo_activity(dr.id)
-      stream_activity = stream_activity(activity2, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [dr])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:photo][:count]).to eql 2
@@ -167,7 +168,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
     it "adds reviews correctly" do
       activity = user_author_review_activity()
       dr = activity.extensions[:dr]
-      stream_activity = stream_activity(activity, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [dr])
 
       summary = RealSelf::Stream::Digest::Summary.create(dr)
       hash = summary.to_h
@@ -179,7 +180,7 @@ describe RealSelf::Stream::Digest::Summary::Dr do
       expect(hash[:review][:last]).to eql activity.object.to_h
 
       activity2 = user_author_review_activity(dr.id)
-      stream_activity = stream_activity(activity2, nil, [dr])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [dr])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:review][:count]).to eql 2
@@ -187,9 +188,9 @@ describe RealSelf::Stream::Digest::Summary::Dr do
     end
 
     it "rejects unknown activity types" do
-      activity = user_author_comment_activity
-      dr = activity.target
-      stream_activity = stream_activity(activity, nil, [dr])
+      activity = user_author_discussion_activity    
+      dr = objekt('dr', Random::rand(1000..9999))
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [dr])
 
       summary = RealSelf::Stream::Digest::Summary.create(dr)
 

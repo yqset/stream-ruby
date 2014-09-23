@@ -21,14 +21,14 @@ module RealSelf
 
             when 'user.author.comment'
               unless activity.target.to_h == @object
-                raise ArgumentError, "activity target (discussion) does not match digest object for activity: #{activity.uuid}"
+                raise ArgumentError, "activity target #{activity.target} does not match digest object for activity: #{activity.uuid}"
               end
 
               add_comment(activity.object)
 
             when 'user.reply.comment'
-              unless activity.target.to_h == @object
-                raise ArgumentError, "activity target (discussion) does not match digest object for activity: #{activity.uuid}"
+              unless activity.extensions[:parent_content].to_h == @object
+                raise ArgumentError, "activity parent content #{(activity.extensions[:parent_content])} does not match digest object #{@object} for activity: #{activity.uuid}"
               end
               
               add_comment_reply(stream_activity)
@@ -49,13 +49,13 @@ module RealSelf
             owner = stream_activity.object
             activity = stream_activity.activity
             comment = activity.object
-            parent_comment = activity.extensions[:parent_comment]
+            parent_comment = activity.target
             parent_comment_author = activity.extensions[:parent_comment_author]
 
             # if the owner of the stream_activity is the author of the parent
             # comment, treat the comment as a reply.  Otherwise, treat it as
             # just a regular comment
-            if( owner == parent_comment_author )
+            if( owner == parent_comment_author )           
               @activities[:comment_reply][parent_comment.id] = @activities[:comment_reply][parent_comment.id] || [parent_comment.to_h, {:count => 0}]
               @activities[:comment_reply][parent_comment.id][1][:count] += 1
               @activities[:comment_reply][parent_comment.id][1][:last] = comment.to_h

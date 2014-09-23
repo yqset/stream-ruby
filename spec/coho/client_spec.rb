@@ -1,5 +1,5 @@
 require 'spec_helper'
-# require_relative 'client_shared_examples'
+require_relative 'client_shared_examples'
 
 include Activity::Helpers
 

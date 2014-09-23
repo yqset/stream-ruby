@@ -11,9 +11,9 @@ begin
 
   # digest objects
   require_relative '../lib/realself/stream/digest/digest'
-  require_relative 'digest/digest_spec_helpers'
-  require_relative 'digest/commentable_shared_examples'
-  require_relative 'digest/summary_shared_examples'
+  # require_relative 'digest/digest_spec_helpers'
+  # require_relative 'digest/commentable_shared_examples'
+  # require_relative 'digest/summary_shared_examples'
 
   # coho objects
   require_relative 'coho/client_shared_examples'

@@ -1,24 +1,30 @@
 PATH
   remote: .
   specs:
-    realself-stream (0.0.25)
+    realself-stream (0.0.26)
       bunny
       httparty
       json-schema
       multi_json
 
+GIT
+  remote: ssh://git@github.com/RealSelf/stream-test-ruby.git
+  revision: 5f4f720e5f3bf93afd894b814b0af8bfdaa06318
+  specs:
+    stream-test (0.0.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
     amq-protocol (1.9.2)
-    bunny (1.4.0)
+    bunny (1.4.1)
       amq-protocol (>= 1.9.2)
     diff-lcs (1.2.5)
     httparty (0.13.1)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     json (1.8.1)
-    json-schema (2.2.4)
+    json-schema (2.2.5)
     multi_json (1.10.1)
     multi_xml (0.5.5)
     rspec (3.0.0)
@@ -45,3 +51,4 @@ DEPENDENCIES
   realself-stream!
   rspec
   simplecov (~> 0.7.1)
+  stream-test (>= 0.0.2)!
