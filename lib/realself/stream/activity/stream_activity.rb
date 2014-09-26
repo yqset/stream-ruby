@@ -41,6 +41,10 @@ module RealSelf
 
       alias :to_hash :to_h
 
+      def hash
+        to_h.hash
+      end
+
       def ==(other)
         self.to_h == other.to_h
       end

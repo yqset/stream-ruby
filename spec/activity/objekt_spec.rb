@@ -67,6 +67,32 @@ describe RealSelf::Stream::Objekt do
     end
   end
 
+  describe '#hash' do
+
+    it 'will equal hash value of a hash with the same content' do
+
+      expected = {:type => 'user'.to_s, :id => 1234.to_s}.hash
+
+      actual = RealSelf::Stream::Objekt.new('user', 1234).hash
+
+      expect(actual).to eql expected
+    end
+
+    it 'supports hash key equality' do
+      o1 = RealSelf::Stream::Objekt.new('user', 1234)
+      o2 = RealSelf::Stream::Objekt.new('user', 1234)
+
+      expect(o1.object_id).to_not eql(o2.object_id)
+      e = {}
+
+      e[o2] = 1234
+
+      expect(e.include?(o1)).to eq(true)
+
+    end
+
+  end
+  
   describe '::from_json' do
     it 'creates an objekt from a JSON string' do
       json = MultiJson.encode(example_hash)
