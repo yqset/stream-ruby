@@ -39,6 +39,10 @@ module RealSelf
 
       alias :to_hash :to_h
 
+      def hash
+        to_h.hash
+      end
+
       def to_objekt
         Objekt.new(@type, @id)
       end

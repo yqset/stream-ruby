@@ -106,6 +106,19 @@ describe RealSelf::Stream::StreamActivity do
     end
   end
 
+  describe "#hash" do
+    it "supports hash key equality" do
+      sa1 = example_stream_activity
+      sa2 = example_stream_activity
+
+      expect(sa1.object_id).to_not eql(sa2.object_id)
+
+      e = {}
+      e[sa2] = 1234
+      expect(e.include?(sa1)).to eql(true)
+    end
+  end
+
   describe "#==" do
     it "compares two stream items" do
       expect(@stream_activity).to eql example_stream_activity

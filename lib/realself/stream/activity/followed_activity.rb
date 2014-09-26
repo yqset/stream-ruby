@@ -2,7 +2,12 @@ module RealSelf
   module Stream
     class FollowedActivity < Activity
 
-      class << self   
+      class << self
+
+        def hash
+          to_h.hash
+        end
+
         private 
 
         def get_implementation(version)
