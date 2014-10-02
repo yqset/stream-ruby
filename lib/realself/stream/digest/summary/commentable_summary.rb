@@ -12,7 +12,7 @@ module RealSelf
             super
 
             @activities.merge!({:comment => {:count => 0}, :comment_reply => {}})
-          end  
+          end
 
           def add(stream_activity)
             activity = stream_activity.activity
@@ -21,24 +21,24 @@ module RealSelf
 
             when 'user.author.comment'
               unless activity.target.to_h == @object
-                raise ArgumentError, "activity target (discussion) does not match digest object for activity: #{activity.uuid}"
+                raise ArgumentError, "activity target #{activity.target} does not match digest object for activity: #{activity.uuid}"
               end
 
               add_comment(activity.object)
 
             when 'user.reply.comment'
-              unless activity.target.to_h == @object
-                raise ArgumentError, "activity target (discussion) does not match digest object for activity: #{activity.uuid}"
+              unless activity.extensions[:parent_content].to_h == @object
+                raise ArgumentError, "activity parent content #{(activity.extensions[:parent_content])} does not match digest object #{@object} for activity: #{activity.uuid}"
               end
-              
+
               add_comment_reply(stream_activity)
 
             else
               super
-            end            
+            end
           end
 
-          protected        
+          protected
 
           def add_comment(comment)
             @activities[:comment][:count] += 1
@@ -49,7 +49,7 @@ module RealSelf
             owner = stream_activity.object
             activity = stream_activity.activity
             comment = activity.object
-            parent_comment = activity.extensions[:parent_comment]
+            parent_comment = activity.target
             parent_comment_author = activity.extensions[:parent_comment_author]
 
             # if the owner of the stream_activity is the author of the parent
@@ -62,9 +62,9 @@ module RealSelf
             else
               add_comment(comment)
             end
-          end          
+          end
         end
-      end  
+      end
     end
   end
 end

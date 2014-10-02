@@ -50,7 +50,7 @@ module RealSelf
 
         def add(stream_activity)
           unless stream_activity.object == @owner
-            raise ArgumentException, "stream activity does not belong to current digest owner: #{owner.to_s}"
+            raise ArgumentError, "stream activity does not belong to current digest owner: #{owner.to_s}"
           end
 
           stream_activity.reasons.each do |reason|

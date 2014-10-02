@@ -5,6 +5,7 @@ describe RealSelf::Stream::Digest::Summary::User do
 
   before :each do
     Digest::Helpers.init(RealSelf::Stream::Digest::Summary::User)
+    @owner = objekt('user', Random::rand(1000..9999))
   end
 
   describe "#new" do
@@ -26,7 +27,7 @@ describe RealSelf::Stream::Digest::Summary::User do
     it "counts the number of messages correctly" do
       activity = user_send_user_message_activity
       recipient = activity.target
-      stream_activity = stream_activity(activity, nil, [recipient])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [@owner])
       user_message = content_objekt(1234)
 
       summary = RealSelf::Stream::Digest::Summary.create(recipient)
@@ -38,22 +39,21 @@ describe RealSelf::Stream::Digest::Summary::User do
       expect(hash[:user_message][:count]).to eql 1
 
       activity2 = user_send_user_message_activity(nil, nil, recipient.id)
-      recipient2 = activity2.target
-      stream_activity = stream_activity(activity2, nil, [recipient2])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [@owner])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:user_message][:count]).to eql 2
     end
 
     it "silently fails and contniues for unknown activity types" do
-      activity = user_author_comment_activity
+      activity = dr_upload_photo_activity
       recipient = activity.actor
-      stream_activity = stream_activity(activity, nil, [activity.target])
-      summary = RealSelf::Stream::Digest::Summary.create(recipient)
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [@owner])
+      summary = RealSelf::Stream::Digest::Summary.create(@owner)
 
       expect{summary.add(stream_activity)}.to_not raise_error
 
-      summary2 = RealSelf::Stream::Digest::Summary.create(recipient)
+      summary2 = RealSelf::Stream::Digest::Summary.create(@owner)
 
       expect(summary).to eql summary2
     end

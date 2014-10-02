@@ -1,7 +1,10 @@
 require 'spec_helper'
+require 'realself/stream/test/factory'
+require_relative './digest_spec_helpers'
 
 describe RealSelf::Stream::Digest::Digest do
   include Digest::Helpers
+  include RealSelf::Stream::Test::Factory  
 
   before :each do
     @owner = RealSelf::Stream::Objekt.new('user', 2345)
@@ -25,7 +28,7 @@ describe RealSelf::Stream::Digest::Digest do
   describe "#add" do
     it "takes a stream activity and adds it to the summary" do
       activity = dr_author_answer_activity(nil, nil, 1234)
-      stream_activity = stream_activity(activity, @owner, [activity.target])
+      stream_activity = stream_activity(@owner, activity, [activity.target])
       @digest.add(stream_activity)
       hash = @digest.to_h
 
@@ -33,8 +36,8 @@ describe RealSelf::Stream::Digest::Digest do
       question = RealSelf::Stream::Objekt.from_hash(hash[:summaries][:question].values[0][0])
       expect(question).to eql activity.target
 
-      activity2 = user_udpate_question_public_note_activity(nil, 1234)
-      stream_activity2 = stream_activity(activity2, @owner, [activity2.object])
+      activity2 = user_update_question_public_note_activity(nil, 1234)
+      stream_activity2 = stream_activity(@owner, activity2, [activity2.object])
       @digest.add(stream_activity2)
       hash = @digest.to_h
 
@@ -46,11 +49,11 @@ describe RealSelf::Stream::Digest::Digest do
 
     it "takes two stream activities and creates two summaries" do
       activity = dr_author_answer_activity
-      stream_activity = stream_activity(activity, @owner, [activity.target])
+      stream_activity = stream_activity(@owner, activity, [activity.target])
       @digest.add(stream_activity)
 
       activity2 = dr_author_answer_activity
-      stream_activity2 = stream_activity(activity2, @owner, [activity2.target])
+      stream_activity2 = stream_activity(@owner, activity2, [activity2.target])
       @digest.add(stream_activity2)
 
       hash = @digest.to_h
@@ -66,7 +69,7 @@ describe RealSelf::Stream::Digest::Digest do
 
     it "raises an error when the stream_activity owner does not match the digest owner" do
       activity = dr_author_answer_activity
-      stream_activity = stream_activity(activity, nil, [activity.target])
+      stream_activity = stream_activity(nil, activity, [activity.target])
 
       expect{ @digest.add(stream_activity) }. to raise_error
     end
@@ -79,12 +82,12 @@ describe RealSelf::Stream::Digest::Digest do
       digest2 = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400, {}, uuid)
 
       activity = dr_author_answer_activity
-      stream_activity = stream_activity(activity, @owner, [activity.target])
+      stream_activity = stream_activity(@owner, activity, [activity.target])
       digest.add(stream_activity)
       digest2.add(stream_activity)
 
       activity2 = dr_author_answer_activity
-      stream_activity2 = stream_activity(activity2, @owner, [activity2.target])
+      stream_activity2 = stream_activity(@owner, activity2, [activity2.target])
       digest.add(stream_activity2)
       digest2.add(stream_activity2)
 
@@ -96,12 +99,12 @@ describe RealSelf::Stream::Digest::Digest do
       digest2 = RealSelf::Stream::Digest::Digest.new(:subscriptions, @owner, 86400)
 
       activity = dr_author_answer_activity
-      stream_activity = stream_activity(activity, @owner, [activity.target])
+      stream_activity = stream_activity(@owner, activity, [activity.target])
       digest.add(stream_activity)
       digest2.add(stream_activity)
 
       activity2 = dr_author_answer_activity
-      stream_activity2 = stream_activity(activity2, @owner, [activity2.target])
+      stream_activity2 = stream_activity(@owner, activity2, [activity2.target])
       digest.add(stream_activity2)
       digest2.add(stream_activity2)
 
@@ -112,11 +115,11 @@ describe RealSelf::Stream::Digest::Digest do
   describe "#to_s" do
     it "converts the digest to a JSON string" do
       activity = dr_author_answer_activity
-      stream_activity = stream_activity(activity, @owner, [activity.target])
+      stream_activity = stream_activity(@owner, activity, [activity.target])
       @digest.add(stream_activity)
 
       activity2 = dr_author_answer_activity
-      stream_activity2 = stream_activity(activity2, @owner, [activity2.target])
+      stream_activity2 = stream_activity(@owner, activity2, [activity2.target])
       @digest.add(stream_activity2)
 
       json = @digest.to_s
@@ -132,7 +135,7 @@ describe RealSelf::Stream::Digest::Digest do
   describe "::from_hash" do
     it "creates a digest from a hash" do
       activity = dr_author_answer_activity
-      stream_activity = stream_activity(activity, @owner, [activity.target])
+      stream_activity = stream_activity(@owner, activity, [activity.target])
       @digest.add(stream_activity)
 
       hash = @digest.to_h
@@ -147,7 +150,7 @@ describe RealSelf::Stream::Digest::Digest do
   describe "::from_json" do
     it "creates a digest from a json string" do
       activity = dr_author_answer_activity
-      stream_activity = stream_activity(activity, @owner, [activity.target])
+      stream_activity = stream_activity(@owner, activity, [activity.target])
       @digest.add(stream_activity)
 
       json = @digest.to_s

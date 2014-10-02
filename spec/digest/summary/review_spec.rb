@@ -8,12 +8,13 @@ describe RealSelf::Stream::Digest::Summary::Review do
 
   before :each do
     Digest::Helpers.init(RealSelf::Stream::Digest::Summary::Review)
+    @owner = objekt('user', Random::rand(1000..9999))
   end
 
   describe "#add" do
     it "counts the number of entries correctly" do
       activity = user_author_review_entry_activity(nil, 1234)
-      stream_activity = stream_activity(activity, nil, [activity.object])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity, [activity.object])
       review = content_objekt(1234)
 
       summary = RealSelf::Stream::Digest::Summary.create(review)
@@ -26,7 +27,7 @@ describe RealSelf::Stream::Digest::Summary::Review do
       expect(hash[:review_entry][:last]).to eql activity.object.to_h
 
       activity2 = user_author_review_entry_activity(nil, 1235)
-      stream_activity = stream_activity(activity2, nil, [activity2.object])
+      stream_activity = RealSelf::Stream::StreamActivity.new(@owner, activity2, [activity2.object])
       summary.add(stream_activity)
       hash = summary.to_h
       expect(hash[:review_entry][:count]).to eql 2

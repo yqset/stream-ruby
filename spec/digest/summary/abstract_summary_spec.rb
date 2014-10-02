@@ -1,4 +1,5 @@
 require 'spec_helper'
+require_relative '../summary_shared_examples'
 
 describe RealSelf::Stream::Digest::Summary::AbstractSummary do
 
