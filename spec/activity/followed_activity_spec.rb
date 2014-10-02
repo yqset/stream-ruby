@@ -43,6 +43,21 @@ describe RealSelf::Stream::FollowedActivity do
       Activity::Helpers.init(0)
       hash = followed_activity(1234)
       expect{RealSelf::Stream::FollowedActivity.from_hash(hash)}.to raise_error
-    end  
+    end
   end  
+  
+  describe "#hash" do
+    it "supports hash key equality" do
+      Activity::Helpers.init(2)
+      fa1 = RealSelf::Stream::FollowedActivity.from_hash(followed_activity(1234))
+      fa2 = RealSelf::Stream::FollowedActivity.from_hash(followed_activity(1234))
+
+      expect(fa1.object_id).to_not eql(fa2.object_id)
+      e = {}
+
+      e[fa1] = 123
+
+      expect(e.include?(fa2)).to eql(true)
+    end
+  end
 end

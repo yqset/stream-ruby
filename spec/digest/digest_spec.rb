@@ -160,4 +160,20 @@ describe RealSelf::Stream::Digest::Digest do
       expect(@digest).to eql digest
     end
   end
+
+  describe "#hash" do
+    it 'supports hash key equality' do
+      d1 = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400, {}, 'uuid')
+      d2 = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400, {}, 'uuid')
+
+      expect(d1.object_id).to_not eql(d2.object_id)
+
+      e = {}
+
+      e[d2] = 1234
+
+      expect(e.include?(d1)).to eq(true)
+    end
+  end
+  
 end

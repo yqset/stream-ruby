@@ -91,4 +91,20 @@ describe RealSelf::Stream::Activity do
       expect{RealSelf::Stream::Activity.from_hash(example_hash)}.to raise_error
     end
   end
+  
+  describe "#hash" do
+    it "supports hash key equality" do
+      Activity::Helpers.init(2)
+      a1 = RealSelf::Stream::Activity.from_hash(example_hash)
+
+      a2 = RealSelf::Stream::Activity.from_hash(example_hash)
+
+      expect(a1.object_id).to_not eql(a2.object_id)
+
+      e = {}
+      e[a2] = 123
+
+      expect(e.include?(a1)).to eql(true)
+    end
+  end
 end
