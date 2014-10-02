@@ -12,7 +12,7 @@ module RealSelf
             super
 
             @activities.merge!({:comment => {:count => 0}, :comment_reply => {}})
-          end  
+          end
 
           def add(stream_activity)
             activity = stream_activity.activity
@@ -30,15 +30,15 @@ module RealSelf
               unless activity.extensions[:parent_content].to_h == @object
                 raise ArgumentError, "activity parent content #{(activity.extensions[:parent_content])} does not match digest object #{@object} for activity: #{activity.uuid}"
               end
-              
+
               add_comment_reply(stream_activity)
 
             else
               super
-            end            
+            end
           end
 
-          protected        
+          protected
 
           def add_comment(comment)
             @activities[:comment][:count] += 1
@@ -55,16 +55,16 @@ module RealSelf
             # if the owner of the stream_activity is the author of the parent
             # comment, treat the comment as a reply.  Otherwise, treat it as
             # just a regular comment
-            if( owner == parent_comment_author )           
+            if( owner == parent_comment_author )
               @activities[:comment_reply][parent_comment.id] = @activities[:comment_reply][parent_comment.id] || [parent_comment.to_h, {:count => 0}]
               @activities[:comment_reply][parent_comment.id][1][:count] += 1
               @activities[:comment_reply][parent_comment.id][1][:last] = comment.to_h
             else
               add_comment(comment)
             end
-          end          
+          end
         end
-      end  
+      end
     end
   end
 end

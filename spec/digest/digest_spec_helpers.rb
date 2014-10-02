@@ -14,28 +14,26 @@ module Digest
     end
 
     # comment activities
-    def user_author_comment_activity_shared(user_id=nil, comment_id=nil, parent_content_type=nil, parent_content_id=nil, parent_content_author_id=nil)    
+    def user_author_comment_activity_shared(user_id=nil, comment_id=nil, parent_content_type=nil, parent_content_id=nil)
       parent_content_type = parent_content_type || @@commentable_content_type
 
       return user_author_comment_activity(
-        user_id, 
+        user_id,
         comment_id,
         parent_content_type,
-        parent_content_id, 
-        parent_content_author_id)  
+        parent_content_id)
     end
 
-    def user_reply_comment_activity_shared(comment_author_id=nil, comment_id=nil, parent_comment_id=nil, parent_comment_author_id=nil, parent_content_type='content', parent_content_id=nil, parent_content_author_id=nil)
+    def user_reply_comment_activity_shared(comment_author_id=nil, comment_id=nil, parent_comment_id=nil, parent_content_type='content', parent_content_id=nil, parent_comment_author_id=nil)
       parent_content_type = parent_content_type || @@commentable_content_type
 
       user_reply_comment_activity(
-        comment_author_id, 
-        comment_id, 
-        parent_comment_id, 
-        parent_comment_author_id,  
+        comment_author_id,
+        comment_id,
+        parent_comment_id,
         parent_content_type,
-        parent_content_id, 
-        parent_content_author_id)         
+        parent_content_id,
+        parent_comment_author_id)
     end
   end
 end
