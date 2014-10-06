@@ -9,7 +9,7 @@ PATH
 
 GIT
   remote: ssh://git@github.com/RealSelf/stream-test-ruby.git
-  revision: ad6beda47e5bf765f7436b29e072f6361bf3d5d2
+  revision: 4e5594499a1a76f8671be8217864ed83d28eefda
   specs:
     stream-test (0.0.4)
 
