@@ -46,7 +46,7 @@ describe RealSelf::Stream::StreamActivity do
       example_activity,
       [RealSelf::Stream::Objekt.new('dr', 1234),
        RealSelf::Stream::Objekt.new('topic', 4567)]
-    )    
+    )
   end
 
   before :each do
@@ -83,7 +83,7 @@ describe RealSelf::Stream::StreamActivity do
       expect(@stream_activity.activity).to be_an_instance_of RealSelf::Stream::ActivityV1
 
     end
-  end 
+  end
 
   describe "#reasons" do
     it "returns an array of Objekts" do
@@ -93,7 +93,7 @@ describe RealSelf::Stream::StreamActivity do
         expect(reason).to be_an_instance_of RealSelf::Stream::Objekt
       end
     end
-  end 
+  end
 
   describe "#to_h" do
     it "returns a hash" do
@@ -122,10 +122,20 @@ describe RealSelf::Stream::StreamActivity do
   describe "#==" do
     it "compares two stream items" do
       expect(@stream_activity).to eql example_stream_activity
-      
+
       other = example_stream_activity
       other.object.id = '0000'
       expect(@stream_activity).to_not eql other
+    end
+
+    it 'compares to nil' do
+      expect(@stream_activity).to_not eql nil
+    end
+
+    it 'compares to other object types' do
+      expect(@stream_activity).to_not eql 'string'
+      expect(@stream_activity).to_not eql({:foo => 'bar'})
+      expect(@stream_activity).to_not eql Exception.new('oops!')
     end
   end
 

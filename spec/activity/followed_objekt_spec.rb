@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe RealSelf::Stream::FollowedObjekt do
 
-  def followed_objekt(i) 
+  def followed_objekt(i)
     {
       :type => "answer",
       :id => i.to_s,
@@ -17,8 +17,8 @@ describe RealSelf::Stream::FollowedObjekt do
         {
           :type => "user",
           :id => "3456"
-        } 
-      ]      
+        }
+      ]
     }
   end
 
@@ -37,7 +37,7 @@ describe RealSelf::Stream::FollowedObjekt do
           RealSelf::Stream::Objekt.new('user', 3456)]
       )
       expect(followed_objekt).to be_an_instance_of RealSelf::Stream::FollowedObjekt
-      expect(followed_objekt.followers.length).to eql 2      
+      expect(followed_objekt.followers.length).to eql 2
     end
   end
 
@@ -54,6 +54,27 @@ describe RealSelf::Stream::FollowedObjekt do
   describe "#to_h" do
     it "returns a hash representing the FollowedObjekt" do
       expect(followed_objekt(1234)).to eql @followed_objekt.to_h
+    end
+  end
+
+  describe '#==' do
+    it 'compares two FollowedObjekts' do
+      other = RealSelf::Stream::FollowedObjekt.from_json(MultiJson.encode(followed_objekt(1234)))
+      expect(@followed_objekt).to eql other
+
+      other = RealSelf::Stream::FollowedObjekt.from_json(MultiJson.encode(followed_objekt(12345)))
+      expect(@followed_objekt).to_not eql other
+    end
+
+    it 'compares to nil' do
+      expect(@followed_objekt).to_not eql nil
+    end
+
+    it 'compares to other object types' do
+      expect(@followed_objekt).to_not eql RealSelf::Stream::Objekt.new('user', 1234)
+      expect(@followed_objekt).to_not eql 'string'
+      expect(@followed_objekt).to_not eql({:foo => 'bar'})
+      expect(@followed_objekt).to_not eql Exception.new('oops!')
     end
   end
 

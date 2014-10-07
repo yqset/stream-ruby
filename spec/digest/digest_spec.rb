@@ -4,7 +4,7 @@ require_relative './digest_spec_helpers'
 
 describe RealSelf::Stream::Digest::Digest do
   include Digest::Helpers
-  include RealSelf::Stream::Test::Factory  
+  include RealSelf::Stream::Test::Factory
 
   before :each do
     @owner = RealSelf::Stream::Objekt.new('user', 2345)
@@ -15,11 +15,11 @@ describe RealSelf::Stream::Digest::Digest do
     it "takes three parameters and returns a new instance" do
       expect(@digest).to be_an_instance_of RealSelf::Stream::Digest::Digest
     end
-    
+
     it "sets protoype when nil" do
       expect(@digest.prototype).to eq('user.digest.notifications')
     end
-    
+
     it "generates uuid when not provided" do
       expect(@digest.uuid.length).to eq(36)
     end
@@ -63,7 +63,7 @@ describe RealSelf::Stream::Digest::Digest do
 
       expect(hash[:summaries][:question][activity.target.id.to_sym][0]).to eql activity.target.to_h
       expect(hash[:summaries][:question][activity.target.id.to_sym][1]).to be_an_instance_of(Hash)
-      expect(hash[:summaries][:question][activity2.target.id.to_sym][0]).to eql activity2.target.to_h      
+      expect(hash[:summaries][:question][activity2.target.id.to_sym][0]).to eql activity2.target.to_h
       expect(hash[:summaries][:question][activity2.target.id.to_sym][1]).to be_an_instance_of(Hash)
     end
 
@@ -109,7 +109,20 @@ describe RealSelf::Stream::Digest::Digest do
       digest2.add(stream_activity2)
 
       expect(digest).to_not eql digest2
-    end    
+    end
+
+    it 'compares to nil' do
+      digest = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400)
+      expect(digest).to_not eql nil
+    end
+
+    it 'compares to other object types' do
+      digest = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400)
+      expect(digest).to_not eql RealSelf::Stream::Objekt.new('user', 1234)
+      expect(digest).to_not eql 'string'
+      expect(digest).to_not eql({:foo => 'bar'})
+      expect(digest).to_not eql Exception.new('oops!')
+    end
   end
 
   describe "#to_s" do
@@ -143,7 +156,7 @@ describe RealSelf::Stream::Digest::Digest do
       digest = RealSelf::Stream::Digest::Digest.from_hash(hash)
 
       expect(hash).to eql digest.to_h
-      expect(@digest).to eql digest 
+      expect(@digest).to eql digest
     end
   end
 
@@ -175,5 +188,5 @@ describe RealSelf::Stream::Digest::Digest do
       expect(e.include?(d1)).to eq(true)
     end
   end
-  
+
 end

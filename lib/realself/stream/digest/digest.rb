@@ -24,7 +24,7 @@ module RealSelf
             summaries[type] = summaries[type] || {}
 
             summary_hash.each do |object_id, summary_array|
-              summary_object = RealSelf::Stream::Objekt.from_hash(summary_array[0])           
+              summary_object = RealSelf::Stream::Objekt.from_hash(summary_array[0])
               summary = RealSelf::Stream::Digest::Summary.from_array(summary_array)
               summaries[type][object_id] = [summary_object, summary]
             end
@@ -32,7 +32,7 @@ module RealSelf
 
           uuid = hash[:uuid] || SecureRandom.uuid
           prototype = hash[:prototype] || nil
-          
+
           self.new(type, owner, interval, summaries, uuid, prototype)
         end
 
@@ -54,7 +54,7 @@ module RealSelf
           end
 
           stream_activity.reasons.each do |reason|
-            summary = get_summary(reason) 
+            summary = get_summary(reason)
             summary.add(stream_activity)
           end
         end
@@ -85,7 +85,7 @@ module RealSelf
         end
 
         def ==(other)
-          self.to_h == other.to_h
+          other.kind_of?(self.class) and self.to_h == other.to_h
         end
 
         alias :eql? :==
@@ -100,7 +100,7 @@ module RealSelf
           @summaries[object.type.to_sym] = @summaries[object.type.to_sym] || {}
           @summaries[object.type.to_sym][object.id.to_sym] || create_summary(object)
           @summaries[object.type.to_sym][object.id.to_sym][1]
-        end 
+        end
 
         def create_summary(object)
           summary = RealSelf::Stream::Digest::Summary.create(object)
@@ -108,8 +108,8 @@ module RealSelf
           @summaries[object.type.to_sym][object.id.to_sym] = [object, summary]
 
           return summary
-        end  
-      end    
+        end
+      end
     end
   end
 end

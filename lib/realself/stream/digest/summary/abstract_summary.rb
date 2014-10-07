@@ -34,7 +34,7 @@ module RealSelf
           alias :to_hash :to_h
 
           def ==(other)
-            self.to_h == other.to_h
+            other.kind_of?(self.class) and self.to_h == other.to_h
           end
 
           alias :eql? :==
@@ -43,7 +43,7 @@ module RealSelf
             MultiJson.encode(self.to_array)
           end
         end
-      end  
+      end
     end
   end
 end
