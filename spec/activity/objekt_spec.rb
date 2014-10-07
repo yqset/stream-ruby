@@ -43,7 +43,7 @@ describe RealSelf::Stream::Objekt do
     it 'returns the correct type' do
       expect(@objekt.id).to eql '1234'
     end
-  end 
+  end
 
   describe '#to_h' do
     it 'returns a hash' do
@@ -58,6 +58,16 @@ describe RealSelf::Stream::Objekt do
 
       other.id = '2345'
       expect(@objekt).to_not eql other
+    end
+
+    it 'compares to nil' do
+      expect(@objekt).to_not eql nil
+    end
+
+    it 'compares to other object types' do
+      expect(@objekt).to_not eql 'string'
+      expect(@objekt).to_not eql({:foo => 'bar'})
+      expect(@objekt).to_not eql Exception.new('oops!')
     end
   end
 
@@ -92,7 +102,7 @@ describe RealSelf::Stream::Objekt do
     end
 
   end
-  
+
   describe '::from_json' do
     it 'creates an objekt from a JSON string' do
       json = MultiJson.encode(example_hash)

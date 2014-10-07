@@ -18,10 +18,10 @@ module RealSelf
 
       def initialize(type, id)
         @type = type.to_s
-        @id = id.to_s   
+        @id = id.to_s
       end
 
-      def to_h        
+      def to_h
         {:type => @type,:id => @id}
       end
 
@@ -32,7 +32,7 @@ module RealSelf
       end
 
       def ==(other)
-        self.to_h == other.to_h
+        other.kind_of?(self.class) and self.to_h == other.to_h
       end
 
       alias :eql? :==

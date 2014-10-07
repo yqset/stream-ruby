@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe RealSelf::Stream::Error do
-  
+
   before :each do
     @error = RealSelf::Stream::Error.new('TestError', 'sample error message')
   end
@@ -29,6 +29,17 @@ describe RealSelf::Stream::Error do
       other = RealSelf::Stream::Error.new('TestError2', 'sample error message 2')
 
       expect(@error).to_not eql other
+    end
+
+    it 'compares to nil' do
+      expect(@error).to_not eql nil
+    end
+
+    it 'compares to other object types' do
+      expect(@error).to_not eql RealSelf::Stream::Objekt.new('user', 1234)
+      expect(@error).to_not eql 'string'
+      expect(@error).to_not eql({:foo => 'bar'})
+      expect(@error).to_not eql Exception.new('oops!')
     end
   end
 

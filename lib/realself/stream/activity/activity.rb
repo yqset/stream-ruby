@@ -6,7 +6,7 @@ module RealSelf
   module Stream
     class Activity
 
-      class << self   
+      class << self
         @@schema = nil
 
         def create(version, *args)
@@ -43,12 +43,12 @@ module RealSelf
             ActivityV2
           else
             raise ArgumentError, "unsupported activity version:  #{version.to_s}"
-          end          
+          end
         end
       end
 
       def ==(other)
-        self.to_h == other.to_h
+        other.kind_of?(self.class) and self.to_h == other.to_h
       end
 
       alias :eql? :==
@@ -57,7 +57,7 @@ module RealSelf
         to_h.hash
       end
 
-      def to_s    
+      def to_s
         MultiJson.encode(self.to_h)
       end
     end
