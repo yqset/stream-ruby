@@ -11,7 +11,7 @@ begin
 
   # digest objects
   require_relative '../lib/realself/stream/digest/digest'
-  require_relative './digest//digest_spec'
+  require_relative './digest/digest_spec'
   require_relative './digest/commentable_summary_spec'
 
   # coho objects
