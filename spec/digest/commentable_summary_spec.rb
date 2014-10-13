@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative '../commentable_shared_examples'
+require_relative './commentable_shared_examples'
 
 describe RealSelf::Stream::Digest::Summary::CommentableSummary do
 
