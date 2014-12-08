@@ -57,6 +57,14 @@ module RealSelf
             summary = get_summary(reason)
             summary.add(stream_activity)
           end
+
+          # This is only necessary because we allow for the creation of
+          # empty summaries - See 'else' clause in User::add
+          remove_empty_summaries
+        end
+
+        def empty?
+          @summaries.empty?
         end
 
         def to_h
@@ -96,12 +104,6 @@ module RealSelf
 
         private
 
-        def get_summary(object)
-          @summaries[object.type.to_sym] = @summaries[object.type.to_sym] || {}
-          @summaries[object.type.to_sym][object.id.to_sym] || create_summary(object)
-          @summaries[object.type.to_sym][object.id.to_sym][1]
-        end
-
         def create_summary(object)
           summary = RealSelf::Stream::Digest::Summary.create(object)
 
@@ -109,6 +111,27 @@ module RealSelf
 
           return summary
         end
+
+        def remove_empty_summaries
+          @summaries.delete_if do |type, list|
+            # remove empty summaries assigned to a specific object
+            list.delete_if do |object_id, summary_array|
+              summary_array[1].empty?
+            end
+
+            # if there are no remaining summaries for any object
+            # of the current data type, remove the entire data type
+            # from the summaries collection
+            list.empty?
+          end
+        end
+
+        def get_summary(object)
+          @summaries[object.type.to_sym] = @summaries[object.type.to_sym] || {}
+          @summaries[object.type.to_sym][object.id.to_sym] || create_summary(object)
+          @summaries[object.type.to_sym][object.id.to_sym][1]
+        end
+
       end
     end
   end

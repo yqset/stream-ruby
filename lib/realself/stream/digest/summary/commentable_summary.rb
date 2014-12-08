@@ -36,6 +36,8 @@ module RealSelf
             else
               super
             end
+
+            @empty = false
           end
 
           protected

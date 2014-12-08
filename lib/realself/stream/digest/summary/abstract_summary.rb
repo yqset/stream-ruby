@@ -15,12 +15,17 @@ module RealSelf
               raise ArgumentError, "invalid object type for this summary:  #{object.type}"
             end
 
+            @empty = true
             @object = object.to_h
             @activities = {}
           end
 
           def add(stream_activity)
             raise ArgumentError, "unsupported activity type: #{stream_activity.activity.prototype}"
+          end
+
+          def empty?
+            @empty
           end
 
           def to_array
