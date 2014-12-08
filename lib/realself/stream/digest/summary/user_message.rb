@@ -16,13 +16,15 @@ module RealSelf
             case activity.prototype
             when 'user.send.user_message'
               @activities[:user_message][:count] += 1
-              @activities[:user_message][:last] = activity.object.to_h              
+              @activities[:user_message][:last] = activity.object.to_h
             else
               super
             end
+
+            @empty = false
           end
         end
-      end  
+      end
     end
   end
 end

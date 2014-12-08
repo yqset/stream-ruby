@@ -19,9 +19,11 @@ module RealSelf
             else
               super
             end
+
+            @empty = false
           end
         end
-      end  
+      end
     end
   end
 end

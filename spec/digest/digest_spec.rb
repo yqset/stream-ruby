@@ -67,6 +67,22 @@ describe RealSelf::Stream::Digest::Digest do
       expect(hash[:summaries][:question][activity2.target.id.to_sym][1]).to be_an_instance_of(Hash)
     end
 
+    it "does not store empty summaries" do
+      activity = user_author_review_activity
+      # reasons array only contains owner - User summary should be empty
+      # See user.rb
+      stream_activity = stream_activity(@owner, activity, [@owner])
+      @digest.add(stream_activity)
+
+      expect(@digest.empty?).to eql true
+
+      activity = user_author_review_activity
+      stream_activity = stream_activity(@owner, activity, [activity.target, @owner])
+      @digest.add(stream_activity)
+
+      expect(@digest.empty?).to eql false
+    end
+
     it "raises an error when the stream_activity owner does not match the digest owner" do
       activity = dr_author_answer_activity
       stream_activity = stream_activity(nil, activity, [activity.target])
