@@ -9,9 +9,9 @@ PATH
 
 GIT
   remote: ssh://git@github.com/RealSelf/stream-test-ruby.git
-  revision: 4e5594499a1a76f8671be8217864ed83d28eefda
+  revision: 8a00f283d590f6f08626dccaa4fb77cb390db3e8
   specs:
-    stream-test (0.0.4)
+    stream-test (0.0.6)
 
 GEM
   remote: https://rubygems.org/
@@ -53,4 +53,4 @@ DEPENDENCIES
   realself-stream!
   rspec
   simplecov (~> 0.7.1)
-  stream-test (>= 0.0.4)!
+  stream-test (= 0.0.6)!
