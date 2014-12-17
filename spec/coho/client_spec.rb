@@ -44,7 +44,15 @@ describe RealSelf::Stream::Coho::Client do
 
       response = double('Response', :code => 200)
 
-      allow(RealSelf::Stream::Coho::Client).to receive(:stubborn_post) { response }
+      body = MultiJson.encode({:actor => actor.to_h, :object => object.to_h})
+
+      expect(RealSelf::Stream::Coho::Client).to receive(:stubborn_post)
+        .with(
+          "/follow",
+          {:body => body}
+        )
+        .once
+        .and_return(response)
 
       expect { RealSelf::Stream::Coho::Client.follow(actor, object) }.to_not raise_error
     end
@@ -57,7 +65,15 @@ describe RealSelf::Stream::Coho::Client do
 
       response = double('Response', :code => 200)
 
-      allow(RealSelf::Stream::Coho::Client).to receive(:stubborn_post) { response }
+      body = MultiJson.encode({:actor => actor.to_h, :object => object.to_h})
+
+      expect(RealSelf::Stream::Coho::Client).to receive(:stubborn_post)
+        .with(
+          "/unfollow",
+          {:body => body}
+        )
+        .once
+        .and_return(response)
 
       expect { RealSelf::Stream::Coho::Client.unfollow(actor, object) }.to_not raise_error
     end
