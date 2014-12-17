@@ -26,19 +26,40 @@ describe RealSelf::Stream::Coho::Client do
     end
   end
 
+  describe '#stubborn_post' do
+    it 'retries a request 3 times if it fails' do
+      logger = double('Logger')
+      expect(logger).to receive(:error).at_least(:once)
+      RealSelf::Stream::Coho::Client.logger = logger
+      RealSelf::Stream::Coho::Client.wait_interval = 0.00001 # Short wait time for fast tests
+      expect(RealSelf::Stream::Coho::Client).to receive(:post).exactly(4).times.and_raise('something broke')
+      expect { RealSelf::Stream::Coho::Client.stubborn_post(test_url, {:body => 'woot!'}) }.to raise_error('something broke')
+    end
+  end
+
   describe "#follow" do
-    it "should raise an error" do
+    it "should call stubborn_post and return success" do
       actor = RealSelf::Stream::Objekt.new('user', 1234)
       object = RealSelf::Stream::Objekt.new('dr', 2345)
-      expect{RealSelf::Stream::Coho::Client.follow(actor, object)}.to raise_error
+
+      response = double('Response', :code => 200)
+
+      allow(RealSelf::Stream::Coho::Client).to receive(:stubborn_post) { response }
+
+      expect { RealSelf::Stream::Coho::Client.follow(actor, object) }.to_not raise_error
     end
   end
 
   describe "#unfollow" do
-    it "should raise an error" do
+    it "should call stubborn_post and return success" do
       actor = RealSelf::Stream::Objekt.new('user', 1234)
       object = RealSelf::Stream::Objekt.new('dr', 2345)
-      expect{RealSelf::Stream::Coho::Client.unfollow(actor, object)}.to raise_error
+
+      response = double('Response', :code => 200)
+
+      allow(RealSelf::Stream::Coho::Client).to receive(:stubborn_post) { response }
+
+      expect { RealSelf::Stream::Coho::Client.unfollow(actor, object) }.to_not raise_error
     end
   end
 
@@ -68,7 +89,7 @@ describe RealSelf::Stream::Coho::Client do
       user = RealSelf::Stream::Objekt.new('user', 1234)
       expect(RealSelf::Stream::Coho::Client.followersof(user)).to eql objekts_array
     end
-  end  
+  end
 
   describe "#validate_response" do
     it 'raises an exception when the response code is not 200 | 204' do

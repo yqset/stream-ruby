@@ -8,11 +8,15 @@ module RealSelf
         class << self
 
           def follow(actor, objekt)
-            raise "not implemented"
+            body = {:actor => actor.to_h, :object => objekt.to_h}
+            response = self.stubborn_post("/follow", {:body => body})
+            validate_response(response)
           end
 
           def unfollow(actor, objekt)
-            raise "not implemented"
+            body = {:actor => actor.to_h, :object => objekt.to_h}
+            response = self.stubborn_post("/unfollow", {:body => body})
+            validate_response(response)
           end
 
           def followedby(objekt)
