@@ -12,6 +12,10 @@ module RealSelf
           if( klass )
             handler = klass.new
             yield handler if block_given?
+            # TODO: if/when we want to initialize handlers
+            # with default parameters, do it here before
+            # returning the new instance
+            # see http://joshrendek.com/2013/11/2-patterns-for-refactoring-with-your-ruby-application/
             handler
           else
             raise "no handler registered for routing key:#{routing_key} and content-type:#{content_type}"

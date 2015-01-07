@@ -22,6 +22,22 @@ describe RealSelf::Stream::Daemon::ActivityHandler do
       end
     end
 
+    context "when an initialization block is provided" do
+
+      it "creates a handler instance and passes it to the block" do
+
+        test_handler = nil
+
+        handler = RealSelf::Stream::Daemon::ActivityHandler.create('TestHandler', 'test.message.type') do |new_handler|
+          test_handler = new_handler
+        end
+
+        expect(handler).to eql test_handler
+
+      end
+
+    end
+
   end
 
   describe "#register_handler" do
