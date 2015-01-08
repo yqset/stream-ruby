@@ -12,8 +12,6 @@ module RealSelf
         end
 
         def publish(item, routing_key, content_type = 'application/json')
-          @@publisher_exchange = @@publisher_exchange || self.initialize_publisher
-
           @@publisher_exchange.publish(
             item.to_s,
             :content_type => content_type.to_s,

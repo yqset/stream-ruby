@@ -19,7 +19,7 @@ module RealSelf
 
         def stubborn_post(*args)
           self.stubborn_request(:post, *args)
-        end        
+        end
 
         def base_uri=(uri)
           base_uri(uri) # pass on the URI to HTTParty
@@ -42,7 +42,7 @@ module RealSelf
         def stubborn_request(method, *args)
           max = 3
           tries ||= 1
-          
+
           case method
             when :get then self.get(*args)
             when :post then self.post(*args)
@@ -61,7 +61,7 @@ module RealSelf
             @logger.error 'Encountered the following exception, exhausted all retry attempts'
             @logger.error e.message
             raise e
-          end          
+          end
         end
       end
     end

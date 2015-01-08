@@ -31,6 +31,20 @@ module RealSelf
         @reasons = reasons
       end
 
+      def ==(other)
+        other.kind_of?(self.class) and self.to_h == other.to_h
+      end
+
+      alias :eql? :==
+
+      def hash
+        to_h.hash
+      end
+
+      def prototype
+        @activity.prototype
+      end
+
       def to_h
         {
           :object => @object.to_h,
@@ -41,19 +55,14 @@ module RealSelf
 
       alias :to_hash :to_h
 
-      def hash
-        to_h.hash
-      end
-
-      def ==(other)
-        other.kind_of?(self.class) and self.to_h == other.to_h
-      end
-
-      alias :eql? :==
-
       def to_s
         MultiJson.encode(self.to_h)
       end
+
+      def uuid
+        @activity.uuid
+      end
+
     end
   end
 end
