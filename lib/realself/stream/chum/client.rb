@@ -14,7 +14,7 @@ module RealSelf
             end
 
             response = self.stubborn_get("/#{type}/#{owner.type}/#{owner.id}?count=#{count}&before=#{before}&after=#{after}&interval=#{interval}&mark_as_read=#{mark_as_read}&include_owner=#{include_owner}")
-            validate_response(response)         
+            validate_response(response)
             parse_stream(response.body)
           end
 
@@ -31,13 +31,19 @@ module RealSelf
 
           protected
 
+          ##
+          # Parses a JSON stream and returns a hash containing StreamActivities
+          #
+          # @param [String] json
+          #
+          # @return [Hash] A Hash containing an Array[StreamActivity]
           def parse_stream(json)
             hash = MultiJson.decode(json, { :symbolize_keys => true })
             stream_items = hash[:stream_items].map { |obj| RealSelf::Stream::StreamActivity.from_hash(obj) }
             hash[:stream_items] = stream_items
 
             hash
-          end          
+          end
         end
       end
     end
