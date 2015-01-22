@@ -32,15 +32,14 @@ shared_examples "coho client" do |activity_version|
       answer_followers = followed_activity.object.followers
       question_followers = followed_activity.target.followers
 
-      client = double('RealSelf::Stream::Coho::Client')
-      allow(RealSelf::Stream::Coho::Client).to receive(:followersof).with(activity.actor) { dr_follwers }
-      allow(RealSelf::Stream::Coho::Client).to receive(:followersof).with(activity.object) { answer_followers }
-      allow(RealSelf::Stream::Coho::Client).to receive(:followersof).with(activity.target) { question_followers }
-      allow(RealSelf::Stream::Coho::Client).to receive(:followersof).with(topic) { topic_followers }
+      expect(RealSelf::Stream::Coho).to receive(:followersof).with(activity.actor) { dr_follwers }
+      expect(RealSelf::Stream::Coho).to receive(:followersof).with(activity.object) { answer_followers }
+      expect(RealSelf::Stream::Coho).to receive(:followersof).with(activity.target) { question_followers }
+      expect(RealSelf::Stream::Coho).to receive(:followersof).with(topic) { topic_followers }
 
-      expect(RealSelf::Stream::Coho::Client).to receive(:get_followers).and_call_original
+      expect(RealSelf::Stream::Coho).to receive(:get_followers).and_call_original
 
-      expect(RealSelf::Stream::Coho::Client.get_followers(activity)).to eql followed_activity
+      expect(RealSelf::Stream::Coho.get_followers(activity)).to eql followed_activity
     end
   end
 
