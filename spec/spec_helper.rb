@@ -15,7 +15,7 @@ begin
   require_relative './digest/commentable_summary_spec'
 
   # coho objects
-  require_relative 'coho/client_shared_examples'
+  require_relative 'coho_shared_examples'
 rescue LoadError
   require 'rubygems'
   require 'rspec'
