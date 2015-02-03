@@ -14,7 +14,7 @@ module RealSelf
           object = RealSelf::Stream::StreamActivity.from_hash(hash)
 
         else
-          raise ArgumentError, "unsupported content type: #{content_type}"
+          raise ContentTypeError, "unsupported content type: #{content_type}"
         end
 
         object
@@ -33,7 +33,7 @@ module RealSelf
           object = RealSelf::Stream::StreamActivity.from_json(json)  #TODO:  Add schema validation support
 
         else
-          raise ArgumentError, "unsupported content type: #{content_type}"
+          raise ContentTypeError, "unsupported content type: #{content_type}"
         end
 
         object

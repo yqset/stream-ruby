@@ -33,7 +33,7 @@ describe RealSelf::Stream::Factory do
   describe "#self.from_hash" do
 
     it "raises an error for unknown content types" do
-      expect{RealSelf::Stream::Factory.from_hash('bogus-type', {})}.to raise_error
+      expect{RealSelf::Stream::Factory.from_hash('bogus-type', {})}.to raise_error RealSelf::Stream::ContentTypeError
     end
 
     it "creates an activity" do
@@ -69,7 +69,7 @@ describe RealSelf::Stream::Factory do
   describe "#self.from_json" do
 
     it "raises an error for unknown content types" do
-      expect{RealSelf::Stream::Factory.from_json('bogus-type', '')}.to raise_error
+      expect{RealSelf::Stream::Factory.from_json('bogus-type', '')}.to raise_error RealSelf::Stream::ContentTypeError
     end
 
     it "creates an activity" do
