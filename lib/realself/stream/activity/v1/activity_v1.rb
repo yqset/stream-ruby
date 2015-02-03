@@ -29,6 +29,8 @@ module RealSelf
 
       attr_reader :title, :published, :actor, :verb, :object, :target, :relatives, :uuid, :prototype, :version
 
+      alias :owner :actor
+
       def initialize(title, published, actor, verb, object, target, relatives, uuid = SecureRandom.uuid, prototype = nil)
         @version = VERSION
         @title = title.to_s
@@ -44,7 +46,7 @@ module RealSelf
         self
       end
 
-      def to_h      
+      def to_h
         hash = {
                 :title => @title,
                 :published => @published.to_s,
@@ -57,7 +59,7 @@ module RealSelf
               }
 
         hash[:target] = @target.to_h unless @target.nil?
-        
+
         hash
       end
 
@@ -70,7 +72,7 @@ module RealSelf
         else
           raise ArgumentError, "unsupported activity version:  #{version.to_s}"
         end
-      end 
+      end
 
     end
   end
