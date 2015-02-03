@@ -7,8 +7,9 @@ PATH
       json-schema
       multi_json
 
-PATH
-  remote: /Users/matt/src/stream-test-ruby
+GIT
+  remote: ssh://git@github.com/RealSelf/stream-test-ruby.git
+  revision: 22861357c30debac414242e68632e3eff2984a4b
   specs:
     stream-test (0.0.8)
 
