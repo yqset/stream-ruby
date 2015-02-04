@@ -20,10 +20,12 @@ module RealSelf
         end
       end
 
+
       def self.register_handler(activity_prototype, content_type, klass)
         @@registered_handlers[content_type] = @@registered_handlers[content_type] || {}
         @@registered_handlers[content_type][activity_prototype.to_s] = klass
       end
+
 
       def self.registered_handlers()
         handler_names = []
@@ -34,6 +36,9 @@ module RealSelf
         handler_names
       end
 
+    end
+
+    class ActivityHandlerFactoryError < StandardError
     end
   end
 end
