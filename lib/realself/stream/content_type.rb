@@ -7,5 +7,8 @@ module RealSelf
       OBJEKT            = 'application/com.realself.objekt+json'
       STREAM_ACTIVITY   = 'application/com.realself.stream_activity+json'
     end
+
+    class ContentTypeError < StandardError
+    end
   end
 end

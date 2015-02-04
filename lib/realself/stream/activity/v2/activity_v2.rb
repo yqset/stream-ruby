@@ -16,7 +16,7 @@ module RealSelf
         verb = hash[:verb].to_s
         object = Objekt.new(hash[:object][:type], hash[:object][:id])
         target = Objekt.new(hash[:target][:type], hash[:target][:id]) if hash[:target]
-        
+
         extensions = {}
         hash[:extensions].each {|key, val| extensions[key.to_sym] = Objekt.from_hash(val)} if hash[:extensions]
 
@@ -27,6 +27,8 @@ module RealSelf
       end
 
       attr_reader :title, :published, :actor, :verb, :object, :target, :extensions, :uuid, :prototype, :version
+
+      alias :owner :actor
 
       def initialize(title, published, actor, verb, object, target, extensions, uuid = SecureRandom.uuid, prototype = nil)
         @version = VERSION
@@ -62,7 +64,7 @@ module RealSelf
               }
 
         hash[:target] = @target.to_h unless @target.nil?
-        
+
         hash
       end
 
@@ -78,7 +80,7 @@ module RealSelf
         else
           raise ArgumentError, "unsupported activity version:  #{version.to_s}"
         end
-      end 
+      end
 
     end
   end
