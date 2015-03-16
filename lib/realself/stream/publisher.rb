@@ -4,7 +4,7 @@ module RealSelf
   module Stream
     class Publisher
       def initialize(config, exchange_name)
-        @publisher_session = Bunny.new(self.symbolize_keys(config))
+        @publisher_session = Bunny.new(symbolize_keys(config))
         @publisher_session.start
         @publisher_channel = @publisher_session.create_channel
         @publisher_exchange = @publisher_channel.topic(exchange_name, :durable => true)
@@ -21,7 +21,7 @@ module RealSelf
 
       private
 
-      def self.symbolize_keys(hash)
+      def symbolize_keys(hash)
         hash.inject({}){|result, (key, value)|
           new_key = case key
                     when String then key.to_sym
