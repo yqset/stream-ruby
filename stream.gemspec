@@ -25,4 +25,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "rspec"
   # see Gemfile for test dependencies
+
+  gem.add_development_dependency "bson_ext", '1.12.1'
+  gem.add_development_dependency "mongo", '1.12.1'
 end

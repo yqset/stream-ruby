@@ -1,6 +1,4 @@
 
-
-require 'realself/stream/activity_handler_factory'
 require 'realself/stream/chum'
 require 'realself/stream/content_type'
 require 'realself/stream/coho'
