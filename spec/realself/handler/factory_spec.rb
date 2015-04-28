@@ -3,36 +3,53 @@ require 'spec_helper'
 
 describe RealSelf::Handler::Factory do
 
-  class TestHandler
-
+  class TestMessageType1Handler
+    include RealSelf::Handler::Activity
   end
 
-  class TestHandler2
-
+  class TestMessageType2Handler
+    include RealSelf::Handler::Activity
   end
 
-  class TestStreamActivityHandler
+  class TestMessageType2Handler2
+    include RealSelf::Handler::Activity
+  end
 
+  class TestMessageType1StreamActivityHandler
+    include RealSelf::Handler::StreamActivity
+  end
+
+  class TestMessageType1StreamActivityHandler2
+    include RealSelf::Handler::StreamActivity
   end
 
   before(:each) do
-    RealSelf::Handler::Factory.register_handler(
-      'test.message.type',
-      RealSelf::Stream::ContentType::ACTIVITY,
-      TestHandler
-    )
+    # RealSelf::Handler::Factory.register_handler(
+    #   'test.message.type',
+    #   RealSelf::Stream::ContentType::ACTIVITY,
+    #   TestHandler
+    # )
 
-    RealSelf::Handler::Factory.register_handler(
-      'test2.message.type',
-      RealSelf::Stream::ContentType::ACTIVITY,
-      TestHandler2
-    )
+    # RealSelf::Handler::Factory.register_handler(
+    #   'test2.message.type',
+    #   RealSelf::Stream::ContentType::ACTIVITY,
+    #   TestHandler2
+    # )
 
-    RealSelf::Handler::Factory.register_handler(
-      'test.message.type',
-      RealSelf::Stream::ContentType::STREAM_ACTIVITY,
-      TestStreamActivityHandler
-    )
+    # RealSelf::Handler::Factory.register_handler(
+    #   'test.message.type',
+    #   RealSelf::Stream::ContentType::STREAM_ACTIVITY,
+    #   TestStreamActivityHandler
+    # )
+
+    # activity handlers
+    TestMessageType1Handler.register_handler('test.message.type-1')
+    TestMessageType2Handler.register_handler('test.message.type-2')
+    TestMessageType2Handler2.register_handler('test.message.type-2')
+
+    # stream activity handlers
+    TestMessageType1StreamActivityHandler.register_handler('test.message.type-1')
+    TestMessageType1StreamActivityHandler2.register_handler('test.message.type-1')
   end
 
 
@@ -44,52 +61,65 @@ describe RealSelf::Handler::Factory do
           'bogus.message.type',
           RealSelf::Stream::ContentType::ACTIVITY
         )
-      }.to raise_error
+      }.to raise_error RealSelf::Handler::HandlerFactoryError
     end
 
     context "when no initialization block is provided" do
 
       it "creates a handler instance" do
-        handler = RealSelf::Handler::Factory.create(
-          'test.message.type',
+        handlers = RealSelf::Handler::Factory.create(
+          'test.message.type-1',
           RealSelf::Stream::ContentType::ACTIVITY
         )
 
-        expect(handler).to be_instance_of(TestHandler)
+        expect(handlers[0]).to be_instance_of(TestMessageType1Handler)
       end
 
 
       it "creates the correct handler based on content type" do
-        handler = RealSelf::Handler::Factory.create(
-          'test.message.type',
+        handlers = RealSelf::Handler::Factory.create(
+          'test.message.type-1',
           RealSelf::Stream::ContentType::ACTIVITY
         )
 
-        expect(handler).to be_instance_of(TestHandler)
+        expect(handlers[0]).to be_instance_of(TestMessageType1Handler)
 
-        handler = RealSelf::Handler::Factory.create(
-          'test.message.type',
+        handlers = RealSelf::Handler::Factory.create(
+          'test.message.type-1',
           RealSelf::Stream::ContentType::STREAM_ACTIVITY
         )
 
-        expect(handler).to be_instance_of(TestStreamActivityHandler)
+        expect(handlers[0]).to be_instance_of(TestMessageType1StreamActivityHandler)
       end
 
     end
 
     context "when an initialization block is provided" do
 
-      it "creates a handler instance and passes it to the block" do
+      it "creates the correct handler instance and passes it to the block" do
         test_handler = nil
 
-        handler = RealSelf::Handler::Factory.create(
-          'test.message.type',
+        handlers = RealSelf::Handler::Factory.create(
+          'test.message.type-2',
           RealSelf::Stream::ContentType::ACTIVITY
         ) do |new_handler|
-          test_handler = new_handler
+          expect(new_handler.class.ancestors).to include(RealSelf::Handler::Activity)
         end
 
-        expect(handler).to eql test_handler
+      end
+
+      it "calls the block once for each handler created" do
+        block_call_count = 0
+
+        handlers = RealSelf::Handler::Factory.create(
+          'test.message.type-2',
+          RealSelf::Stream::ContentType::ACTIVITY
+        ) do |new_handler|
+          block_call_count += 1
+        end
+
+        expect(block_call_count).to eql 2
+        expect(handlers.size).to eql 2
       end
 
     end
@@ -99,20 +129,14 @@ describe RealSelf::Handler::Factory do
 
   describe "#register_handler" do
 
-    it "registers a handler" do
+    it "registers multiple handlers of different types" do
       handlers = RealSelf::Handler::Factory.registered_handlers
-      expect(handlers.empty?).to be false
-      expect(handlers.include?("#{RealSelf::Stream::ContentType::ACTIVITY}::test.message.type")).to be true
-    end
-
-    it "registers handlers of multiple content types" do
-      handlers = RealSelf::Handler::Factory.registered_handlers
-
-      expect(handlers.empty?).to be false
-      expect(handlers.size).to eql 3
-      expect(handlers.include?("#{RealSelf::Stream::ContentType::ACTIVITY}::test.message.type")).to be true
-      expect(handlers.include?("#{RealSelf::Stream::ContentType::ACTIVITY}::test2.message.type")).to be true
-      expect(handlers.include?("#{RealSelf::Stream::ContentType::STREAM_ACTIVITY}::test.message.type")).to be true
+      expect(handlers.size).to eql 5
+      expect(handlers.include?("#{RealSelf::Stream::ContentType::ACTIVITY} => test.message.type-1 => TestMessageType1Handler")).to be true
+      expect(handlers.include?("#{RealSelf::Stream::ContentType::ACTIVITY} => test.message.type-2 => TestMessageType2Handler")).to be true
+      expect(handlers.include?("#{RealSelf::Stream::ContentType::ACTIVITY} => test.message.type-2 => TestMessageType2Handler2")).to be true
+      expect(handlers.include?("#{RealSelf::Stream::ContentType::STREAM_ACTIVITY} => test.message.type-1 => TestMessageType1StreamActivityHandler")).to be true
+      expect(handlers.include?("#{RealSelf::Stream::ContentType::STREAM_ACTIVITY} => test.message.type-1 => TestMessageType1StreamActivityHandler2")).to be true
     end
 
   end
