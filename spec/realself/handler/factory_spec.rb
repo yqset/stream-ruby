@@ -24,24 +24,6 @@ describe RealSelf::Handler::Factory do
   end
 
   before(:each) do
-    # RealSelf::Handler::Factory.register_handler(
-    #   'test.message.type',
-    #   RealSelf::Stream::ContentType::ACTIVITY,
-    #   TestHandler
-    # )
-
-    # RealSelf::Handler::Factory.register_handler(
-    #   'test2.message.type',
-    #   RealSelf::Stream::ContentType::ACTIVITY,
-    #   TestHandler2
-    # )
-
-    # RealSelf::Handler::Factory.register_handler(
-    #   'test.message.type',
-    #   RealSelf::Stream::ContentType::STREAM_ACTIVITY,
-    #   TestStreamActivityHandler
-    # )
-
     # activity handlers
     TestMessageType1Handler.register_handler('test.message.type-1')
     TestMessageType2Handler.register_handler('test.message.type-2')

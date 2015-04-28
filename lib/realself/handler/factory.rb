@@ -5,7 +5,7 @@ module RealSelf
       @@registered_handlers = {}
 
       def self.create(activity_prototype, content_type)
-        klasses = @@registered_handlers[content_type] ? @@registered_handlers[content_type][activity_prototype.to_s] : []
+        klasses = @@registered_handlers[content_type] ? @@registered_handlers[content_type][activity_prototype.to_s] : nil
 
         raise(
           HandlerFactoryError,
