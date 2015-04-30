@@ -1,4 +1,4 @@
-
+require 'core_ext/hash'
 
 require 'realself/stream/activity_handler_factory'
 require 'realself/stream/chum'

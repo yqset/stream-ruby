@@ -4,11 +4,15 @@ require 'spec_helper'
 describe RealSelf::Stream::Objekt do
 
   def example_hash
-    { :type => 'user', :id => '1234' }
+    { :type => 'User', :id => '1234' }
+  end
+
+  def example_hash_downcased
+    example_hash.hmap { |k, v| [k, v.downcase] }
   end
 
   def example_json
-    '{"type": "user", "id": "1234"}'
+    '{"type": "User", "id": "1234"}'
   end
 
   before :each do
@@ -47,7 +51,7 @@ describe RealSelf::Stream::Objekt do
 
   describe '#to_h' do
     it 'returns a hash' do
-      expect(@objekt.to_h).to eql example_hash
+      expect(@objekt.to_h).to eql example_hash_downcased
     end
   end
 
@@ -73,7 +77,7 @@ describe RealSelf::Stream::Objekt do
 
   describe '#to_s' do
     it 'returns a JSON string' do
-      expect(@objekt.to_s).to eql MultiJson.encode(example_hash)
+      expect(@objekt.to_s).to eql MultiJson.encode(example_hash_downcased)
     end
   end
 
