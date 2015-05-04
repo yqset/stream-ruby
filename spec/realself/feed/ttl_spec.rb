@@ -88,6 +88,10 @@ describe RealSelf::Feed::Ttl  do
 
       expect(@mongo_collection).to receive(:ensure_index)
         .once
+        .with({:'activity.uuid' => Mongo::DESCENDING, :'object.id' => Mongo::DESCENDING})
+
+      expect(@mongo_collection).to receive(:ensure_index)
+        .once
         .with(
           {:created => Mongo::ASCENDING},
           {:expireAfterSeconds => TestTtlFeed::FEED_TTL_SECONDS})
