@@ -51,6 +51,10 @@ describe RealSelf::Feed::Permanent  do
         .once
         .with({:'object.id' => Mongo::DESCENDING}, {:unique => true})
 
+      expect(@mongo_collection).to receive(:ensure_index)
+        .once
+        .with({:'activity.uuid' => Mongo::DESCENDING, :'object.id' => Mongo::DESCENDING})
+
       expect(@mongo_collection).to receive(:update)
         .with(
           @update_query,
