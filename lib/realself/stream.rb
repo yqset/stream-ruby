@@ -1,11 +1,11 @@
+require 'realself/content_type'
 
 require 'realself/stream/chum'
-require 'realself/stream/content_type'
 require 'realself/stream/coho'
 require 'realself/stream/factory'
 require 'realself/stream/publisher'
 require 'realself/stream/routing_key'
-require 'realself/stream/version'
+require 'realself/version'
 
 require 'realself/stream/activity/activity'
 require 'realself/stream/activity/error'

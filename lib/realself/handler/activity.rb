@@ -6,7 +6,7 @@ module RealSelf
         def register_handler(activity_prototype)
           RealSelf::Handler::Factory.register_handler(
             activity_prototype,
-            RealSelf::Stream::ContentType::ACTIVITY,
+            RealSelf::ContentType::ACTIVITY,
             self
           )
         end

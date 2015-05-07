@@ -37,6 +37,10 @@ module RealSelf
 
       alias :eql? :==
 
+      def content_type
+        ContentType::STREAM_ACTIVITY
+      end
+
       def hash
         to_h.hash
       end

@@ -4,16 +4,16 @@ SimpleCov.start
 
 begin
 
-  # activity objects
-  require 'realself/feed'
-  require 'realself/handler'
   require 'realself/stream'
+  require 'realself/handler'
+  require 'realself/feed'
   require 'realself/stream/digest/digest'
   require 'mongo'
 
+  require 'realself/stream/test/factory'
+
   # activity tests
   require_relative 'activity/helpers'
-
   require_relative './stream/activity/activity_shared_examples'
   require_relative './stream/activity/followed_activity_shared_examples'
 
