@@ -5,7 +5,6 @@ require 'realself/stream/coho'
 require 'realself/stream/factory'
 require 'realself/stream/publisher'
 require 'realself/stream/routing_key'
-require 'realself/version'
 
 require 'realself/stream/activity/activity'
 require 'realself/stream/activity/error'

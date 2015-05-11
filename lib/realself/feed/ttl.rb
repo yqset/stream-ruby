@@ -49,6 +49,11 @@ module RealSelf
           collection.ensure_index({:'object.id' => Mongo::HASHED})
           collection.ensure_index({:'object.id' => Mongo::DESCENDING}, {:unique => true})
           collection.ensure_index(
+            {
+              :'activity.uuid' => Mongo::DESCENDING,
+              :'object.id' => Mongo::DESCENDING
+            })
+          collection.ensure_index(
             {:created => Mongo::ASCENDING},
             {:expireAfterSeconds => self.class::FEED_TTL_SECONDS})
         end
