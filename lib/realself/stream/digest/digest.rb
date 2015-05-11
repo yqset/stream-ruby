@@ -103,6 +103,10 @@ module RealSelf
 
         alias :eql? :==
 
+        def content_type
+          ContentType::DIGEST_ACTIVITY
+        end
+
         def to_s
           MultiJson.encode(self.to_h)
         end

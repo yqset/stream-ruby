@@ -4,6 +4,8 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'realself/version'
 
 Gem::Specification.new do |gem|
+  gem.required_ruby_version = '~>2.2'
+
   gem.name          = "realself-stream"
   gem.version       = RealSelf::VERSION
   gem.authors       = ["Matt Towers"]
@@ -26,7 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec"
   # see Gemfile for test dependencies
 
-  gem.add_development_dependency "bson_ext", '1.12.1'
-  gem.add_development_dependency "mongo", '1.12.1'
+  gem.add_development_dependency "bson_ext", '1.9.2'
+  gem.add_development_dependency "mongo", '1.9.2'
   gem.add_development_dependency "pry-byebug"
 end

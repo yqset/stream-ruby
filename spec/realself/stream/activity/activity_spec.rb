@@ -19,6 +19,7 @@ describe RealSelf::Stream::Activity do
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV1
     end
 
+
     it "can create a version 2 activity" do
       activity = RealSelf::Stream::Activity.create(2,
         'sample activity title',
@@ -36,6 +37,7 @@ describe RealSelf::Stream::Activity do
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV2
     end
 
+
     it "fails to create an unknown activity version" do
       expect{RealSelf::Stream::Activity.create(0,
         'sample activity title',
@@ -50,6 +52,7 @@ describe RealSelf::Stream::Activity do
       )}.to raise_error
     end
   end
+
 
   describe "::from_json" do
     it "can create a version 1 activity" do
@@ -68,6 +71,7 @@ describe RealSelf::Stream::Activity do
       expect(activity.version).to eql 2
     end
   end
+
 
   describe "::from_hash" do
     it "can create a version 1 activity" do
@@ -89,6 +93,7 @@ describe RealSelf::Stream::Activity do
       expect{RealSelf::Stream::Activity.from_hash(example_hash)}.to raise_error
     end
   end
+
 
   describe '#==' do
     it 'compares two activities' do
@@ -115,6 +120,7 @@ describe RealSelf::Stream::Activity do
     end
   end
 
+
   describe "#hash" do
     it "supports hash key equality" do
       Activity::Helpers.init(2)
@@ -128,6 +134,13 @@ describe RealSelf::Stream::Activity do
       e[a2] = 123
 
       expect(e.include?(a1)).to eql(true)
+    end
+  end
+
+
+  describe '#content_type' do
+    it 'returns the expected content type' do
+      expect(RealSelf::Stream::Activity.new.content_type).to eql RealSelf::ContentType::ACTIVITY
     end
   end
 end

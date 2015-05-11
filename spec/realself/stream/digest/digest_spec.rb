@@ -2,10 +2,12 @@ describe RealSelf::Stream::Digest::Digest do
   include Digest::Helpers
   include RealSelf::Stream::Test::Factory
 
+
   before :each do
     @owner = RealSelf::Stream::Objekt.new('user', 2345)
     @digest = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400)
   end
+
 
   describe "#new" do
     it "takes three parameters and returns a new instance" do
@@ -20,6 +22,7 @@ describe RealSelf::Stream::Digest::Digest do
       expect(@digest.uuid.length).to eq(36)
     end
   end
+
 
   describe "#add" do
     it "takes a stream activity and adds it to the summary" do
@@ -43,6 +46,7 @@ describe RealSelf::Stream::Digest::Digest do
       expect(hash[:summaries][:question][question.id.to_sym][1][:public_note]).to eql true
     end
 
+
     it "takes two stream activities and creates two summaries" do
       activity = dr_author_answer_activity
       stream_activity = stream_activity(@owner, activity, [activity.target])
@@ -63,6 +67,7 @@ describe RealSelf::Stream::Digest::Digest do
       expect(hash[:summaries][:question][activity2.target.id.to_sym][1]).to be_an_instance_of(Hash)
     end
 
+
     it "does not store empty summaries" do
       activity = user_author_review_activity
       # reasons array only contains owner - User summary should be empty
@@ -79,6 +84,7 @@ describe RealSelf::Stream::Digest::Digest do
       expect(@digest.empty?).to eql false
     end
 
+
     it "raises an error when the stream_activity owner does not match the digest owner" do
       activity = dr_author_answer_activity
       stream_activity = stream_activity(nil, activity, [activity.target])
@@ -86,6 +92,7 @@ describe RealSelf::Stream::Digest::Digest do
       expect{ @digest.add(stream_activity) }. to raise_error
     end
   end
+
 
   describe "#==" do
     it "compares two identical digests" do
@@ -106,6 +113,7 @@ describe RealSelf::Stream::Digest::Digest do
       expect(digest).to eql digest2
     end
 
+
     it "compares two different digests" do
       digest = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400)
       digest2 = RealSelf::Stream::Digest::Digest.new(:subscriptions, @owner, 86400)
@@ -123,10 +131,12 @@ describe RealSelf::Stream::Digest::Digest do
       expect(digest).to_not eql digest2
     end
 
+
     it 'compares to nil' do
       digest = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400)
       expect(digest).to_not eql nil
     end
+
 
     it 'compares to other object types' do
       digest = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400)
@@ -136,6 +146,7 @@ describe RealSelf::Stream::Digest::Digest do
       expect(digest).to_not eql Exception.new('oops!')
     end
   end
+
 
   describe "#to_s" do
     it "converts the digest to a JSON string" do
@@ -157,6 +168,15 @@ describe RealSelf::Stream::Digest::Digest do
     end
   end
 
+
+  describe '#content_type' do
+    it 'returns the expected content type' do
+      digest = RealSelf::Stream::Digest::Digest.new(:notifications, @owner, 86400)
+      expect(digest.content_type).to eql RealSelf::ContentType::DIGEST_ACTIVITY
+    end
+  end
+
+
   describe "::from_hash" do
     it "creates a digest from a hash" do
       activity = dr_author_answer_activity
@@ -172,6 +192,7 @@ describe RealSelf::Stream::Digest::Digest do
     end
   end
 
+
   describe "::from_json" do
     it "creates a digest from a json string" do
       activity = dr_author_answer_activity
@@ -185,6 +206,7 @@ describe RealSelf::Stream::Digest::Digest do
       expect(@digest).to eql digest
     end
   end
+
 
   describe "#hash" do
     it 'supports hash key equality' do
