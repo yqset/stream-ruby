@@ -47,7 +47,7 @@ module RealSelf
           end
 
           collection.ensure_index({:'object.id' => Mongo::HASHED})
-          collection.ensure_index({:'object.id' => Mongo::DESCENDING}, {:unique => true})
+          collection.ensure_index({:'object.id' => Mongo::DESCENDING})
           collection.ensure_index(
             {
               :'activity.uuid' => Mongo::DESCENDING,

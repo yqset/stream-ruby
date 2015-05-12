@@ -84,7 +84,7 @@ describe RealSelf::Feed::Ttl  do
 
       expect(@mongo_collection).to receive(:ensure_index)
         .once
-        .with({:'object.id' => Mongo::DESCENDING}, {:unique => true})
+        .with({:'object.id' => Mongo::DESCENDING})
 
       expect(@mongo_collection).to receive(:ensure_index)
         .once
