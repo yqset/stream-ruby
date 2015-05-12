@@ -1,0 +1,7 @@
+experimental:
+  notify:
+    branches:
+      only:
+        - master # whitelisted branches
+      ignore:
+        - /*/ # disallow all non-whitelisted branches
