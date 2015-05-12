@@ -81,6 +81,13 @@ describe RealSelf::Stream::StreamActivity do
     end
   end
 
+  describe '#content_type' do
+    it 'returns the expected content type' do
+      expect(@stream_activity.content_type).to eql RealSelf::ContentType::STREAM_ACTIVITY
+    end
+  end
+
+
   describe "#reasons" do
     it "returns an array of Objekts" do
       expect(@stream_activity.reasons.length).to eql 2

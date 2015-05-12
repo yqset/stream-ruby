@@ -1,5 +1,3 @@
-require 'realself/stream/test/factory'
-
 module Digest
   module Helpers
 

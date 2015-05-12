@@ -1,3 +1,3 @@
-module Realself
-  VERSION = '0.4.1'
+module RealSelf
+  VERSION = '1.0.0'
 end

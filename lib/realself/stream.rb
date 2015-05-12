@@ -1,6 +1,6 @@
+require 'realself/content_type'
 
 require 'realself/stream/chum'
-require 'realself/stream/content_type'
 require 'realself/stream/coho'
 require 'realself/stream/factory'
 require 'realself/stream/publisher'

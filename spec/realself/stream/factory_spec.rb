@@ -31,12 +31,12 @@ describe RealSelf::Stream::Factory do
   describe "#self.from_hash" do
 
     it "raises an error for unknown content types" do
-      expect{RealSelf::Stream::Factory.from_hash('bogus-type', {})}.to raise_error RealSelf::Stream::ContentTypeError
+      expect{RealSelf::Stream::Factory.from_hash('bogus-type', {})}.to raise_error RealSelf::ContentTypeError
     end
 
     it "creates an activity" do
       activity = RealSelf::Stream::Factory.from_hash(
-        RealSelf::Stream::ContentType::ACTIVITY,
+        RealSelf::ContentType::ACTIVITY,
         @activity.to_h
       )
 
@@ -45,7 +45,7 @@ describe RealSelf::Stream::Factory do
 
     it "creates a digest" do
       activity = RealSelf::Stream::Factory.from_hash(
-        RealSelf::Stream::ContentType::DIGEST_ACTIVITY,
+        RealSelf::ContentType::DIGEST_ACTIVITY,
         @digest.to_h
       )
 
@@ -54,7 +54,7 @@ describe RealSelf::Stream::Factory do
 
     it "creates a stream activity" do
       activity = RealSelf::Stream::Factory.from_hash(
-        RealSelf::Stream::ContentType::STREAM_ACTIVITY,
+        RealSelf::ContentType::STREAM_ACTIVITY,
         @stream_activity.to_h
       )
 
@@ -67,12 +67,12 @@ describe RealSelf::Stream::Factory do
   describe "#self.from_json" do
 
     it "raises an error for unknown content types" do
-      expect{RealSelf::Stream::Factory.from_json('bogus-type', '')}.to raise_error RealSelf::Stream::ContentTypeError
+      expect{RealSelf::Stream::Factory.from_json('bogus-type', '')}.to raise_error RealSelf::ContentTypeError
     end
 
     it "creates an activity" do
       activity = RealSelf::Stream::Factory.from_json(
-        RealSelf::Stream::ContentType::ACTIVITY,
+        RealSelf::ContentType::ACTIVITY,
         @activity.to_s
       )
 
@@ -81,7 +81,7 @@ describe RealSelf::Stream::Factory do
 
     it "creates a digest" do
       activity = RealSelf::Stream::Factory.from_json(
-        RealSelf::Stream::ContentType::DIGEST_ACTIVITY,
+        RealSelf::ContentType::DIGEST_ACTIVITY,
         @digest.to_s
       )
 
@@ -90,7 +90,7 @@ describe RealSelf::Stream::Factory do
 
     it "creates a stream activity" do
       activity = RealSelf::Stream::Factory.from_json(
-        RealSelf::Stream::ContentType::STREAM_ACTIVITY,
+        RealSelf::ContentType::STREAM_ACTIVITY,
         @stream_activity.to_s
       )
 

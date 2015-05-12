@@ -55,6 +55,10 @@ module RealSelf
 
       alias :eql? :==
 
+      def content_type
+        ContentType::ACTIVITY
+      end
+
       def hash
         to_h.hash
       end

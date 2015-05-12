@@ -2,9 +2,11 @@ module RealSelf
   module Handler
     class Factory
 
-      @@registered_handlers = {}
+      @@registered_handlers   = {}
+      @@registered_enclosures = {}
 
-      def self.create(activity_prototype, content_type)
+
+      def self.create(activity_prototype, content_type, constructor_params = nil)
         klasses = @@registered_handlers[content_type] ? @@registered_handlers[content_type][activity_prototype.to_s] : nil
 
         raise(
@@ -13,14 +15,18 @@ module RealSelf
         )if klasses.nil?
 
         klasses.values.map do |klass|
-          handler = klass.new
-          yield handler if block_given?
-          # TODO: if/when we want to initialize handlers
-          # with default parameters, do it here before
-          # returning the new instance
-          # see http://joshrendek.com/2013/11/2-patterns-for-refactoring-with-your-ruby-application/
-          handler
+          constructor_params ? klass.new(**constructor_params) : klass.new
         end
+      end
+
+
+      def self.enclosure(queue_name)
+        @@registered_enclosures[queue_name.to_s] || Handler::Enclosure
+      end
+
+
+      def self.register_enclosure(queue_name, enclosure)
+        @@registered_enclosures[queue_name.to_s] = enclosure
       end
 
 
@@ -41,6 +47,11 @@ module RealSelf
           end
         end
         names
+      end
+
+
+      def self.registered_routing_keys(content_type)
+        @@registered_handlers[content_type].keys
       end
     end
 
