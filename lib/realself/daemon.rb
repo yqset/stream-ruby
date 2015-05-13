@@ -1,3 +1,8 @@
+module RealSelf
+  module Daemon
+  end
+end
+
 require 'sneakers'
 require 'sneakers/worker'
 require 'realself/content_type'

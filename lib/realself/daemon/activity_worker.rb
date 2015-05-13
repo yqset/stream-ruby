@@ -1,6 +1,6 @@
 module RealSelf
   module Daemon
-    class StreamActivityWorker
+    class ActivityWorker
       include Sneakers::Worker
       include RealSelf::Daemon::Worker
 

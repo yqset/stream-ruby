@@ -12,15 +12,15 @@ module RealSelf
 
 
       def work_with_params message, delivery_info, metadata
-        stream_activity = Stream::Factory.from_json self.class.content_type, message
+        activity        = Stream::Factory.from_json self.class.content_type, message
         enclosure       = Handler::Factory.enclosure self.class.queue_name
         handlers        = Handler::Factory.create(
-                            stream_activity.prototype,
-                            stream_activity.content_type,
+                            activity.prototype,
+                            activity.content_type,
                             self.class.handler_params)
 
         enclosure.handle do
-          handlers.each { |h| h.handle stream_activity }
+          handlers.each { |h| h.handle activity }
         end
       end
 
@@ -29,8 +29,11 @@ module RealSelf
         attr_accessor :content_type, :worker_options
         attr_reader   :configured, :handler_params
 
-        def configure(exchange_name:, queue_name:, handler_params: {}, enable_newrelic: false, enable_dlx: false, worker_options: WORKER_OPTIONS)
+        def configure(exchange_name:, queue_name:, enclosure: nil, handler_params: {}, enable_newrelic: false, enable_dlx: false, worker_options: WORKER_OPTIONS)
           @handler_params = handler_params
+          @queue_name     = queue_name
+
+          Handler::Factory.register_enclosure(queue_name, enclosure)
 
           worker_options[:exchange]    = exchange_name
           worker_options[:routing_key] = Handler::Factory.registered_routing_keys(self.content_type)
