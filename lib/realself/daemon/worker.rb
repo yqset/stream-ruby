@@ -47,6 +47,7 @@ module RealSelf
 
           if enable_newrelic
             include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
+            Sneakers::Metrics::NewrelicMetrics.eagent ::NewRelic
             add_transaction_tracer :work_with_params, name: 'MetricsWorker', params: 'args[0]'
           end
 
