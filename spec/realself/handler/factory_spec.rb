@@ -133,7 +133,7 @@ describe RealSelf::Handler::Factory do
 
     it "registers multiple handlers of different types" do
       handlers = RealSelf::Handler::Factory.registered_handlers
-      expect(handlers.size).to eql 6
+      expect(handlers.size).to eql 7  # one comes from worker_spec.rb
       expect(handlers.include?("#{RealSelf::ContentType::ACTIVITY} => test.message.type-1 => TestMessageType1Handler")).to be true
       expect(handlers.include?("#{RealSelf::ContentType::ACTIVITY} => test.message.type-2 => TestMessageType2Handler")).to be true
       expect(handlers.include?("#{RealSelf::ContentType::ACTIVITY} => test.message.type-2 => TestMessageType2Handler2")).to be true
