@@ -29,7 +29,7 @@ module RealSelf
         attr_accessor :content_type, :worker_options
         attr_reader   :configured, :handler_params
 
-        def configure(exchange_name:, queue_name:, enclosure: nil, handler_params: {}, enable_newrelic: false, enable_dlx: false, worker_options: WORKER_OPTIONS)
+        def configure(exchange_name:, queue_name:, enclosure: nil, handler_params: {}, enable_dlx: false, worker_options: WORKER_OPTIONS)
           @handler_params = handler_params
           @queue_name     = queue_name
 
@@ -47,12 +47,6 @@ module RealSelf
 
           # sneakers queue configuration
           from_queue queue_name, worker_options
-
-          if enable_newrelic
-            include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
-            Sneakers::Metrics::NewrelicMetrics.eagent ::NewRelic
-            add_transaction_tracer :work_with_params, name: 'MetricsWorker', params: 'args[0]'
-          end
 
           @configured = true
         end

@@ -49,21 +49,6 @@ describe RealSelf::Daemon::Worker do
         :enable_dlx    => true
       })
     end
-
-
-    it 'enables new relic when requested' do
-      expect(RealSelf::Daemon::ActivityWorker).to receive(:from_queue)
-        .with('test.queue', @worker_options)
-
-      expect(RealSelf::Daemon::ActivityWorker).to receive(:add_transaction_tracer)
-        .with(:work_with_params, name: 'MetricsWorker', params: 'args[0]')
-
-      RealSelf::Daemon::ActivityWorker.configure({
-        :exchange_name      => 'test.exchange',
-        :queue_name         => 'test.queue',
-        :enable_newrelic    => true
-      })
-    end
   end
 
 
@@ -108,7 +93,6 @@ describe RealSelf::Daemon::Worker do
         :enclosure          => TestEnclosure,
         :exchange_name      => 'test.exchange',
         :queue_name         => 'test.queue',
-        :enable_newrelic    => true,
         :handler_params     => {:test_handler => 'param1'}
       })
 

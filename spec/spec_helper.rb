@@ -7,13 +7,11 @@ end
 begin
 
   require 'mongo'
-  require 'newrelic_rpm'
   require 'realself/stream'
   require 'realself/handler'
   require 'realself/feed'
   require 'realself/daemon'
   require 'realself/stream/digest/digest'
-  require 'sneakers/metrics/newrelic_metrics'
 
   require 'realself/stream/test/factory'
 

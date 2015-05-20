@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    realself-stream (1.0.1)
+    realself-stream (1.0.2)
       bunny
       httparty
       json-schema
@@ -28,7 +28,7 @@ GEM
     coderay (1.1.0)
     columnize (0.9.0)
     diff-lcs (1.2.5)
-    httparty (0.13.3)
+    httparty (0.13.5)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     json (1.8.2)
@@ -39,7 +39,6 @@ GEM
       bson (~> 1.9.2)
     multi_json (1.10.1)
     multi_xml (0.5.5)
-    newrelic_rpm (3.12.0.288)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -81,7 +80,6 @@ PLATFORMS
 DEPENDENCIES
   bson_ext (= 1.9.2)
   mongo (= 1.9.2)
-  newrelic_rpm
   pry-byebug
   realself-stream!
   rspec
