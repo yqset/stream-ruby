@@ -19,3 +19,5 @@ require 'realself/stream/activity/v1/followed_activity_v1'
 require 'realself/stream/activity/v2/activity_v2'
 require 'realself/stream/activity/v2/followed_activity_v2'
 
+require 'realself/stream/digest/digest'
+
