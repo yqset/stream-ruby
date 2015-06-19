@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+include RealSelf::Stream::Test::Factory
+
 describe RealSelf::Feed::Capped  do
 
   class TestCappedFeed < RealSelf::Feed::Capped

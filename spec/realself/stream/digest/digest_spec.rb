@@ -1,3 +1,5 @@
+require_relative 'helpers'
+
 describe RealSelf::Stream::Digest::Digest do
   include Digest::Helpers
   include RealSelf::Stream::Test::Factory

@@ -10,7 +10,12 @@ module RealSelf
         end
 
         def from_hash(hash)
-          Objekt.new(hash[:type], hash[:id])
+          if hash.has_key? :type
+            Objekt.new(hash[:type].downcase, hash[:id])
+
+          else
+            Objekt.new(hash[:_type].downcase, hash[:_id])
+          end
         end
       end
 

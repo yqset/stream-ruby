@@ -1,7 +1,7 @@
 module Digest
   module Helpers
 
-    include RealSelf::Stream::Test::Factory
+    class TestSummary < RealSelf::Stream::Digest::A
 
     def self.init(commentable_class)
       @@commentable_class = commentable_class
@@ -37,7 +37,3 @@ module Digest
     end
   end
 end
-
-
-require_relative 'commentable_shared_examples'
-require_relative 'summary_shared_examples'
