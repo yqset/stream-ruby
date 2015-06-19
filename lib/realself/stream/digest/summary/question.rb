@@ -4,7 +4,9 @@ module RealSelf
   module Stream
     module Digest
       module Summary
-        class Question < AbstractSummary
+        class Question
+          include Summarizable
+
           def initialize(object)
             super
             @activities.merge!({:public_note => false, :answer => {:count => 0}})
@@ -25,7 +27,7 @@ module RealSelf
             @empty = false
           end
 
-          Summary.register_type(:question, self)
+          Digest.register_summary_type(:question, self)
         end
       end
     end

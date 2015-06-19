@@ -4,6 +4,14 @@ module RealSelf
       class Digest
         VERSION = 1
 
+        class DigestError < StandardError; end
+
+        @summary_klasses = {}
+
+        class << self
+          attr_accessor :summary_klasses
+        end
+
         def self.from_json(json, validate=true)
           hash = MultiJson.decode(json, { :symbolize_keys => true })
           from_hash(hash)
@@ -23,7 +31,8 @@ module RealSelf
 
             summary_hash.each do |object_id, summary_array|
               summary_object = RealSelf::Stream::Objekt.from_hash(summary_array[0])
-              summary = RealSelf::Stream::Digest::Summary.from_array(summary_array)
+              summary = Digest.summary_klasses[type.to_sym].new(summary_object)
+              summary.activities = summary_array[1]
               summaries[type][object_id] = [summary_object, summary]
             end
           end
@@ -32,6 +41,11 @@ module RealSelf
           prototype = hash[:prototype] || nil
 
           self.new(type, owner, interval, summaries, uuid, prototype)
+        end
+
+        def self.register_summary_type(type, klass)
+          Digest.summary_klasses ||= {}
+          Digest.summary_klasses[type.to_sym] = klass
         end
 
         attr_reader :type, :interval, :owner, :version, :summaries, :uuid, :prototype
@@ -109,19 +123,25 @@ module RealSelf
           MultiJson.encode(self.to_h)
         end
 
-        private
-
         ##
         # Create a summary
         #
         # @param [Stream::Objekt] object
         def create_summary(object)
-          summary = RealSelf::Stream::Digest::Summary.create(object)
+          type = object.type.to_sym
+
+          raise DigestError, "Summary type not registered: #{type}" unless self.class.summary_klasses[type]
+
+          summary = self.class.summary_klasses[type].new(object)
 
           @summaries[object.type.to_sym][object.id.to_sym] = [object, summary]
 
-          return summary
+          summary
         end
+
+
+        private
+
 
         def remove_empty_summaries
           @summaries.delete_if do |type, list|

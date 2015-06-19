@@ -1,7 +1,7 @@
 module Digest
   module Helpers
 
-    class TestSummary < RealSelf::Stream::Digest::A
+    # include RealSelf::Stream::Test::Factory
 
     def self.init(commentable_class)
       @@commentable_class = commentable_class

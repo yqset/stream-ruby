@@ -21,7 +21,7 @@ require 'realself/stream/activity/v2/activity_v2'
 require 'realself/stream/activity/v2/followed_activity_v2'
 
 require 'realself/stream/digest/digest'
-require 'realself/stream/digest/summary'
+require 'realself/stream/digest/summarizable'
 
 
 

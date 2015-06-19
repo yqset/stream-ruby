@@ -4,7 +4,9 @@ module RealSelf
   module Stream
     module Digest
       module Summary
-        class Topic < AbstractSummary
+        class Topic
+          include Summarizable
+
           def initialize(object)
             super
             hash = {
@@ -42,7 +44,7 @@ module RealSelf
             @empty = false
           end
 
-          Summary.register_type(:topic, self)
+          Digest.register_summary_type(:topic, self)
         end
       end
     end

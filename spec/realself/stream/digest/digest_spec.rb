@@ -1,4 +1,7 @@
 require_relative 'helpers'
+require 'realself/stream/digest/summary/question'
+require 'realself/stream/digest/summary/topic'
+require 'realself/stream/digest/summary/user'
 
 describe RealSelf::Stream::Digest::Digest do
   include Digest::Helpers
