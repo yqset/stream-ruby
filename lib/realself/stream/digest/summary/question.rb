@@ -24,6 +24,8 @@ module RealSelf
 
             @empty = false
           end
+
+          Summary.register_type(:question, self)
         end
       end
     end

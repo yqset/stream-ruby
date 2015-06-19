@@ -23,6 +23,8 @@ module RealSelf
 
             @empty = false
           end
+
+          Summary.register_type(:user_message, self)
         end
       end
     end

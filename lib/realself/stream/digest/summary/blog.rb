@@ -5,7 +5,7 @@ module RealSelf
     module Digest
       module Summary
         class Blog < CommentableSummary
-
+          Summary.register_type(:blog, self)
         end
       end
     end

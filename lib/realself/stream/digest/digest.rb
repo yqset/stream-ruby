@@ -1,5 +1,3 @@
-require 'realself/stream/digest/summary'
-
 module RealSelf
   module Stream
     module Digest

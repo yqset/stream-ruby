@@ -5,9 +5,9 @@ module RealSelf
     module Digest
       module Summary
         class Guide < CommentableSummary
-          
+          Summary.register_type(:guide, self)
         end
-      end  
+      end
     end
   end
 end

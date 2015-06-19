@@ -1,31 +1,21 @@
-# These two need to be required first, because the rest of the summaries depend on them
-require 'realself/stream/digest/summary/abstract_summary'
-require 'realself/stream/digest/summary/commentable_summary'
-
-# And now require the rest
-Dir[File.dirname(__FILE__) + '/summary/*.rb'].each {|file| require file }
-
 module RealSelf
   module Stream
     module Digest
       module Summary
+        class SummaryError < StandardError; end
+
+        @summary_klasses = {}
 
         ##
         # Factory method to construct a new Summary, based on the type of object given
         #
         # @param [Stream::Objekt] object
         def self.create(object)
-          begin
-            # convert object type to camel case
-            # http://stackoverflow.com/questions/4072159/classify-a-ruby-string
-            classname = object.type.split('_').collect(&:capitalize).join
+          type = object.type.to_sym
 
-            # create an instance of the summary
-            klass = RealSelf::Stream::Digest::Summary.const_get(classname)
-            klass.new(object)
-          rescue Exception => e
-            raise "Failed to create unknown summary object type:  #{classname}"
-          end
+          raise SummaryError, "Summary type not registered: #{type}" unless @summary_klasses[type]
+
+          @summary_klasses[type].new(object)
         end
 
         def self.from_json(json, validate=true)
@@ -41,7 +31,13 @@ module RealSelf
 
           summary
         end
+
+
+        def self.register_type(type, klass)
+          @summary_klasses[type.to_sym] = klass
+        end
       end
     end
   end
 end
+

@@ -22,6 +22,8 @@ module RealSelf
 
             @empty = false
           end
+
+          Summary.register_type(:review, self)
         end
       end
     end

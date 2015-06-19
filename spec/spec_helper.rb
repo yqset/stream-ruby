@@ -5,7 +5,7 @@ SimpleCov.start do
 end
 
 begin
-
+  require 'pry-byebug'
   require 'mongo'
   require 'realself/stream'
   require 'realself/handler'

@@ -41,6 +41,8 @@ module RealSelf
 
             @empty = false
           end
+
+          Summary.register_type(:topic, self)
         end
       end
     end

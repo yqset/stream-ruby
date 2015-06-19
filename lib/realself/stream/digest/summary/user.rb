@@ -41,6 +41,8 @@ module RealSelf
 
             @empty = false
           end
+
+          Summary.register_type(:user, self)
         end
       end
     end

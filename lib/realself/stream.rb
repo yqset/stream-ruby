@@ -20,4 +20,12 @@ require 'realself/stream/activity/v2/activity_v2'
 require 'realself/stream/activity/v2/followed_activity_v2'
 
 require 'realself/stream/digest/digest'
+require 'realself/stream/digest/summary'
 
+
+
+# RealSelf-speicific
+# TODO: move these classes to steelhead-daemon
+# require 'realself/stream/digest/summary/abstract_summary'
+# require 'realself/stream/digest/summary/commentable_summary'
+# Dir[File.dirname(__FILE__) + '/stream/digest/summary/*.rb'].each {|file| require file }

@@ -52,6 +52,8 @@ module RealSelf
 
             @empty = false
           end
+
+          Summary.register_type(:dr, self)
         end
       end
     end
