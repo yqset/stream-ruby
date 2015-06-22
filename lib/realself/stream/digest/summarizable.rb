@@ -5,6 +5,10 @@ module RealSelf
         attr_accessor :activities
 
         def initialize(object)
+          if object.type.to_sym != self.class::SUMMARY_TYPE
+            raise ArgumentError, "Summary type mismatch for object: #{object.to_s}"
+          end
+
           @empty = true
           @object = object.to_h
           @activities = {}

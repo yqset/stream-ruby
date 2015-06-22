@@ -12,6 +12,20 @@ module RealSelf
           attr_accessor :summary_klasses
         end
 
+
+        ##
+        # Create a summary
+        #
+        # @param [Stream::Objekt] object
+        def self.create_summary(object)
+          type = object.type.to_sym
+
+          raise DigestError, "Summary type not registered: #{type}" unless Digest.summary_klasses[type]
+
+          Digest.summary_klasses[type].new(object)
+        end
+
+
         def self.from_json(json, validate=true)
           hash = MultiJson.decode(json, { :symbolize_keys => true })
           from_hash(hash)
@@ -66,7 +80,7 @@ module RealSelf
         # @param [StreamActivity] stream_activity
         def add(stream_activity)
           unless stream_activity.object == @owner
-            raise ArgumentError, "stream activity does not belong to current digest owner: #{owner.to_s}"
+            raise DigestError, "stream activity does not belong to current digest owner: #{owner.to_s}"
           end
 
           # A "reason" is a Stream::Objekt
@@ -75,8 +89,8 @@ module RealSelf
             summary.add(stream_activity)
           end
 
-          # This is only necessary because we allow for the creation of
-          # empty summaries - See 'else' clause in User::add
+          # Make sure the call to add() actually did something
+          # If not, remove the empty summary
           remove_empty_summaries
         end
 
@@ -123,22 +137,6 @@ module RealSelf
           MultiJson.encode(self.to_h)
         end
 
-        ##
-        # Create a summary
-        #
-        # @param [Stream::Objekt] object
-        def create_summary(object)
-          type = object.type.to_sym
-
-          raise DigestError, "Summary type not registered: #{type}" unless self.class.summary_klasses[type]
-
-          summary = self.class.summary_klasses[type].new(object)
-
-          @summaries[object.type.to_sym][object.id.to_sym] = [object, summary]
-
-          summary
-        end
-
 
         private
 
@@ -168,7 +166,7 @@ module RealSelf
           @summaries[object.type.to_sym] = @summaries[object.type.to_sym] || {}
 
           # Create a new summary if we haven't already for this type/id pair
-          @summaries[object.type.to_sym][object.id.to_sym] || create_summary(object)
+          @summaries[object.type.to_sym][object.id.to_sym] ||= [object, Digest.create_summary(object)]
 
           # Return the 'summary' part of the summary object
           @summaries[object.type.to_sym][object.id.to_sym][1]

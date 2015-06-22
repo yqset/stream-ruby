@@ -1,8 +1,8 @@
 require 'spec_helper'
-
-include RealSelf::Stream::Test::Factory
+require_relative '../helpers'
 
 describe RealSelf::Feed::Capped  do
+  include Helpers
 
   class TestCappedFeed < RealSelf::Feed::Capped
     FEED_NAME = :capped_feed_test.freeze
@@ -14,7 +14,7 @@ describe RealSelf::Feed::Capped  do
     @mongo_db = double('Mongo::DB')
     @mongo_collection = double('Mongo::Collection')
 
-    activity = Activity::Helpers.example_activity
+    activity = Helpers.example_activity
 
     reason = RealSelf::Stream::Objekt.new('review', '9989')
 
@@ -119,12 +119,12 @@ describe RealSelf::Feed::Capped  do
     before(:each) do
       @default_count    = RealSelf::Feed::Getable::FEED_DEFAULT_PAGE_SIZE
 
-      uar = user_author_review_activity
-      daa = dr_author_answer_activity
-      dup = dr_upload_photo_activity
+      uct  = user_create_thing_activity
+      uut  = user_update_thing_activity
+      uct2 = user_create_thing_activity
 
       results = []
-      [uar, daa, dup].each do |activity|
+      [uct, uut, uct2].each do |activity|
         sa = RealSelf::Stream::StreamActivity.new(@feed_owner, activity, [activity.actor])
         results << sa.to_h
       end

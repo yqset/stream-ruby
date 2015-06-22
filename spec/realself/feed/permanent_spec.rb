@@ -13,7 +13,7 @@ describe RealSelf::Feed::Permanent  do
     @mongo_collection = double('Mongo::Collection')
     @collection_name = "#{@feed_owner.type}.#{TestPermanentFeed::FEED_NAME}"
 
-    activity = Activity::Helpers.example_activity
+    activity = Helpers.example_activity
 
     @stream_activity = RealSelf::Stream::StreamActivity.new(
       @feed_owner,

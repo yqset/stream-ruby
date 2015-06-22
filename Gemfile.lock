@@ -7,12 +7,6 @@ PATH
       json-schema
       multi_json
 
-GIT
-  remote: ssh://git@github.com/RealSelf/stream-test-ruby.git
-  revision: daaa08072755e5ee180caa249f529e2fe5fc7153
-  specs:
-    stream-test (0.0.13)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -85,4 +79,3 @@ DEPENDENCIES
   rspec
   simplecov (~> 0.7.1)
   sneakers (= 1.0.4)
-  stream-test (= 0.0.13)!

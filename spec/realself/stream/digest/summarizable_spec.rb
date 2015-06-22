@@ -1,4 +1,4 @@
-describe RealSelf::Stream::Digest::Summary do
+describe RealSelf::Stream::Digest::Summarizable do
 
   # it_should_behave_like "a summary", RealSelf::Stream::Digest::Summary::Blog
   # it_should_behave_like "a summary", RealSelf::Stream::Digest::Summary::Discussion

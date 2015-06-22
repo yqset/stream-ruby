@@ -51,13 +51,14 @@ describe RealSelf::Feed::Getable do
       @default_count    = RealSelf::Feed::Getable::FEED_DEFAULT_PAGE_SIZE
       @default_results  = []
 
-      uar = user_author_review_activity
-      daa = dr_author_answer_activity
-      dup = dr_upload_photo_activity
+      uct  = user_create_thing_activity
+      uut  = user_update_thing_activity
+      uct2 = user_create_thing_activity
 
-      [uar, daa, dup].each do |activity|
+      results = []
+      [uct, uut, uct2].each do |activity|
         sa = RealSelf::Stream::StreamActivity.new(@feed_owner, activity, [activity.actor])
-        @default_results << sa.to_h
+        results << sa.to_h
       end
 
       @default_response = {
