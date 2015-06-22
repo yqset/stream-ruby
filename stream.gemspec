@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.description   = "Standard classes for interacting with RealSelf activity stream services"
   gem.summary       = ""
   gem.homepage      = "https://github.com/RealSelf/stream-ruby"
-  gem.license       = "(c) 2014 RealSelf, Inc. All Rights Reserved"
+  gem.license       = "(c) #{Time.now.year} RealSelf, Inc. All Rights Reserved"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
