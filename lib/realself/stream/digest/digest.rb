@@ -1,10 +1,30 @@
-require 'realself/stream/digest/summary'
-
 module RealSelf
   module Stream
     module Digest
       class Digest
         VERSION = 1
+
+        class DigestError < StandardError; end
+
+        @summary_klasses = {}
+
+        class << self
+          attr_accessor :summary_klasses
+        end
+
+
+        ##
+        # Create a summary
+        #
+        # @param [Stream::Objekt] object
+        def self.create_summary(object)
+          type = object.type.to_sym
+
+          raise DigestError, "Summary type not registered: #{type}" unless Digest.summary_klasses[type]
+
+          Digest.summary_klasses[type].new(object)
+        end
+
 
         def self.from_json(json, validate=true)
           hash = MultiJson.decode(json, { :symbolize_keys => true })
@@ -25,7 +45,8 @@ module RealSelf
 
             summary_hash.each do |object_id, summary_array|
               summary_object = RealSelf::Stream::Objekt.from_hash(summary_array[0])
-              summary = RealSelf::Stream::Digest::Summary.from_array(summary_array)
+              summary = Digest.summary_klasses[type.to_sym].new(summary_object)
+              summary.activities = summary_array[1]
               summaries[type][object_id] = [summary_object, summary]
             end
           end
@@ -34,6 +55,11 @@ module RealSelf
           prototype = hash[:prototype] || nil
 
           self.new(type, owner, interval, summaries, uuid, prototype)
+        end
+
+        def self.register_summary_type(type, klass)
+          Digest.summary_klasses ||= {}
+          Digest.summary_klasses[type.to_sym] = klass
         end
 
         attr_reader :type, :interval, :owner, :version, :summaries, :uuid, :prototype
@@ -54,7 +80,7 @@ module RealSelf
         # @param [StreamActivity] stream_activity
         def add(stream_activity)
           unless stream_activity.object == @owner
-            raise ArgumentError, "stream activity does not belong to current digest owner: #{owner.to_s}"
+            raise DigestError, "stream activity does not belong to current digest owner: #{owner.to_s}"
           end
 
           # A "reason" is a Stream::Objekt
@@ -63,8 +89,8 @@ module RealSelf
             summary.add(stream_activity)
           end
 
-          # This is only necessary because we allow for the creation of
-          # empty summaries - See 'else' clause in User::add
+          # Make sure the call to add() actually did something
+          # If not, remove the empty summary
           remove_empty_summaries
         end
 
@@ -111,19 +137,9 @@ module RealSelf
           MultiJson.encode(self.to_h)
         end
 
+
         private
 
-        ##
-        # Create a summary
-        #
-        # @param [Stream::Objekt] object
-        def create_summary(object)
-          summary = RealSelf::Stream::Digest::Summary.create(object)
-
-          @summaries[object.type.to_sym][object.id.to_sym] = [object, summary]
-
-          return summary
-        end
 
         def remove_empty_summaries
           @summaries.delete_if do |type, list|
@@ -150,7 +166,7 @@ module RealSelf
           @summaries[object.type.to_sym] = @summaries[object.type.to_sym] || {}
 
           # Create a new summary if we haven't already for this type/id pair
-          @summaries[object.type.to_sym][object.id.to_sym] || create_summary(object)
+          @summaries[object.type.to_sym][object.id.to_sym] ||= [object, Digest.create_summary(object)]
 
           # Return the 'summary' part of the summary object
           @summaries[object.type.to_sym][object.id.to_sym][1]

@@ -2,7 +2,7 @@ describe RealSelf::Stream::FollowedActivityV2, "with a v2 followed activity" do
 
   describe "#to_activity" do
     it "creates an ActivityV2 object from a FollowedActivityV2" do
-      Activity::Helpers.init(2)
+      Helpers.init(2)
       followed_activity = RealSelf::Stream::FollowedActivity.from_json(MultiJson.encode(followed_activity(1234)))
       activity = followed_activity.to_activity
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV2

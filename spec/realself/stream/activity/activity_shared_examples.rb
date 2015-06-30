@@ -1,11 +1,11 @@
 RSpec.configure do |c|
-  c.include Activity::Helpers
+  c.include Helpers
 end
 
 shared_examples "an activity" do |activity_version|
 
   before :each do
-    Activity::Helpers.init(activity_version)
+    Helpers.init(activity_version)
     @activity = RealSelf::Stream::Activity.from_json(example_activity.to_s)
   end
 

@@ -1,17 +1,11 @@
 PATH
   remote: .
   specs:
-    realself-stream (1.0.2)
+    realself-stream (1.1.0)
       bunny
       httparty
       json-schema
       multi_json
-
-GIT
-  remote: ssh://git@github.com/RealSelf/stream-test-ruby.git
-  revision: 8612cf1e2869e73a19971cebc91057656a3648e7
-  specs:
-    stream-test (0.0.9)
 
 GEM
   remote: https://rubygems.org/
@@ -85,4 +79,3 @@ DEPENDENCIES
   rspec
   simplecov (~> 0.7.1)
   sneakers (= 1.0.4)
-  stream-test (= 0.0.9)!

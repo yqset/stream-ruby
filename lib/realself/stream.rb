@@ -1,7 +1,8 @@
-require 'realself/content_type'
+require 'core_ext/hash'
 
 require 'realself/stream/chum'
 require 'realself/stream/coho'
+require 'realself/content_type'
 require 'realself/stream/factory'
 require 'realself/stream/publisher'
 require 'realself/stream/routing_key'
@@ -20,4 +21,4 @@ require 'realself/stream/activity/v2/activity_v2'
 require 'realself/stream/activity/v2/followed_activity_v2'
 
 require 'realself/stream/digest/digest'
-
+require 'realself/stream/digest/summarizable'

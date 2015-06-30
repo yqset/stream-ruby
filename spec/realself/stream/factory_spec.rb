@@ -1,5 +1,5 @@
 RSpec.configure do |c|
-  c.include Activity::Helpers
+  c.include Helpers
 end
 
 describe RealSelf::Stream::Factory do

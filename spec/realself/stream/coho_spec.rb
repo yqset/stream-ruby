@@ -78,7 +78,7 @@ describe RealSelf::Stream::Coho do
 
   describe "#followedby" do
     it 'validates a successful response and parses the response body in to an array of Objekts' do
-      Activity::Helpers.init(1)
+      Helpers.init(1)
       objekts = objekts_array.map { |obj| obj.to_h }
 
       response = double('Response', :code => 200, :body => MultiJson.encode(objekts))
@@ -92,7 +92,7 @@ describe RealSelf::Stream::Coho do
 
   describe "#followersof" do
     it 'validates a successful response and parses the response body in to an array of Objekts' do
-      Activity::Helpers.init(1)
+      Helpers.init(1)
       objekts = objekts_array.map { |obj| obj.to_h }
 
       response = double('Response', :code => 200, :body => MultiJson.encode(objekts))
@@ -115,7 +115,7 @@ describe RealSelf::Stream::Coho do
     end
 
     it 'does not an exception when the response code is 200' do
-      Activity::Helpers.init(1)
+      Helpers.init(1)
       objekts = objekts_array.map { |obj| obj.to_h }
 
       response = double('Response', :code => 200, :body => MultiJson.encode(objekts))

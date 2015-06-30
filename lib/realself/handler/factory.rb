@@ -56,7 +56,6 @@ module RealSelf
     end
 
 
-    class HandlerFactoryError < StandardError
-    end
+    class HandlerFactoryError < StandardError; end
   end
 end

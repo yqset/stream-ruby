@@ -56,7 +56,7 @@ describe RealSelf::Stream::Activity do
 
   describe "::from_json" do
     it "can create a version 1 activity" do
-      Activity::Helpers.init(1)
+      Helpers.init(1)
       json = MultiJson.encode(example_hash)
       activity = RealSelf::Stream::Activity.from_json(json)
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV1
@@ -64,7 +64,7 @@ describe RealSelf::Stream::Activity do
     end
 
     it "can create a version 2 activity" do
-      Activity::Helpers.init(2)
+      Helpers.init(2)
       json = MultiJson.encode(example_hash)
       activity = RealSelf::Stream::Activity.from_json(json)
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV2
@@ -75,21 +75,21 @@ describe RealSelf::Stream::Activity do
 
   describe "::from_hash" do
     it "can create a version 1 activity" do
-      Activity::Helpers.init(1)
+      Helpers.init(1)
       activity = RealSelf::Stream::Activity.from_hash(example_hash)
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV1
       expect(activity.version).to eql 1
     end
 
     it "can create a version 2 activity" do
-      Activity::Helpers.init(2)
+      Helpers.init(2)
       activity = RealSelf::Stream::Activity.from_hash(example_hash)
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV2
       expect(activity.version).to eql 2
     end
 
     it "raises an error when trying to create an unknown version" do
-      Activity::Helpers.init(0)
+      Helpers.init(0)
       expect{RealSelf::Stream::Activity.from_hash(example_hash)}.to raise_error
     end
   end
@@ -97,22 +97,22 @@ describe RealSelf::Stream::Activity do
 
   describe '#==' do
     it 'compares two activities' do
-      activity = Activity::Helpers.init(2)
-      other = Activity::Helpers.init(2)
+      activity = Helpers.init(2)
+      other = Helpers.init(2)
 
       expect(activity).to eql other
 
-      other = Activity::Helpers.init(1)
+      other = Helpers.init(1)
       expect(activity).to_not eql other
     end
 
     it 'compares to nil' do
-      activity = Activity::Helpers.init(2)
+      activity = Helpers.init(2)
       expect(activity).to_not eql nil
     end
 
     it 'compares to other object types' do
-      activity = Activity::Helpers.init(2)
+      activity = Helpers.init(2)
       expect(activity).to_not eql RealSelf::Stream::Objekt.new('user', 1234)
       expect(activity).to_not eql 'string'
       expect(activity).to_not eql({:foo => 'bar'})
@@ -123,7 +123,7 @@ describe RealSelf::Stream::Activity do
 
   describe "#hash" do
     it "supports hash key equality" do
-      Activity::Helpers.init(2)
+      Helpers.init(2)
       a1 = RealSelf::Stream::Activity.from_hash(example_hash)
 
       a2 = RealSelf::Stream::Activity.from_hash(example_hash)
