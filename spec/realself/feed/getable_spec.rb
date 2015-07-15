@@ -74,7 +74,7 @@ describe RealSelf::Feed::Getable do
           @default_options)
         .and_return(@mongo_collection)
 
-      expect(@mongo_collection). to receive(:sort)
+      expect(@mongo_collection).to receive(:sort)
         .with(:_id => :desc)
         .and_return(@mongo_cursor)
 

@@ -17,6 +17,7 @@ describe RealSelf::Feed::UnreadCountable do
   before(:each) do
     @mongo_db = double('Mongo::DB')
     @mongo_collection = double('Mongo::Collection')
+    @mongo_cursor     = double('Mongo::Cursor')
 
     @owner = RealSelf::Stream::Objekt.new('user', '1234')
 
@@ -72,6 +73,106 @@ describe RealSelf::Feed::UnreadCountable do
     end
   end
 
+
+  describe '#find_with_unread' do
+    before(:each) do
+      collection_name = "#{@owner.type}.#{TestUnreadCount::FEED_NAME}.unread_count"
+
+      expect(@mongo_db).to receive(:collection)
+        .with(collection_name)
+        .and_return(@mongo_collection)
+
+      expect(@mongo_collection).to receive(:name)
+        .and_return(collection_name)
+
+      expect(@mongo_collection).to receive(:ensure_index)
+        .once
+        .with({:owner_id => Mongo::HASHED})
+
+      expect(@mongo_collection).to receive(:ensure_index)
+        .once
+        .with({:owner_id => Mongo::DESCENDING}, {:unique => true})
+    end
+
+
+    it "uses the correct mongo query and formats the results" do
+      object_id = BSON::ObjectId.new
+
+      query = {
+        :_id => {
+          :'$gt' => object_id
+        },
+        :count => {
+          :'$gte' => 1
+        }
+      }
+
+      raw_result = [
+        {
+          '_id'       => BSON::ObjectId.from_string('000000000000000000000000'),
+          'count'     => 10,
+          'owner_id'  => '123456'
+        }
+      ]
+
+      formatted_result = [
+        {
+          'id'       => '000000000000000000000000',
+          'count'     => 10,
+          'owner_id'  => '123456'
+        }
+      ]
+
+      expect(@mongo_collection).to receive(:find)
+        .with(query)
+        .and_return(@mongo_collection)
+
+      expect(@mongo_collection).to receive(:limit)
+        .with(10)
+        .and_return(@mongo_cursor)
+
+      expect(@mongo_cursor).to receive(:to_a)
+        .and_return(raw_result)
+
+      result = @test_feed.find_with_unread(:user, 1, 10, object_id.to_s)
+
+      expect(result).to eql formatted_result
+    end
+  end
+
+
+  describe "#get_unread_count" do
+    before(:each) do
+      collection_name = "#{@owner.type}.#{TestUnreadCount::FEED_NAME}.unread_count"
+
+      expect(@mongo_db).to receive(:collection)
+        .with(collection_name)
+        .and_return(@mongo_collection)
+
+      expect(@mongo_collection).to receive(:name)
+        .and_return(collection_name)
+
+      expect(@mongo_collection).to receive(:ensure_index)
+        .once
+        .with({:owner_id => Mongo::HASHED})
+
+      expect(@mongo_collection).to receive(:ensure_index)
+        .once
+        .with({:owner_id => Mongo::DESCENDING}, {:unique => true})
+    end
+
+    it "uses the correct mongo query" do
+      expect(@mongo_collection).to receive(:find_one)
+        .with(
+          {:owner_id => @owner.id},
+          {:fields => {:_id => 0}})
+        .and_return({:owner_id => @owner.id, :count => 1})
+
+      result = @test_feed.get_unread_count(@owner)
+
+      expect(result[:count]).to eql 1
+    end
+  end
 
   describe "#increment_unread_count" do
     before(:each) do

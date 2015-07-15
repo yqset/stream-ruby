@@ -30,6 +30,56 @@ module RealSelf
 
 
       ##
+      # Find objects with greater than a specified number of unread items in the feed
+      #
+      # @param [String] owner_type    The type of object that owns the feed (e.g. 'user')
+      # @param [int] min_unread_count (optional) The minimum number of unread items the object must have.  default = 1
+      # @param [int] limit            (optional) The maximum number of records to return
+      # @param [String] last_id       (optional) The document ID of the last item in the previous page. default = nil
+      #
+      # @return [Array] An array of hashes [{'id' : [document id], 'owner_id': [id], 'count': [count]}]
+      def find_with_unread(owner_type, min_unread_count = 1, limit = 100, last_id = nil)
+        object_id = last_id || '000000000000000000000000'
+
+        query = {
+          :_id => {
+            :'$gt' => BSON::ObjectId.from_string(object_id)
+          },
+          :count => {
+            :'$gte' => min_unread_count
+          }
+        }
+
+        result = unread_count_collection(owner_type).find(query)
+          .limit(limit)
+          .to_a
+
+        # return the '_id' field as 'id'
+        # NOTE: hashes returned from mongo use string-based keys
+        result.each do |item|
+          item['id'] = item['_id'].to_s
+          item.delete('_id')
+        end
+
+        result
+      end
+
+      ##
+      # Retrieve the number of unread items for the current feed and owner
+      #
+      # @param [Objekt] The feed owner
+      #
+      # @return [Hash] {:owner_id => [owner.id], :count => 0}
+      def get_unread_count(owner)
+        result = unread_count_collection(owner.type).find_one(
+          {:owner_id => owner.id},
+          {:fields => {:_id => 0}}
+        )
+
+        result ||  {:owner_id => owner.id, :count => 0}
+      end
+
+      ##
       # Increment the unread count by 1 for the feed owner in the containing feed
       # up to MAX_FEED_SIZE if specified or 2147483647
       #
@@ -94,7 +144,7 @@ module RealSelf
       # Execute the mongo update
       def unread_count_do_update(owner, args)
         begin
-          unread_count_collection(owner).find_and_modify(args)
+          unread_count_collection(owner.type).find_and_modify(args)
         rescue Mongo::OperationFailure => ex
           raise ex unless self.class::MONGO_ERROR_DUPLICATE_KEY == ex.error_code
         end
@@ -103,8 +153,8 @@ module RealSelf
 
       ##
       # Get the mongo collection object
-      def unread_count_collection(owner)
-        collection = @mongo_db.collection("#{owner.type}.#{self.class::FEED_NAME}.unread_count")
+      def unread_count_collection(owner_type)
+        collection = @mongo_db.collection("#{owner_type}.#{self.class::FEED_NAME}.unread_count")
 
         unless @@mongo_indexes["#{collection.name}.owner_id"]
           collection.ensure_index({:owner_id => Mongo::HASHED})
