@@ -29,8 +29,16 @@ module RealSelf
       end
 
 
-
-      def find_with_unread_count(owner_type, min_unread_count, limit = 100, last_id = nil)
+      ##
+      # Find objects with greater than a specified number of unread items in the feed
+      #
+      # @param [String] owner_type    The type of object that owns the feed (e.g. 'user')
+      # @param [int] min_unread_count (optional) The minimum number of unread items the object must have.  default = 1
+      # @param [int] limit            (optional) The maximum number of records to return
+      # @param [String] last_id       (optional) The document ID of the last item in the previous page. default = nil
+      #
+      # @return [Array] An array of hashes [{'id' : [document id], 'owner_id': [id], 'count': [count]}]
+      def find_with_unread(owner_type, min_unread_count = 1, limit = 100, last_id = nil)
         object_id = last_id || '000000000000000000000000'
 
         query = {
@@ -56,7 +64,12 @@ module RealSelf
         result
       end
 
-
+      ##
+      # Retrieve the number of unread items for the current feed and owner
+      #
+      # @param [Objekt] The feed owner
+      #
+      # @return [Hash] {:owner_id => [owner.id], :count => 0}
       def get_unread_count(owner)
         result = unread_count_collection(owner.type).find_one(
           {:owner_id => owner.id},

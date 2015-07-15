@@ -74,7 +74,7 @@ describe RealSelf::Feed::UnreadCountable do
   end
 
 
-  describe '#find_with_unread_count' do
+  describe '#find_with_unread' do
     before(:each) do
       collection_name = "#{@owner.type}.#{TestUnreadCount::FEED_NAME}.unread_count"
 
@@ -134,7 +134,7 @@ describe RealSelf::Feed::UnreadCountable do
       expect(@mongo_cursor).to receive(:to_a)
         .and_return(raw_result)
 
-      result = @test_feed.find_with_unread_count(:user, 1, 10, object_id.to_s)
+      result = @test_feed.find_with_unread(:user, 1, 10, object_id.to_s)
 
       expect(result).to eql formatted_result
     end
