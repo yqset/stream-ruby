@@ -129,7 +129,7 @@ describe RealSelf::Feed::Capped  do
         results << sa.to_h
       end
 
-      @default_results = [{'feed' => results}]
+      @default_results = results
 
       @default_query = [
         {:'$match'    => {:"object.id" => @feed_owner.id}},
@@ -139,25 +139,19 @@ describe RealSelf::Feed::Capped  do
         {:'$limit'    => @default_count},
         {:'$project'  =>
           {
-            :"feed.id"        => "$feed._id",
-            :"feed.activity"  => 1,
-            :"feed.reasons"   => 1
-          }
-        },
-        {:'$group' =>
-          {
-            :_id    => "$_id",
-            :feed  => {:'$addToSet' => "$feed"}
+            :'_id' => '$feed._id',
+            :'activity' => '$feed.activity',
+            :'reasons' => '$feed.reasons'
           }
         }
       ]
 
 
       @default_response = {
-        :count        => @default_results[0]['feed'].length,
+        :count        => @default_results.length,
         :before       => nil,
         :after        => nil,
-        :stream_items => @default_results[0]['feed']
+        :stream_items => @default_results
       }
 
       allow(@mongo_db).to receive(:collection)

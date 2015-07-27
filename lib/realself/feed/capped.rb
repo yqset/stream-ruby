@@ -31,21 +31,24 @@ module RealSelf
           {:'$match'    => {:'object.id' => owner.id}},
           {:'$unwind'   => '$feed'},
           {:'$match'    => feed_query},
-          {:'$sort'     => {:'feed._id' => Mongo::DESCENDING }},
+          {:'$sort'     => {:'feed._id' => Mongo::DESCENDING}},
         ]
 
         aggregate_query << {:'$limit'    => count} unless count.nil?
 
-        aggregate_query += [
-          {:'$project'  => {:'feed.id' => '$feed._id', :'feed.activity' => 1, :'feed.reasons' => 1}},
-          {:'$group'    => {:_id => '$_id', :feed => {:'$addToSet' => '$feed'}}}
-        ]
+        aggregate_query << {
+          :'$project'  => {
+            :'_id' => '$feed._id',
+            :'activity' => '$feed.activity',
+            :'reasons' => '$feed.reasons'}
+        }
 
-        result  = collection.aggregate(aggregate_query)
-        feed    =  result[0] ? result[0]['feed'] : []
+        feed  = collection.aggregate(aggregate_query)
+
 
         feed.each do |item|
-          item['id'] = item['id'].to_s
+          item['id'] = item['_id'].to_s
+          item.delete('_id')
         end
 
         return {:count => feed.length, :before => before, :after => after, :stream_items => feed}
