@@ -135,7 +135,7 @@ describe RealSelf::Feed::Capped  do
         {:'$match'    => {:"object.id" => @feed_owner.id}},
         {:'$unwind'   => "$feed"},
         {:'$match'    => {}},
-        {:'$sort'     => {:"feed._id" => 1}},
+        {:'$sort'     => {:"feed._id" => Mongo::DESCENDING}},
         {:'$limit'    => @default_count},
         {:'$project'  =>
           {

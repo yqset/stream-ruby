@@ -31,7 +31,7 @@ module RealSelf
           {:'$match'    => {:'object.id' => owner.id}},
           {:'$unwind'   => '$feed'},
           {:'$match'    => feed_query},
-          {:'$sort'     => {:'feed._id' => 1 }},
+          {:'$sort'     => {:'feed._id' => Mongo::DESCENDING }},
         ]
 
         aggregate_query << {:'$limit'    => count} unless count.nil?
@@ -153,8 +153,8 @@ module RealSelf
         return nil if before.nil? and after.nil?
 
         query = {}
-        query[:'$gt'] = BSON::ObjectId.from_string(before) if before
-        query[:'$lt'] = BSON::ObjectId.from_string(after) if after
+        query[:'$lt'] = BSON::ObjectId.from_string(before) if before
+        query[:'$gt'] = BSON::ObjectId.from_string(after) if after
 
         query
       end
