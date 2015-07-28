@@ -13,8 +13,10 @@ module RealSelf
       # @param [Hash] query     a hash containing a mongo query to use to filter the results
       #
       # @return [Hash]          {:count => [Integer], :before => [String], :after => [String], :stream_items => [Array]}
-      def get(owner, count = FEED_DEFAULT_PAGE_SIZE, before = nil, after = nil, query = {})
+      def get(owner, count = nil, before = nil, after = nil, query = {})
         collection = collection(owner) # Implemented by including class
+
+        count ||= FEED_DEFAULT_PAGE_SIZE
 
         id_range                  = get_id_range_query(before, after)
         query_options             = {:fields => {:object => 0}} # filter out the item owner
