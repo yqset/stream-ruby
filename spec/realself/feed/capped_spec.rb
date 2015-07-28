@@ -195,6 +195,12 @@ describe RealSelf::Feed::Capped  do
         @default_response[:before]    = before
         @default_response[:after]     = after
 
+        ownerless_results = @default_results.map do |item|
+          item.delete(:object)
+        end
+
+        @default_response[:stream_items] = ownerless_results
+
         expect(@test_feed).to receive(:get_id_range_query)
           .with(
             before,
@@ -203,9 +209,9 @@ describe RealSelf::Feed::Capped  do
 
         expect(@mongo_collection).to receive(:aggregate)
           .with(@default_query)
-          .and_return(@default_results)
+          .and_return(ownerless_results)
 
-        response = @test_feed.get(@feed_owner, @default_count, before, after, query)
+        response = @test_feed.get(@feed_owner, @default_count, before, after, query, false)
 
         expect(response).to eql @default_response
       end

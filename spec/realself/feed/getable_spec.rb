@@ -44,10 +44,6 @@ describe RealSelf::Feed::Getable do
         :redacted     => {:'$ne' => true}
       }
 
-      @default_options = {
-        :fields => {:object => 0}
-      }
-
       @default_count    = RealSelf::Feed::Getable::FEED_DEFAULT_PAGE_SIZE
       @default_results  = []
 
@@ -68,11 +64,6 @@ describe RealSelf::Feed::Getable do
         :stream_items => @default_results
       }
 
-      expect(@mongo_collection).to receive(:find)
-        .with(
-          @default_query,
-          @default_options)
-        .and_return(@mongo_collection)
 
       expect(@mongo_collection).to receive(:sort)
         .with(:_id => :desc)
@@ -89,6 +80,14 @@ describe RealSelf::Feed::Getable do
 
     context "default arguments" do
       it "returns a properly formatted response" do
+        default_options = {}
+
+        expect(@mongo_collection).to receive(:find)
+          .with(
+            @default_query,
+            default_options)
+          .and_return(@mongo_collection)
+
         response = @test_feed.get(@feed_owner)
 
         expect(response). to eql @default_response
@@ -106,6 +105,8 @@ describe RealSelf::Feed::Getable do
           :'$lt' => BSON::ObjectId.from_string(after)
         }
 
+        default_options = {:fields => {:object => 0}}
+
         @default_query[:_id]        = id_range_query
         @default_response[:before]  = before
         @default_response[:after]   = after
@@ -116,7 +117,13 @@ describe RealSelf::Feed::Getable do
             after)
           .and_call_original
 
-        response = @test_feed.get(@feed_owner, @default_count, before, after)
+        expect(@mongo_collection).to receive(:find)
+          .with(
+            @default_query,
+            default_options)
+          .and_return(@mongo_collection)
+
+        response = @test_feed.get(@feed_owner, @default_count, before, after, {}, false)
 
         expect(response).to eql @default_response
       end
