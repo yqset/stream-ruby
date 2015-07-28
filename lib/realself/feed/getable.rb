@@ -6,20 +6,22 @@ module RealSelf
       ##
       # retrieve the feed
       #
-      # @param [Objekt] owner   the feed owner
-      # @param [Integer] count  the maximum number of items to return
-      # @param [String] before  a BSON::ObjectId string
-      # @param [String] after   a BSON::ObjecxtId string
-      # @param [Hash] query     a hash containing a mongo query to use to filter the results
+      # @param [Objekt] owner         the feed owner
+      # @param [Integer] count        the maximum number of items to return
+      # @param [String] before        a BSON::ObjectId string
+      # @param [String] after         a BSON::ObjecxtId string
+      # @param [Hash] query           a hash containing a mongo query to use to filter the results
+      # @param [bool] include_owner   a flag indicating that the stream item owner should be included in each stream_item returned
       #
       # @return [Hash]          {:count => [Integer], :before => [String], :after => [String], :stream_items => [Array]}
-      def get(owner, count = nil, before = nil, after = nil, query = {})
+      def get(owner, count = nil, before = nil, after = nil, query = {}, include_owner = true)
         collection = collection(owner) # Implemented by including class
 
         count ||= FEED_DEFAULT_PAGE_SIZE
 
         id_range                  = get_id_range_query(before, after)
-        query_options             = {:fields => {:object => 0}} # filter out the item owner
+
+        query_options = (include_owner ? {} : {:fields => {:object => 0}})
 
         feed_query                = query
         feed_query[:'object.id']  = owner.id
