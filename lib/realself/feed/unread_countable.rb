@@ -159,6 +159,8 @@ module RealSelf
         unless @@mongo_indexes["#{collection.name}.owner_id"]
           collection.ensure_index({:owner_id => Mongo::HASHED})
           collection.ensure_index({:owner_id => Mongo::DESCENDING}, {:unique => true})
+
+          @@mongo_indexes["#{collection.name}.owner_id"] = true
         end
 
         collection
