@@ -39,8 +39,8 @@ describe RealSelf::Feed::Permanent  do
         .with(@collection_name)
         .and_return(@mongo_collection)
 
-      expect(@mongo_collection).to receive(:name)
-        .once
+      allow(@mongo_collection).to receive(:name)
+        .twice
         .and_return(@collection_name)
 
       expect(@mongo_collection).to receive(:ensure_index)

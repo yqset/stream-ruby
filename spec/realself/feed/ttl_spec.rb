@@ -68,12 +68,27 @@ describe RealSelf::Feed::Ttl  do
         .with(@collection_name)
         .and_return(@mongo_collection)
 
-      expect(@mongo_collection).to receive(:name)
-        .once
+      allow(@mongo_collection).to receive(:name)
+        .twice
         .and_return(@collection_name)
 
       expect(@mongo_collection).to receive(:index_information)
         .and_return(@ttl_index_info)
+    end
+
+    # do this one before other tests to accommodate the
+    # static flag for ensureing the indexes
+    it "raises an error if the TTL has changed" do
+      class BadTTLFeed < RealSelf::Feed::Ttl
+        FEED_NAME = :ttl_feed_test.freeze
+        FEED_TTL_SECONDS = 10.freeze
+      end
+
+      test_feed = BadTTLFeed.new
+      test_feed.mongo_db = @mongo_db
+
+      expect{test_feed.insert(@feed_owner, @stream_activity)}
+        .to raise_error RealSelf::Feed::FeedError
     end
 
 
@@ -106,19 +121,6 @@ describe RealSelf::Feed::Ttl  do
           {:upsert => true})
 
       @test_feed.insert(@feed_owner, @stream_activity)
-    end
-
-    it "raises an error if the TTL has changed" do
-      class BadTTLFeed < RealSelf::Feed::Ttl
-        FEED_NAME = :ttl_feed_test.freeze
-        FEED_TTL_SECONDS = 10.freeze
-      end
-
-      test_feed = BadTTLFeed.new
-      test_feed.mongo_db = @mongo_db
-
-      expect{test_feed.insert(@feed_owner, @stream_activity)}
-        .to raise_error RealSelf::Feed::FeedError
     end
   end
 end

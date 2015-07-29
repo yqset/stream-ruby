@@ -45,6 +45,8 @@ module RealSelf
               :'activity.uuid' => Mongo::DESCENDING,
               :'object.id' => Mongo::DESCENDING
             })
+
+          @@mongo_indexes["#{collection.name}.owner_id"] = true
         end
 
         collection

@@ -132,6 +132,8 @@ module RealSelf
         unless @@mongo_indexes["#{collection.name}.object.id"]
           collection.ensure_index({:'object.id' => Mongo::HASHED})
           collection.ensure_index({:'object.id' => Mongo::DESCENDING}, {:unique => true})
+
+          @@mongo_indexes["#{collection.name}.object.id"] = true
         end
 
         # attempt to upsert to the collection

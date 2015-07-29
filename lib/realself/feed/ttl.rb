@@ -56,6 +56,8 @@ module RealSelf
           collection.ensure_index(
             {:created => Mongo::ASCENDING},
             {:expireAfterSeconds => self.class::FEED_TTL_SECONDS})
+
+          @@mongo_indexes["#{collection.name}.owner_id"] = true
         end
 
         collection
