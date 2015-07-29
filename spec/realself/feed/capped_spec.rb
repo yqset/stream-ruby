@@ -339,16 +339,16 @@ describe RealSelf::Feed::Capped  do
         .and_call_original
 
       # simulate creation of the index
-      expect(@mongo_collection).to receive(:name)
-        .once
+      allow(@mongo_collection).to receive(:name)
+        .twice
         .and_return("#{@feed_owner.type}.#{@feed_name}")
 
-      expect(@mongo_collection).to receive(:ensure_index)
+      allow(@mongo_collection).to receive(:ensure_index)
         .once
         .with(
           {:'object.id' => Mongo::HASHED})
 
-      expect(@mongo_collection).to receive(:ensure_index)
+      allow(@mongo_collection).to receive(:ensure_index)
         .once
         .with(
           {:'object.id' => Mongo::DESCENDING},

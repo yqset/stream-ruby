@@ -31,6 +31,14 @@ describe RealSelf::Feed::UnreadCountable do
       :update => {},
       :upsert => true
     }
+
+    allow(@mongo_collection).to receive(:ensure_index)
+      .once
+      .with({:owner_id => Mongo::HASHED})
+
+    allow(@mongo_collection).to receive(:ensure_index)
+      .once
+      .with({:owner_id => Mongo::DESCENDING}, {:unique => true})
   end
 
 
@@ -82,16 +90,9 @@ describe RealSelf::Feed::UnreadCountable do
         .with(collection_name)
         .and_return(@mongo_collection)
 
-      expect(@mongo_collection).to receive(:name)
+      allow(@mongo_collection).to receive(:name)
+        .twice
         .and_return(collection_name)
-
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with({:owner_id => Mongo::HASHED})
-
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with({:owner_id => Mongo::DESCENDING}, {:unique => true})
     end
 
 
@@ -151,14 +152,6 @@ describe RealSelf::Feed::UnreadCountable do
 
       expect(@mongo_collection).to receive(:name)
         .and_return(collection_name)
-
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with({:owner_id => Mongo::HASHED})
-
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with({:owner_id => Mongo::DESCENDING}, {:unique => true})
     end
 
     it "uses the correct mongo query" do
@@ -282,14 +275,6 @@ describe RealSelf::Feed::UnreadCountable do
 
       expect(@mongo_collection).to receive(:name)
         .and_return(collection_name)
-
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with({:owner_id => Mongo::HASHED})
-
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with({:owner_id => Mongo::DESCENDING}, {:unique => true})
     end
 
 
