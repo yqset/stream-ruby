@@ -63,8 +63,8 @@ module RealSelf
         return nil if before.nil? and after.nil?
 
         query = {}
-        query[:'$gt'] = BSON::ObjectId.from_string(before) if before
-        query[:'$lt'] = BSON::ObjectId.from_string(after) if after
+        query[:'$lt'] = BSON::ObjectId.from_string(before) if before
+        query[:'$gt'] = BSON::ObjectId.from_string(after) if after
 
         query
       end

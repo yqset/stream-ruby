@@ -101,8 +101,8 @@ describe RealSelf::Feed::Getable do
         after  = BSON::ObjectId.new.to_s
 
         id_range_query = {
-          :'$gt' => BSON::ObjectId.from_string(before),
-          :'$lt' => BSON::ObjectId.from_string(after)
+          :'$lt' => BSON::ObjectId.from_string(before),
+          :'$gt' => BSON::ObjectId.from_string(after)
         }
 
         default_options = {:fields => {:object => 0}}
