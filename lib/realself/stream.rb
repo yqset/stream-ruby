@@ -1,7 +1,5 @@
 require 'core_ext/hash'
 
-require 'realself/stream/chum'
-require 'realself/stream/coho'
 require 'realself/content_type'
 require 'realself/stream/factory'
 require 'realself/stream/publisher'
