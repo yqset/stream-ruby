@@ -157,7 +157,6 @@ module RealSelf
         collection = @mongo_db.collection("#{owner_type}.#{self.class::FEED_NAME}.unread_count")
 
         unless @@mongo_indexes["#{collection.name}.owner_id"]
-          collection.ensure_index({:owner_id => Mongo::HASHED})
           collection.ensure_index({:owner_id => Mongo::DESCENDING}, {:unique => true})
 
           @@mongo_indexes["#{collection.name}.owner_id"] = true

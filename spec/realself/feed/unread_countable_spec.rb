@@ -34,10 +34,6 @@ describe RealSelf::Feed::UnreadCountable do
 
     allow(@mongo_collection).to receive(:ensure_index)
       .once
-      .with({:owner_id => Mongo::HASHED})
-
-    allow(@mongo_collection).to receive(:ensure_index)
-      .once
       .with({:owner_id => Mongo::DESCENDING}, {:unique => true})
   end
 

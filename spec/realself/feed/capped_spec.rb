@@ -346,11 +346,6 @@ describe RealSelf::Feed::Capped  do
       allow(@mongo_collection).to receive(:ensure_index)
         .once
         .with(
-          {:'object.id' => Mongo::HASHED})
-
-      allow(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with(
           {:'object.id' => Mongo::DESCENDING},
           {:unique => true})
     end

@@ -38,12 +38,19 @@ module RealSelf
         collection = @mongo_db.collection("#{owner.type}.#{self.class::FEED_NAME}")
 
         unless @@mongo_indexes["#{collection.name}.owner_id"]
-          collection.ensure_index({:'object.id' => Mongo::HASHED})
-          collection.ensure_index({:'object.id' => Mongo::DESCENDING})
+
+          # used for insert/update
           collection.ensure_index(
             {
-              :'activity.uuid' => Mongo::DESCENDING,
-              :'object.id' => Mongo::DESCENDING
+              :'activity.uuid'  => Mongo::DESCENDING,
+              :'object.id'      => Mongo::DESCENDING
+            })
+
+          # used for read
+          collection.ensure_index(
+            {
+              :'object.id' => Mongo::DESCENDING,
+              :'_id'       => Mongo::DESCENDING
             })
 
           @@mongo_indexes["#{collection.name}.owner_id"] = true

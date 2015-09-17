@@ -46,13 +46,21 @@ module RealSelf
             end
           end
 
-          collection.ensure_index({:'object.id' => Mongo::HASHED})
-          collection.ensure_index({:'object.id' => Mongo::DESCENDING})
+          # used for insert/update
           collection.ensure_index(
             {
-              :'activity.uuid' => Mongo::DESCENDING,
-              :'object.id' => Mongo::DESCENDING
+              :'activity.uuid'  => Mongo::DESCENDING,
+              :'object.id'      => Mongo::DESCENDING
             })
+
+          # used for read
+          collection.ensure_index(
+            {
+              :'object.id'  => Mongo::DESCENDING,
+              :_id          => Mongo::DESCENDING
+            })
+
+          # TTL expiration time
           collection.ensure_index(
             {:created => Mongo::ASCENDING},
             {:expireAfterSeconds => self.class::FEED_TTL_SECONDS})
