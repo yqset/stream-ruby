@@ -95,15 +95,18 @@ describe RealSelf::Feed::Ttl  do
     it "calls the update method with the correct arguments" do
       expect(@mongo_collection).to receive(:ensure_index)
         .once
-        .with({:'object.id' => Mongo::HASHED})
+        .with(
+          {:'activity.uuid' => Mongo::DESCENDING,
+            :'object.id' => Mongo::DESCENDING
+          })
 
       expect(@mongo_collection).to receive(:ensure_index)
         .once
-        .with({:'object.id' => Mongo::DESCENDING})
-
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with({:'activity.uuid' => Mongo::DESCENDING, :'object.id' => Mongo::DESCENDING})
+        .with(
+          {
+            :'object.id' => Mongo::DESCENDING,
+            :'_id'       => Mongo::DESCENDING
+          })
 
       expect(@mongo_collection).to receive(:ensure_index)
         .once
