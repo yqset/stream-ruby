@@ -72,48 +72,9 @@ describe RealSelf::Feed::Ttl  do
         .twice
         .and_return(@collection_name)
 
-      expect(@mongo_collection).to receive(:index_information)
-        .and_return(@ttl_index_info)
     end
 
-    # do this one before other tests to accommodate the
-    # static flag for ensureing the indexes
-    it "raises an error if the TTL has changed" do
-      class BadTTLFeed < RealSelf::Feed::Ttl
-        FEED_NAME = :ttl_feed_test.freeze
-        FEED_TTL_SECONDS = 10.freeze
-      end
-
-      test_feed = BadTTLFeed.new
-      test_feed.mongo_db = @mongo_db
-
-      expect{test_feed.insert(@feed_owner, @stream_activity)}
-        .to raise_error RealSelf::Feed::FeedError
-    end
-
-
-    it "calls the update method with the correct arguments" do
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with(
-          {:'activity.uuid' => Mongo::DESCENDING,
-            :'object.id' => Mongo::DESCENDING
-          })
-
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with(
-          {
-            :'object.id' => Mongo::DESCENDING,
-            :'_id'       => Mongo::DESCENDING
-          })
-
-      expect(@mongo_collection).to receive(:ensure_index)
-        .once
-        .with(
-          {:created => Mongo::ASCENDING},
-          {:expireAfterSeconds => TestTtlFeed::FEED_TTL_SECONDS})
-
+    it "calls the update method with the correct arguments" do      
       stream_hash = @stream_activity.to_h
       stream_hash[:created] = @date.utc
 
