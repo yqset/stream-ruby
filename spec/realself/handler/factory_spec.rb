@@ -108,6 +108,18 @@ describe RealSelf::Handler::Factory do
 
     end
 
+
+    context "when multiple handlers are registered with the same prototype" do
+
+      it "returns them all when #create is called" do
+        handlers = RealSelf::Handler::Factory.create(
+          'test.message.type-1',
+          RealSelf::ContentType::STREAM_ACTIVITY)
+
+        expect(handlers.size).to eql 2
+      end
+    end
+
   end
 
 

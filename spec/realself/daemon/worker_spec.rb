@@ -71,6 +71,7 @@ describe RealSelf::Daemon::Worker do
     it 'calls initializes state and calls handle on the hander(s)' do
       expect(RealSelf::Daemon::ActivityWorker).to receive(:from_queue)
         .with('test.queue', @worker_options)
+        .and_call_original
 
       expect(RealSelf::Stream::Factory).to receive(:from_json)
         .and_return(@activity)
@@ -90,6 +91,7 @@ describe RealSelf::Daemon::Worker do
         .with(@activity)
 
       RealSelf::Daemon::ActivityWorker.configure({
+        :enable_dlx         => true,
         :enclosure          => TestEnclosure,
         :exchange_name      => 'test.exchange',
         :queue_name         => 'test.queue',
@@ -97,7 +99,7 @@ describe RealSelf::Daemon::Worker do
       })
 
       worker = RealSelf::Daemon::ActivityWorker.new
-# puts RealSelf::Handler::Factory.registered_handlers
+
       worker.work_with_params(@activity.to_s, nil, nil)
     end
   end
