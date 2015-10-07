@@ -4,7 +4,7 @@ module RealSelf
       include Sneakers::Worker
       include RealSelf::Daemon::Worker
 
-      self.content_type = ContentType::STREAM_ACTIVITY
+      @content_type = ContentType::STREAM_ACTIVITY
     end
   end
 end
