@@ -31,5 +31,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "bson_ext", '1.9.2'
   gem.add_development_dependency "mongo", '1.9.2'
   gem.add_development_dependency "pry-byebug"
-  gem.add_development_dependency "sneakers", '2.3.0'
+  gem.add_development_dependency "sneakers", '2.2.1'
 end
