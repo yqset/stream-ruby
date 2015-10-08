@@ -60,7 +60,7 @@ GEM
       simplecov-html (~> 0.7.1)
     simplecov-html (0.7.1)
     slop (3.6.0)
-    sneakers (2.3.0)
+    sneakers (2.2.1)
       bunny (~> 2.2.0)
       serverengine (~> 1.5.5)
       thor
@@ -78,4 +78,4 @@ DEPENDENCIES
   realself-stream!
   rspec
   simplecov (~> 0.7.1)
-  sneakers (= 2.3.0)
+  sneakers (= 2.2.1)
