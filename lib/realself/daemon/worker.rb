@@ -20,7 +20,10 @@ module RealSelf
                             self.class.handler_params)
 
         enclosure.handle do
-          handlers.each { |h| h.handle activity }
+          handlers.each do |h|
+            RealSelf.logger.info "#{h.class.name} handling #{activity.prototype}, UUID: #{activity.uuid}, owner: #{activity.owner.type}:#{activity.owner.id}"
+            h.handle activity
+          end
         end
       end
 
