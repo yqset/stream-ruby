@@ -10,7 +10,7 @@ module RealSelf
         end
 
         def from_hash(hash)
-          if hash.has_key? :type
+          unless hash[:type].nil?
             Objekt.new(hash[:type].downcase, hash[:id])
 
           else

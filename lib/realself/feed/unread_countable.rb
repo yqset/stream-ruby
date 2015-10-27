@@ -7,25 +7,42 @@ module RealSelf
       MAX_UNREAD_COUNT = 2147483647.freeze
       MONGO_ERROR_DUPLICATE_KEY = 11000.freeze
 
+
       ##
       # Decrement the unread count by 1 for the feed owner in the containing feed
       # Decrement will not cause the unread count to go below zero
       #
       # @param [Objekt] The user whose unread count is being changed
       def decrement_unread_count(owner)
-        unread_count_do_update(
+        result = unread_count_do_update(
           owner,
           {
-            :query => {
-              :owner_id => owner.id,
-              :count => { :'$gt' => 0 }
-            },
-            :update => {
-              :'$inc' => { :count => -1}
-            },
-            :upsert => true
-          }
-        )
+            :owner_id => owner.id,
+            :count => { :'$gt' => 0 }
+          },
+          {
+            :'$inc' => { :count => -1 }
+          })
+
+        # if the update failed, assume the unread count is already at
+        # zero, so return that.
+        result ? result : {:owner_id => owner.id, :count => 0}
+      end
+
+
+      ##
+      # create indexes on the unread count collection if necessary
+      #
+      # @param [String] owner_type  The type of object that owns the feed
+      # @param [true | false]       Create the index in the background
+      def ensure_index(owner_type, background = true)
+        super if defined?(super)
+
+        collection = unread_count_collection(owner_type)
+
+        collection.indexes.create_one(
+          {:owner_id => Mongo::Index::DESCENDING},
+          :unique => true, :background => background)
       end
 
 
@@ -64,6 +81,7 @@ module RealSelf
         result
       end
 
+
       ##
       # Retrieve the number of unread items for the current feed and owner
       #
@@ -71,13 +89,14 @@ module RealSelf
       #
       # @return [Hash] {:owner_id => [owner.id], :count => 0}
       def get_unread_count(owner)
-        result = unread_count_collection(owner.type).find_one(
+        result = unread_count_collection(owner.type).find(
           {:owner_id => owner.id},
           {:fields => {:_id => 0}}
-        )
+        ).limit(1)
 
-        result ||  {:owner_id => owner.id, :count => 0}
+        result.first ||  {:owner_id => owner.id, :count => 0}
       end
+
 
       ##
       # Increment the unread count by 1 for the feed owner in the containing feed
@@ -85,19 +104,17 @@ module RealSelf
       #
       # @param [Objekt] The user whose unread count is being changed
       def increment_unread_count(owner)
-        unread_count_do_update(
+        result = unread_count_do_update(
           owner,
           {
-            :query => {
-              :owner_id => owner.id,
-              :count => { :'$lt' => self.class::MAX_FEED_SIZE }
-            },
-            :update => {
-              :'$inc' => { :count => 1}
-            },
-            :upsert => true
-          }
-        )
+            :owner_id => owner.id,
+            :count => { :'$lt' => self.class::MAX_FEED_SIZE }
+          },
+          {:'$inc' => {:count => 1}})
+
+        # if the update failed, assume the unread count is already at
+        # the max value so return that.
+        result ? result : {:owner_id => owner.id, :count => self.class::MAX_FEED_SIZE}
       end
 
 
@@ -118,35 +135,30 @@ module RealSelf
       #
       # @param [Objekt] The user whose unread count is being changed
       def set_unread_count(owner, count)
-        unread_count_do_update(
+        result = unread_count_do_update(
           owner,
+          {:owner_id => owner.id},
           {
-            :query => {
-              :owner_id => owner.id
-            },
-            :update => {
-              # keep the unread count between 0 and max feed size
-              :'$set' => { :count => [[0, count].max, self.class::MAX_FEED_SIZE].min }
-            },
-            :upsert => true
-          }
-        )
+            # keep the unread count between 0 and max feed size
+            :'$set' => { :count => [[0, count].max, self.class::MAX_FEED_SIZE].min }
+          })
+
+        # if the update failed, assume the unread count is already at the passed value
+        result ? result : {:owner_id => owner.id, :count => count}
       end
 
 
       private
 
 
-      @@mongo_indexes ||= {}
-
-
       ##
       # Execute the mongo update
-      def unread_count_do_update(owner, args)
+      def unread_count_do_update(owner, query, update)
         begin
-          unread_count_collection(owner.type).find_and_modify(args)
-        rescue Mongo::OperationFailure => ex
-          raise ex unless self.class::MONGO_ERROR_DUPLICATE_KEY == ex.error_code
+          unread_count_collection(owner.type)
+            .find_one_and_update(query, update, {:upsert => true, :return_document => :after})
+        rescue Mongo::Error::OperationFailure => ex
+          raise ex unless ex.message =~ /#{self.class::MONGO_ERROR_DUPLICATE_KEY}/
         end
       end
 
@@ -154,15 +166,7 @@ module RealSelf
       ##
       # Get the mongo collection object
       def unread_count_collection(owner_type)
-        collection = @mongo_db.collection("#{owner_type}.#{self.class::FEED_NAME}.unread_count")
-
-        unless @@mongo_indexes["#{collection.name}.owner_id"]
-          collection.ensure_index({:owner_id => Mongo::DESCENDING}, {:unique => true})
-
-          @@mongo_indexes["#{collection.name}.owner_id"] = true
-        end
-
-        collection
+        @mongo_db.collection("#{owner_type}.#{self.class::FEED_NAME}.unread_count")
       end
 
 

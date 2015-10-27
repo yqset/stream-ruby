@@ -1,4 +1,3 @@
-require_relative '../../helpers'
 include Helpers
 
 describe RealSelf::Stream::ActivityV2, "with activity type v2" do

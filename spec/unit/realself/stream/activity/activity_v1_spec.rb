@@ -1,4 +1,3 @@
-require_relative '../../helpers'
 require_relative 'activity_shared_examples'
 require_relative 'followed_activity_shared_examples'
 

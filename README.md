@@ -6,7 +6,7 @@ TODO: Write a gem description
 
 Add this line to your application's Gemfile:
 
-    gem 'realself-stream'
+    gem 'realself-stream', '~> 2.0.0', realself: 'stream-ruby'
 
 And then execute:
 
@@ -18,7 +18,27 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+#### Running Tests
+The preferred method for running tests is via `rake` tasks.
+
+```bash
+# run all integration and unit tests
+$ bundle exec rake test
+
+# run integration tests only
+$ bundle exec rake test:integration
+
+# run unit tests only
+$ bundle exec rake test:unit
+
+# skip TTL test, while running all others
+$ SKIP_TTL_TESTS=true bundle exec rake test
+```
+
+* Integration tests assume MongoDB ``~>2.6.0` is running locally and listening on port `27017`.  
+* `bundle exec rspec` will run all integration and unit tests
+* The TTL integration test must allow the TTL to expire to compleate all tests.  To skip waiiting for the timeout, set the `SKIP_TTL_TESTS` environment variable to `true`.
+
 
 ## Contributing
 
