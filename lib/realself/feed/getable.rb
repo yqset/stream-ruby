@@ -1,7 +1,7 @@
 module RealSelf
   module Feed
     module Getable
-      FEED_DEFAULT_PAGE_SIZE = 10 # default nubmer feed items to return
+      FEED_DEFAULT_PAGE_SIZE = 10.freeze # default nubmer feed items to return
 
       ##
       # retrieve the feed
@@ -15,22 +15,23 @@ module RealSelf
       #
       # @return [Hash]          {:count => [Integer], :before => [String], :after => [String], :stream_items => [Array]}
       def get(owner, count = nil, before = nil, after = nil, query = {}, include_owner = true)
-        collection = collection(owner) # Implemented by including class
+        collection = get_collection(owner.type) # Implemented by including class
 
         count ||= FEED_DEFAULT_PAGE_SIZE
 
         id_range                  = get_id_range_query(before, after)
 
-        query_options = (include_owner ? {} : {:fields => {:object => 0}})
+        projection = (include_owner ? {} : {:object => 0})
 
         feed_query                = query
         feed_query[:'object.id']  = owner.id
         feed_query[:_id]          = id_range if id_range
         feed_query[:redacted]     = {:'$ne' => true}  # omit redacted items
 
-        feed = collection.find(feed_query, query_options)
-          .sort(:_id => :desc)
+        feed = collection.find(feed_query)
+          .sort(:_id => Mongo::Index::DESCENDING)
           .limit(count)
+          .projection(projection)
           .to_a
 
         # return the '_id' field as 'id'

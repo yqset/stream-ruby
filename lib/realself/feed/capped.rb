@@ -7,6 +7,32 @@ module RealSelf
       attr_accessor :mongo_db
 
 
+      ##
+      # create indexes on the feed if necessary
+      #
+      # @param [String] owner_type  The type of object that owns the feed
+      # @param [true | false]       Create the index in the background
+      def ensure_index(owner_type, background = true)
+        super if defined?(super)
+
+        collection = get_collection(owner_type)
+
+        collection.indexes.create_many([
+          {
+            :key        => {:'object.id' => Mongo::Index::DESCENDING},
+            :background => background,
+            :unique     => true
+          },
+          {
+            :key        => {:'feed.activity.redacted' => Mongo::Index::DESCENDING},
+            :background => background,
+            :sparse     => true
+          }
+        ])
+      end
+
+
+      ##
       # retrieve the feed
       #
       # @param [Objekt] owner         the feed owner
@@ -18,22 +44,23 @@ module RealSelf
       #
       # @return [Hash]          {:count => [Integer], :before => [String], :after => [String], :stream_items => [Array]}
       def get(owner, count = nil, before = nil, after = nil, query = {}, include_owner = true)
-        feed_query                    = {}
-        count                         ||= FEED_DEFAULT_PAGE_SIZE
-        id_range                      = get_id_range_query(before, after)
-        feed_query[:'feed._id']       = id_range if id_range
+        feed_query                            = {}
+        count                                 ||= FEED_DEFAULT_PAGE_SIZE
+        id_range                              = get_id_range_query(before, after)
+        feed_query[:'feed._id']               = id_range if id_range
+        feed_query[:'feed.activity.redacted'] = {:'$ne' => true}  # omit redacted items
 
         query.each do |key, value|
           feed_query["feed.#{key}".to_sym] = value
         end
 
-        collection = @mongo_db.collection("#{owner.type}.#{self.class::FEED_NAME}")
+        collection = get_collection(owner.type)
 
         aggregate_query = [
           {:'$match'    => {:'object.id' => owner.id}},
           {:'$unwind'   => '$feed'},
           {:'$match'    => feed_query},
-          {:'$sort'     => {:'feed._id' => Mongo::DESCENDING}},
+          {:'$sort'     => {:'feed._id' => Mongo::Index::DESCENDING}},
         ]
 
         aggregate_query << {:'$limit'    => count} unless count.nil?
@@ -46,13 +73,11 @@ module RealSelf
           }
         }
 
-        feed  = collection.aggregate(aggregate_query)
-
-
-        feed.each do |item|
+        feed  = collection.aggregate(aggregate_query).map do |item|
           item['id'] = item['_id'].to_s
           item.delete('_id')
           item['object'] = owner.to_h if include_owner
+          item
         end
 
         return {:count => feed.length, :before => before, :after => after, :stream_items => feed}
@@ -66,15 +91,14 @@ module RealSelf
       # @param [ StreamActivity ] the stream activity to insert in to the feed
       # @param [ Boolean ] a flag indicating that similar/duplicate items are allowed in the feed
       # @param [ Hash ] a hash containing the criteria to use for detecting duplicates
-      def insert(owner, stream_activity, allow_duplicates = true, duplicate_match_criteria = nil)
-        collection    = @mongo_db.collection("#{owner.type}.#{self.class::FEED_NAME}")
+      def insert(owner, stream_activity, allow_duplicates = false, duplicate_match_criteria = nil)
+        collection    = get_collection(owner.type)
 
-        update_query  = get_update_query(
-                          owner,
-                          allow_duplicates,
-                          duplicate_match_criteria)
+        # enforce idempotence based on UUID unless otherwise specified
+        duplicate_match_criteria ||= {'activity.uuid' => stream_activity.uuid} unless allow_duplicates
 
-        update = get_update_clause(stream_activity)
+        update_query  = get_update_query(owner, duplicate_match_criteria)
+        update        = get_update_clause(stream_activity)
 
         do_insert(collection, owner, update_query, update)
       end
@@ -90,60 +114,45 @@ module RealSelf
       #
       # @param [String] the UUID of the activity to redact
       #
-      # @returns [Array]  an array of collection names that were redacted from
-      def redact(activity_uuid)
+      # @returns [Integer]  The number of owner_type feeds from which the activity was redacted
+      def redact(owner_type, activity_uuid)
         raise(
           FeedError,
           "Invalid UUID: #{activity_uuid}"
         ) unless activity_uuid.match(RealSelf::Stream::Activity::UUID_REGEX)
 
-        redacted_from = []
+        collection = get_collection(owner_type)
 
-        @mongo_db.collections.each do |collection|
-          # ignore system collections
-          next if collection.name.start_with?('system.')
-
-          #ignore collections not managed by this feed class
-          next if !collection.name.end_with?(self.class::FEED_NAME.to_s)
-
-          result = collection.update(
-            {:'feed.activity.uuid' => activity_uuid},
+        result = collection.find({:'feed.activity.uuid' => activity_uuid})
+          .update_many(
             {:'$set' => {:'feed.$.activity.redacted' => true}},
             {:upsert => false, :multi => true})
 
-          if result['updatedExisting']
-            redacted_from << collection.name
-          end
-        end
-
-        redacted_from
+        result.modified_count
       end
 
 
       private
 
-      @@mongo_indexes ||= {}
+      ##
+      # Get the mongo collection for the feed
+      def get_collection(owner_type)
+        @mongo_db.collection("#{owner_type}.#{self.class::FEED_NAME}")
+      end
 
 
       ##
       # do the insert in to the capped feed
       def do_insert(collection, owner, update_query, update)
-        # ensure indexes
-        unless @@mongo_indexes["#{collection.name}.object.id"]
-          collection.ensure_index({:'object.id' => Mongo::DESCENDING}, {:unique => true})
-
-          @@mongo_indexes["#{collection.name}.object.id"] = true
-        end
-
         # attempt to upsert to the collection
         # if the query fails, we will attempt an insert
         # If the insert fails with a unique index violation
         # assume the container document exists and the new activity
         # is already present in the feed.
         begin
-          return collection.update(update_query, update, {:upsert => true})
-        rescue Mongo::OperationFailure => ex
-          raise ex unless self.class::MONGO_ERROR_DUPLICATE_KEY == ex.error_code
+          return collection.find(update_query).update_one(update, {:upsert => true})
+        rescue Mongo::Error::OperationFailure => ex
+          raise ex unless ex.message =~ /#{self.class::MONGO_ERROR_DUPLICATE_KEY}/
         end
 
         return nil
@@ -191,24 +200,13 @@ module RealSelf
       ##
       # build the mongodb query to use when attempting
       # to insert a new activity in to a capped feed
-      def get_update_query(owner, allow_duplicates, duplicate_match_criteria)
-        # create the update query
-        update_query = {:'object.id' => owner.id}
-
-        # add the criteria by which we will detect duplicates in the feed if necessary
-        unless allow_duplicates
-          raise(
-            FeedError,
-            "Missing duplicate match criteria"
-          ) unless duplicate_match_criteria
-
-          update_query[:feed] =
-          {
-            :'$not' =>{
-              :'$elemMatch' => duplicate_match_criteria
-            }
+      def get_update_query(owner, duplicate_match_criteria)
+        update_query = {:'object.id'  => owner.id}
+        update_query[:feed] = {
+          :'$not' =>{
+            :'$elemMatch' => duplicate_match_criteria
           }
-        end
+        } if duplicate_match_criteria
 
         update_query
       end

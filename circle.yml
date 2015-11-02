@@ -5,3 +5,35 @@ experimental:
         - master # whitelisted branches
       ignore:
         - /*/ # disallow all non-whitelisted branches
+
+general:
+  artifacts:
+    - 'coverage'
+
+dependencies:
+  pre:
+    - sudo service mongodb stop
+    - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.6.11.tgz
+    - tar -zxvf mongodb-linux-x86_64-2.6.11.tgz
+    - mkdir -p mongo_data
+    - mongodb-linux-x86_64-2.6.11/bin/mongod --dbpath ./mongo_data --fork --syslog
+
+machine:
+  environment:
+    SKIP_TTL_TESTS: true
+
+deployment:
+  production:
+    branch: master
+    commands:
+      # Build the package
+      - bundle exec rake build:tag
+      - bundle package --all
+      # Download the Distlli CLI
+      - wget -qO- http://download.distelli.com/setup | sh -s ~/
+      # Push it!
+      - ~/DistelliCLI/bin/distelli push -m `git describe --tag --match "v1.0*"`
+      # Some day we may want to deploy with Distelli, too
+      # - ~/DistelliCLI/bin/distelli deploy -q -y -m "Deployment from Circle-CI" -h <server_name>
+      # Bonus material
+      - curl -s http://api.icndb.com/jokes/random/ | python2 -c 'import sys, json; print "\n\n"+json.load(sys.stdin)["value"]["joke"]+"\n\n"' || echo "No jokes for you\!"

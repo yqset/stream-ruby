@@ -5,6 +5,38 @@ module RealSelf
 
       attr_accessor :mongo_db
 
+
+      ##
+      # create indexes on the feed if necessary
+      #
+      # @param [String] owner_type  The type of object that owns the feed
+      # @param [true | false]       Create the index in the background
+      def ensure_index(owner_type, background = true)
+        super if defined?(super)
+
+        collection = get_collection(owner_type)
+
+        collection.indexes.create_many([
+          {
+            :key => {
+              :'object.id'  => Mongo::Index::DESCENDING,
+              :_id          => Mongo::Index::DESCENDING
+            },
+            :background => background,
+            :unique     => true
+          },
+          {
+            :key => {
+              :'activity.uuid'  => Mongo::Index::DESCENDING,
+              :'object.id'      => Mongo::Index::DESCENDING
+            },
+            :background => background,
+            :unique     => true
+          }
+        ])
+      end
+
+
       ##
       # Insert a stream activity in to a permanent feed
       #
@@ -18,45 +50,19 @@ module RealSelf
           :'object.id'      => owner.id
         }
 
-        collection(owner).update(
-          upsert_query,
-          activity_hash,
-          {:upsert => true}
-        )
+        get_collection(owner.type).find(upsert_query)
+          .update_one(activity_hash, :upsert => true)
       end
 
 
       private
 
-      @@mongo_indexes ||= {}
-
 
       ##
       # get the collection for this feed
       # and ensure the required indexes
-      def collection(owner)
-        collection = @mongo_db.collection("#{owner.type}.#{self.class::FEED_NAME}")
-
-        unless @@mongo_indexes["#{collection.name}.owner_id"]
-
-          # used for insert/update
-          collection.ensure_index(
-            {
-              :'activity.uuid'  => Mongo::DESCENDING,
-              :'object.id'      => Mongo::DESCENDING
-            })
-
-          # used for read
-          collection.ensure_index(
-            {
-              :'object.id' => Mongo::DESCENDING,
-              :'_id'       => Mongo::DESCENDING
-            })
-
-          @@mongo_indexes["#{collection.name}.owner_id"] = true
-        end
-
-        collection
+      def get_collection(owner_type)
+        @mongo_db.collection("#{owner_type}.#{self.class::FEED_NAME}")
       end
     end
   end
