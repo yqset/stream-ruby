@@ -29,7 +29,5 @@ deployment:
       # Build the package
       - bundle exec rake build:tag
 
-      # Some day we may want to deploy with Distelli, too
-      # - ~/DistelliCLI/bin/distelli deploy -q -y -m "Deployment from Circle-CI" -h <server_name>
       # Bonus material
       - curl -s http://api.icndb.com/jokes/random/ | python2 -c 'import sys, json; print "\n\n"+json.load(sys.stdin)["value"]["joke"]+"\n\n"' || echo "No jokes for you\!"
