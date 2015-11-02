@@ -32,7 +32,7 @@ deployment:
       # Download the Distlli CLI
       - wget -qO- http://download.distelli.com/setup | sh -s ~/
       # Push it!
-      - ~/DistelliCLI/bin/distelli push -m `git describe --tag --match "v1.0*"`
+      - ~/DistelliCLI/bin/distelli push -m `git describe --tag --match "v2.0*"`
       # Some day we may want to deploy with Distelli, too
       # - ~/DistelliCLI/bin/distelli deploy -q -y -m "Deployment from Circle-CI" -h <server_name>
       # Bonus material
