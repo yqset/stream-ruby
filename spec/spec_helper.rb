@@ -7,6 +7,7 @@ require 'mongo'
 require 'realself/stream'
 require 'realself/handler'
 require 'realself/feed'
+require 'realself/graph/follow'
 require 'realself/daemon'
 require 'realself/stream/digest/digest'
 
