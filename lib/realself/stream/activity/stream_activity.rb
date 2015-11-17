@@ -28,7 +28,7 @@ module RealSelf
       def initialize(object, activity, reasons = [])
         @object = object
         @activity = activity
-        @reasons = reasons
+        @reasons = Set.new(reasons)
       end
 
       def ==(other)
