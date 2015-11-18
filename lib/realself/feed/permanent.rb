@@ -15,7 +15,7 @@ module RealSelf
       def self.ensure_index(owner_type, background: true, mongo:)
         super if defined?(super)
 
-        collection = mongo.collection("#{owner_type}.#{self.class::FEED_NAME}") 
+        collection = mongo.collection("#{owner_type}.#{self::FEED_NAME}") 
 
         collection.indexes.create_many([
           {
