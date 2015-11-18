@@ -37,7 +37,7 @@ module RealSelf
           {
             :key          => {:created => Mongo::Index::ASCENDING},
             :background   => background,
-            :expire_after => self.class::FEED_TTL_SECONDS
+            :expire_after => self::FEED_TTL_SECONDS
           }
         ])
       end
