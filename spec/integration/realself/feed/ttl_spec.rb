@@ -6,15 +6,15 @@ describe RealSelf::Feed::Ttl do
   class TestTtl < RealSelf::Feed::Ttl
     FEED_NAME = :ttl_integrtion_test.freeze
     FEED_TTL_SECONDS = 60.freeze
-    include RealSelf::Feed::Redactable
     include RealSelf::Feed::UnreadCountable
+    include RealSelf::Feed::Redactable
   end
 
 
   before :all do
     @feed           = TestTtl.new
     @feed.mongo_db  = IntegrationHelper.get_mongo
-    @feed.ensure_index :user, false
+    @feed.ensure_index :user, background: false
   end
 
   it_should_behave_like '#insertable', @feed

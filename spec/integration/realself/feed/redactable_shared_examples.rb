@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_examples RealSelf::Feed::Redactable do |feed|
   before :all do
     @feed.mongo_db   = IntegrationHelper.get_mongo
-    @feed.ensure_index :user, false
+    @feed.ensure_index :user, background: false
   end
 
   describe '#ensure_index' do

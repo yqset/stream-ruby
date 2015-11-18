@@ -24,7 +24,7 @@ RSpec.configure do |config|
   config.before :all do
     ::IntegrationHelper.get_mongo
 
-    ::IntegrationHelper.skip_ttl_test = true if ENV['SKIP_TTL_TESTS']
+    ::IntegrationHelper.skip_ttl_test = true unless ENV['ENABLE_TTL_TEST']
 
   end
 

@@ -31,7 +31,7 @@ module RealSelf
       module ClassMethods
         attr_reader   :configured, :content_type, :handler_params
 
-        def configure(exchange_name:, queue_name:, enclosure: nil, handler_params: {}, enable_dlx: false, worker_options: {})
+        def configure(exchange_name:, queue_name:, enclosure: nil, handler_params: {}, enable_retry: false, worker_options: {})
           @handler_params = handler_params
 
           Handler::Factory.register_enclosure(queue_name, enclosure)
@@ -43,8 +43,8 @@ module RealSelf
 
           # enable DLX with default name if requested
           worker_options.merge!(
-            :arguments   => {:'x-dead-letter-exchange' => "dlx.#{queue_name}"}
-          ) if enable_dlx
+            :arguments   => {:'x-dead-letter-exchange' => "#{queue_name}-retry"}
+          ) if enable_retry
 
           # sneakers queue configuration
           from_queue queue_name, worker_options

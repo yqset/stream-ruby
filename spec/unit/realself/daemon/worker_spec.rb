@@ -34,7 +34,7 @@ describe RealSelf::Daemon::Worker do
        :prefetch    => 1,
        :routing_key => ['test.activity'],
        :threads     => 1,
-       :arguments   => {:'x-dead-letter-exchange' => "dlx.test.queue"}
+       :arguments   => {:'x-dead-letter-exchange' => "test.queue-retry"}
     }
   end
 
@@ -46,7 +46,7 @@ describe RealSelf::Daemon::Worker do
       RealSelf::Daemon::ActivityWorker.configure({
         :exchange_name => 'test.exchange',
         :queue_name    => 'test.queue',
-        :enable_dlx    => true
+        :enable_retry  => true
       })
     end
   end
@@ -91,7 +91,7 @@ describe RealSelf::Daemon::Worker do
         .with(@activity)
 
       RealSelf::Daemon::ActivityWorker.configure({
-        :enable_dlx         => true,
+        :enable_retry       => true,
         :enclosure          => TestEnclosure,
         :exchange_name      => 'test.exchange',
         :queue_name         => 'test.queue',

@@ -20,7 +20,7 @@ dependencies:
 
 machine:
   environment:
-    SKIP_TTL_TESTS: true
+    ENABLE_TTL_TESTS: false
 
 deployment:
   production:
