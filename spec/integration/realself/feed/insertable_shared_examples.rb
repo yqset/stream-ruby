@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_examples '#insertable' do |feed|
   before :all do
     @feed.mongo_db   = IntegrationHelper.get_mongo
-    @feed.ensure_index :user, false
+    @feed.class.ensure_index :user, background: false, mongo: @feed.mongo_db
   end
 
   describe '#insert' do

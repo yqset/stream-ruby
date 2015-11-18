@@ -14,7 +14,7 @@ describe RealSelf::Feed::Ttl do
   before :all do
     @feed           = TestTtl.new
     @feed.mongo_db  = IntegrationHelper.get_mongo
-    @feed.ensure_index :user, false
+    TestTtl.ensure_index :user, background: false, mongo: @feed.mongo_db
   end
 
   it_should_behave_like '#insertable', @feed
