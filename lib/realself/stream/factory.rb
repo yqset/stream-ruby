@@ -10,6 +10,9 @@ module RealSelf
         when RealSelf::ContentType::DIGEST_ACTIVITY
           object = RealSelf::Stream::Digest::Digest.from_hash(hash)
 
+        when RealSelf::ContentType::FOLLOWED_ACTIVITY
+          object = RealSelf::Stream::FollowedActivity.from_hash(hash)
+
         when RealSelf::ContentType::STREAM_ACTIVITY
           object = RealSelf::Stream::StreamActivity.from_hash(hash)
 
@@ -28,6 +31,9 @@ module RealSelf
 
         when RealSelf::ContentType::DIGEST_ACTIVITY
           object = RealSelf::Stream::Digest::Digest.from_json(json, validate)
+
+        when RealSelf::ContentType::FOLLOWED_ACTIVITY
+          object = RealSelf::Stream::FollowedActivity.from_json(json, validate)
 
         when RealSelf::ContentType::STREAM_ACTIVITY
           object = RealSelf::Stream::StreamActivity.from_json(json)  #TODO:  Add schema validation support

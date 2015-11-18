@@ -96,6 +96,18 @@ describe RealSelf::Stream::StreamActivity do
         expect(reason).to be_an_instance_of RealSelf::Stream::Objekt
       end
     end
+
+    it "prevents duplicate reasons from being added" do
+      reason = RealSelf::Stream::Objekt.new(:thing, 5678)
+
+      @stream_activity.reasons << reason
+
+      expect(@stream_activity.reasons.length).to eql 3
+
+      @stream_activity.reasons << reason
+
+      expect(@stream_activity.reasons.length).to eql 3
+    end
   end
 
   describe "#to_h" do
