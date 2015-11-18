@@ -12,6 +12,7 @@ require 'realself/daemon'
 require 'realself/stream/digest/digest'
 
 require_relative './helpers'
+require_relative './integration/integration_helper'
 require_relative './integration/realself/feed/getable_shared_examples'
 require_relative './integration/realself/feed/insertable_shared_examples'
 require_relative './integration/realself/feed/redactable_shared_examples'
