@@ -14,7 +14,7 @@ describe RealSelf::Feed::Capped do
   before :all do
     @feed           = CappedIntegrationTestFeed.new
     @feed.mongo_db  = IntegrationHelper.get_mongo
-    CappedIntegrationTestFeed.ensure_index :user, background: false, mongo: @feed.mongo_db
+    @feed.ensure_index :user, background: false
   end
 
 

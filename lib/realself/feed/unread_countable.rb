@@ -35,11 +35,10 @@ module RealSelf
       #
       # @param [String] owner_type  The type of object that owns the feed
       # @param [true | false]       Create the index in the background
-      # @param [mongo_db] mongo     The mongo db client instance
-      def self.ensure_index(owner_type, background: true, mongo:)
+      def ensure_index(owner_type, background: true)
         super if defined?(super)
 
-        collection = mongo.collection("#{owner_type}.#{self::FEED_NAME}.unread_count") 
+        collection = unread_count_collection(owner_type)
 
         collection.indexes.create_one(
           {:owner_id => Mongo::Index::DESCENDING},

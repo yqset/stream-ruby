@@ -13,7 +13,7 @@ describe RealSelf::Feed::Permanent do
   before :all do
     @feed           = TestPermanent.new
     @feed.mongo_db  = IntegrationHelper.get_mongo
-    TestPermanent.ensure_index :user, background: false, mongo: @feed.mongo_db
+    @feed.ensure_index :user, background: false
   end
 
   it_should_behave_like '#insertable', @feed
