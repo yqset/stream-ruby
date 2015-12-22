@@ -1,4 +1,4 @@
-# Realself::Stream [![CircleCI](https://circleci.com/gh/RealSelf/stream-ruby.svg?style=shield&circle-token=12e8289117eb5dd18737d252efce759a6a8d1afb)](https://circleci.com/gh/RealSelf/stream-ruby/tree/master)
+# Realself::Stream [![Circle CI](https://circleci.com/gh/RealSelf/stream-ruby.svg?style=svg&circle-token=9bee1e8453fa503ca91bbfa034cdbfd8ebb68a66)](https://circleci.com/gh/RealSelf/stream-ruby)
 
 TODO: Write a gem description
 
