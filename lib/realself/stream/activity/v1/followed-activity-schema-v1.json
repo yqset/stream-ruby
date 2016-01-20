@@ -7,7 +7,7 @@
   "properties" : {
     "published" : {
       "type" : "string",
-      "foramt" : "date-time"
+      "format" : "date-time"
     },
     "title" : {
       "type" : "string"
