@@ -1,4 +1,4 @@
 
 require 'simplecov'
 
-SimpleCov.command_name "test:integration"
+SimpleCov.command_name "test:unit"

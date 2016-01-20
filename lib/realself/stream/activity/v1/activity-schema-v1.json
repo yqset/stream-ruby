@@ -36,7 +36,7 @@
     },
     "prototype" : {
       "type" : "string"
-    }        
+    }
   },
   "definitions" : {
     "activity-object" : {
