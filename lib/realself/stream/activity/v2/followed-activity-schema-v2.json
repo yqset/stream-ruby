@@ -1,39 +1,57 @@
 {
-  "id" : "https://realself.com/queue-item-schema-v2#",
+  "id" : "http://realself.com/queue-item-schema-v2#",
   "$schema" : "http://json-schema.org/draft-04/schema#",
   "description" : "schema for items places on the ingestor queue",
   "type" : "object",
   "required" : ["published", "title", "actor", "verb", "object"],
   "properties" : {
     "published" : {
-      "$ref": "../regex_schema.json#/definitions/ISO8601"
+      "type" : "string",
+      "pattern" : "^\\A\\d{4}-\\d{2}-\\d{2}T(\\d{2}):(\\d{2}):(\\d{2})([\\.,]\\d+)?(Z|[+-](\\d{2})(:?\\d{2})?)?\\z"
     },
     "title" : {
       "type" : "string"
     },
     "actor" : {
-        "$ref" : "../shared-schema.json#/definitions/followed-activity-object"
+        "$ref" : "#/definitions/activity-object"
     },
     "verb" : {
         "type" :"string"
     },
     "object" : {
-        "$ref" : "../shared-schema.json#/definitions/followed-activity-object"
+        "$ref" : "#/definitions/activity-object"
     },
     "target" : {
-        "$ref" : "../shared-schema.json#/definitions/followed-activity-object"
+        "$ref" : "#/definitions/activity-object"
     },
     "extensions" : {
         "type" : "object",
         "minItems" : 0,
         "uniqueItems" : true,
-        "additionalProperties" : {"$ref" : "../shared-schema.json#/definitions/activity-object"}
-    },
-    "uuid" : {
-      "$ref": "../regex_schema.json#/definitions/uuid"
+        "additionalProperties" : {"$ref" : "#/definitions/activity-object"}
     },
     "prototype" : {
       "type" : "string"
+    }
+  },
+  "definitions" : {
+    "activity-object" : {
+      "type" : "object",
+      "required" : ["type", "id"],
+      "properties" : {
+        "type" : {
+          "type" : "string"
+        },
+        "id" : {
+          "type" : "string"
+        },
+        "followers" : {
+          "type" : "array",
+          "items" : {"$ref" : "#/definitions/activity-object"},
+          "minItems" : 0,
+          "uniqueItems" : true
+        }
+      }
     }
   }
 }
