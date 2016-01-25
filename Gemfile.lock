@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    realself-stream (2.3.1)
+    realself-stream (2.3.2)
       bunny
       httparty
       json-schema
@@ -19,7 +19,7 @@ GEM
   specs:
     addressable (2.3.8)
     amq-protocol (2.0.0)
-    bson (3.2.6)
+    bson (4.0.0)
     bunny (2.2.0)
       amq-protocol (>= 2.0.0)
     byebug (4.0.5)
@@ -34,8 +34,8 @@ GEM
     json-schema (2.6.0)
       addressable (~> 2.3.8)
     method_source (0.8.2)
-    mongo (2.1.2)
-      bson (~> 3.0)
+    mongo (2.2.0)
+      bson (~> 4.0)
     multi_json (1.10.1)
     multi_xml (0.5.5)
     pry (0.10.1)
@@ -78,7 +78,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  mongo (= 2.1.2)
+  mongo (= 2.2.0)
   pry-byebug
   rake_helpers!
   realself-stream!
