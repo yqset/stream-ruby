@@ -7,7 +7,7 @@
   "properties" : {
     "published" : {
       "type" : "string",
-      "format" : "date-time"
+      "pattern" : "^\\A\\d{4}-\\d{2}-\\d{2}T(\\d{2}):(\\d{2}):(\\d{2})([\\.,]\\d+)?(Z|[+-](\\d{2})(:?\\d{2})?)?\\z"
     },
     "title" : {
       "type" : "string"
@@ -30,9 +30,13 @@
         "uniqueItems" : true,
         "additionalProperties" : {"$ref" : "#/definitions/activity-object"}
     },
+    "uuid" : {
+      "type" : "string",
+      "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+    },
     "prototype" : {
       "type" : "string"
-    }        
+    }
   },
   "definitions" : {
     "activity-object" : {

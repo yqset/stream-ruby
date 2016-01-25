@@ -70,6 +70,16 @@ describe RealSelf::Stream::Activity do
       expect(activity).to be_an_instance_of RealSelf::Stream::ActivityV2
       expect(activity.version).to eql 2
     end
+
+    it "raises an exception on parse error" do
+      (1..2).each do |version|
+        Helpers.init(version)
+        hash = example_hash
+        hash[:published] = "bogus date"
+        json = MultiJson.encode(hash)
+        expect{RealSelf::Stream::Activity.from_json(json)}.to raise_error JSON::Schema::ValidationError
+      end
+    end
   end
 
 
