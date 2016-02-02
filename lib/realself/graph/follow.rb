@@ -117,22 +117,57 @@ module RealSelf
       # gets the objects that an actor is following
       #
       # @param [String] The type of actors to include e.g. :user
-      # @param [Objekt] The object being followed
+      # @param [Objekt | Array] The object or objects being followed
       # @param [&block] (optional) A block to execute for each actor following the object
       #
-      # @return (Array) An array of Objekts containing the actors
-      def self.followers_of actor_type, object
-        cursor = get_collection(actor_type).find(
-          {:object => object.to_h},
-          {:fields => {:_id => 0, :object => 0}})
+      # @return (Hash) <Objekt>, [<Objekt>, <Objekt2>] A Hash with the follower as a key and an array of followed objects as the value
+      def self.followers_of actor_type, objects
+        objects = [*objects].map {|obj| {:object => obj.to_h}}
+
+        cursor = get_collection(actor_type).aggregate(
+          [
+            {:'$match' => {:'$or' => objects}},
+            {:'$sort'  => {:'actor.id' => 1}}
+          ])
+
+        follower  = nil
+        following = []
 
         if block_given?
           cursor.each do |item|
-            yield RealSelf::Stream::Objekt.from_hash(item[:actor])
+            if item[:actor] != follower
+              # when we get to the next follower, yield the previous follower
+              # and the list of items they are following
+              yield RealSelf::Stream::Objekt.from_hash(follower), following unless following.empty?
+
+              # reset the current follower and list of followed objects
+              follower  = item[:actor]
+              following = []
+            end
+
+            following << RealSelf::Stream::Objekt.from_hash(item[:object])
           end
 
+          # yield the follower and the list of items they are following
+          yield RealSelf::Stream::Objekt.from_hash(follower), following unless following.empty?
+
         else
-          cursor.to_a.map { |item| RealSelf::Stream::Objekt.from_hash(item[:actor]) }
+          follow_map = {}
+
+          cursor.to_a.each do |item|
+            if item[:actor] != follower
+              follow_map[RealSelf::Stream::Objekt.from_hash(follower)] = following unless following.empty?
+
+              follower  = item[:actor]
+              following = []
+            end
+
+            following << RealSelf::Stream::Objekt.from_hash(item[:object])
+          end
+
+          follow_map[RealSelf::Stream::Objekt.from_hash(follower)] = following
+
+          follow_map
         end
       end
 
