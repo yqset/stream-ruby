@@ -1,20 +1,19 @@
 # Realself::Stream [![Circle CI](https://circleci.com/gh/RealSelf/stream-ruby.svg?style=svg&circle-token=9bee1e8453fa503ca91bbfa034cdbfd8ebb68a66)](https://circleci.com/gh/RealSelf/stream-ruby)
 
-TODO: Write a gem description
+[Documentation](https://github.com/RealSelf/stream-ruby/wiki)
+
+[Sample Stream Service](https://github.com/RealSelf/sample-stream-service)
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'realself-stream', '~> 2.0.0', realself: 'stream-ruby'
+    gem 'realself-stream', '~> 2.0.0', :git => 'ssh://git@github.com/RealSelf/stream-ruby.git'
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
-Or install it yourself as:
-
-    $ gem install realself-stream
 
 ## Usage
 
@@ -35,7 +34,7 @@ $ bundle exec rake test:unit
 $ SKIP_TTL_TESTS=true bundle exec rake test
 ```
 
-* Integration tests assume MongoDB ``~>2.6.0` is running locally and listening on port `27017`.  
+* Integration tests assume MongoDB ``~>2.6.0` is running locally and listening on port `27017`.
 * `bundle exec rspec` will run all integration and unit tests
 * The TTL integration test must allow the TTL to expire to compleate all tests.  To skip waiiting for the timeout, set the `SKIP_TTL_TESTS` environment variable to `true`.
 
