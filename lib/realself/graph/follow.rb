@@ -127,7 +127,11 @@ module RealSelf
         cursor = get_collection(actor_type).aggregate(
           [
             {:'$match' => {:'$or' => objects}},
-            {:'$sort'  => {:'actor.id' => 1}}
+            {:'$sort'  => {
+              :'actor.id' => Mongo::Index::ASCENDING,
+              :'_id'      => Mongo::Index::ASCENDING
+              }
+            }
           ])
 
         follower  = nil

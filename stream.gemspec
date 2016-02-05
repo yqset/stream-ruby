@@ -24,6 +24,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "json-schema"
   gem.add_dependency "multi_json"
   gem.add_dependency "httparty"
+  gem.add_dependency "rake", "~> 10.0"
 
   gem.add_development_dependency "rspec"
   # see Gemfile for test dependencies

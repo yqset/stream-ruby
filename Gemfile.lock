@@ -1,17 +1,11 @@
 PATH
   remote: .
   specs:
-    realself-stream (2.3.2)
+    realself-stream (2.3.4)
       bunny
       httparty
       json-schema
       multi_json
-
-GIT
-  remote: ssh://git@github.com/RealSelf/rake_helpers.git
-  revision: d9e6b90ec876867f2d92ce34557ec3ddf79f3a58
-  specs:
-    rake_helpers (0.1.1)
       rake (~> 10.0)
 
 GEM
@@ -45,7 +39,7 @@ GEM
     pry-byebug (3.1.0)
       byebug (~> 4.0)
       pry (~> 0.10)
-    rake (10.4.2)
+    rake (10.5.0)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
@@ -80,7 +74,6 @@ PLATFORMS
 DEPENDENCIES
   mongo (= 2.2.0)
   pry-byebug
-  rake_helpers!
   realself-stream!
   rspec
   simplecov (~> 0.7.1)
