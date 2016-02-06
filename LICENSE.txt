@@ -1,4 +1,4 @@
-Copyright (c) 2013 Matt Towers
+Copyright (c) 2013-2016 RealSelf, Inc.
 
 MIT License
 
