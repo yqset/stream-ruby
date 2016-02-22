@@ -1,12 +1,13 @@
 PATH
   remote: .
   specs:
-    realself-stream (2.3.4)
+    realself-stream (2.3.5)
       bunny
       httparty
       json-schema
       multi_json
       rake (~> 10.0)
+      rspec
 
 GEM
   remote: https://rubygems.org/
@@ -40,18 +41,19 @@ GEM
       byebug (~> 4.0)
       pry (~> 0.10)
     rake (10.5.0)
-    rspec (3.0.0)
-      rspec-core (~> 3.0.0)
-      rspec-expectations (~> 3.0.0)
-      rspec-mocks (~> 3.0.0)
-    rspec-core (3.0.2)
-      rspec-support (~> 3.0.0)
-    rspec-expectations (3.0.2)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.2)
+      rspec-support (~> 3.4.0)
+    rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.0.0)
-    rspec-mocks (3.0.2)
-      rspec-support (~> 3.0.0)
-    rspec-support (3.0.2)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
     serverengine (1.5.11)
       sigdump (~> 0.2.2)
     sigdump (0.2.3)
@@ -75,7 +77,6 @@ DEPENDENCIES
   mongo (= 2.2.0)
   pry-byebug
   realself-stream!
-  rspec
   simplecov (~> 0.7.1)
   sneakers (= 2.2.1)
 
