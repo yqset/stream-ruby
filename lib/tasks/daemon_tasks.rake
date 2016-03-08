@@ -6,7 +6,7 @@ require 'bunny'
 module RealSelf
   module Daemon
     module RakeTasks
-      def self.process_errors rmq_url, queue_name, content_type
+      def self.process_errors rmq_url, queue_name, content_type, limit=nil
         connection = Bunny.new rmq_url
         connection.start
 
@@ -15,7 +15,7 @@ module RealSelf
         ch = connection.channel
         error_queue = ch.queue(error_queue_name, :durable => true)
 
-        message_count = error_queue.message_count
+        message_count = limit || error_queue.message_count
         puts("#{error_queue_name} size: #{message_count}")
         processed = 0;
 
@@ -73,7 +73,7 @@ module RealSelf
 end
 
 desc "Replay messages from an error queue"
-task :replay_error_queue, :rmq_url, :original_queue_name, :content_type do |t, args|
+task :replay_error_queue, :rmq_url, :original_queue_name, :content_type, :limit do |t, args|
 puts args
-  RealSelf::Daemon::RakeTasks.process_errors args[:rmq_url], args[:original_queue_name], args[:content_type]
+  RealSelf::Daemon::RakeTasks.process_errors args[:rmq_url], args[:original_queue_name], args[:content_type], args[:limit]
 end
