@@ -63,13 +63,15 @@ describe RealSelf::Feed::Capped do
         case index[:name]
         when "_id_"
           index[:name]
+        when "feed.activity.uuid_-1"
+          index[:name]
         when "object.id_-1"
           expect(index[:key]).to eql({'object.id' => Mongo::Index::DESCENDING})
           index[:name]
         end
       end.compact
 
-      expect(result.size).to eql 2
+      expect(result.size).to eql 3
     end
   end
 
