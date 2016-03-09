@@ -27,6 +27,10 @@ module RealSelf
             :key        => {:'feed.activity.redacted' => Mongo::Index::DESCENDING},
             :background => background,
             :sparse     => true
+          },
+          {
+            :key        => {:'feed.activity.uuid' => Mongo::Index::DESCENDING},
+            :background => background
           }
         ])
       end
