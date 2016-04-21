@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'mongo'
 
 describe RealSelf::Feed::Capped do
-  include Helpers
 
   class CappedIntegrationTestFeed < RealSelf::Feed::Capped
     FEED_NAME = :capped_integration_test.freeze
@@ -27,7 +26,7 @@ describe RealSelf::Feed::Capped do
 
   before :each do
     @owner = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
-    @activity         = user_create_thing_activity
+    @activity         = Helpers.user_create_thing_activity
     @stream_activity  = RealSelf::Stream::StreamActivity.new(@owner, @activity, [@owner])
   end
 
@@ -102,7 +101,7 @@ describe RealSelf::Feed::Capped do
       stream_activities = []
 
       (CappedIntegrationTestFeed::MAX_FEED_SIZE + 1).times do
-        activity = user_create_thing_activity
+        activity = Helpers.user_create_thing_activity
         sa       = RealSelf::Stream::StreamActivity.new(@owner, activity, [@owner])
 
         stream_activities << sa

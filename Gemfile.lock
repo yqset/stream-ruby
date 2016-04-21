@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    realself-stream (2.3.8)
+    realself-stream (2.4.0)
       bunny
       httparty
       json-schema
@@ -45,7 +45,7 @@ GEM
       rspec-core (~> 3.4.0)
       rspec-expectations (~> 3.4.0)
       rspec-mocks (~> 3.4.0)
-    rspec-core (3.4.2)
+    rspec-core (3.4.4)
       rspec-support (~> 3.4.0)
     rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)

@@ -12,7 +12,7 @@ module RealSelf
 
 
       def work_with_params message, delivery_info, metadata
-        activity        = Stream::Factory.from_json self.class.content_type, message, false
+        activity        = Stream::Factory.from_json self.class.content_type, message, true
         enclosure       = Handler::Factory.enclosure self.class.queue_name
         handlers        = Handler::Factory.create(
                             activity.prototype,
