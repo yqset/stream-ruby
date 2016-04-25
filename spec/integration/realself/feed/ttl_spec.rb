@@ -62,7 +62,7 @@ describe RealSelf::Feed::Ttl do
 
   describe '#insert' do
     it 'adds the "created" attribute to the inserted activities' do
-      activity  = user_create_thing_activity
+      activity  = Helpers.user_create_thing_activity
       sa        = RealSelf::Stream::StreamActivity.new(@owner, activity, [@owner])
 
       @feed.insert(@owner, sa)
@@ -76,7 +76,7 @@ describe RealSelf::Feed::Ttl do
 
     it 'expires old activities' do
       unless IntegrationHelper.skip_ttl_test
-        activity  = user_create_thing_activity
+        activity  = Helpers.user_create_thing_activity
         sa        = RealSelf::Stream::StreamActivity.new(@owner, activity, [@owner])
 
         @feed.insert(@owner, sa)

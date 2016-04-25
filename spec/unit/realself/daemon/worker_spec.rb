@@ -54,17 +54,16 @@ describe RealSelf::Daemon::Worker do
 
   context '#work_with_params' do
     before(:each) do
-      @activity = RealSelf::Stream::Activity.create(2,
-            'sample activity title',
-            DateTime.parse('1970-01-01T00:00:00Z'),
-            RealSelf::Stream::Objekt.new('test', 0),
-            'ack',
-            RealSelf::Stream::Objekt.new('message', 0),
-            nil,
-            nil,
-            SecureRandom.uuid,
-            'test.activity'
-            )
+      @activity = RealSelf::Stream::Activity.new(
+        'sample activity title',
+        DateTime.parse('1970-01-01T00:00:00Z'),
+        RealSelf::Stream::Objekt.new('test', 0),
+        'ack',
+        RealSelf::Stream::Objekt.new('message', 0),
+        nil,
+        nil,
+        SecureRandom.uuid,
+        'test.activity')
     end
 
 

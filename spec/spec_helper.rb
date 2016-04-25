@@ -17,8 +17,6 @@ require_relative './integration/realself/feed/getable_shared_examples'
 require_relative './integration/realself/feed/insertable_shared_examples'
 require_relative './integration/realself/feed/redactable_shared_examples'
 require_relative './integration/realself/feed/unread_countable_shared_examples'
-require_relative './unit/realself/stream/activity/activity_shared_examples'
-require_relative './unit/realself/stream/activity/followed_activity_shared_examples'
 require_relative './unit/realself/stream/digest/digest_spec'
 
 SimpleCov.start do

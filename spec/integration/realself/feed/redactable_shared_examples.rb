@@ -30,8 +30,8 @@ shared_examples RealSelf::Feed::Redactable do |feed|
     it "redacts activities" do
       owner     = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
       owner2    = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
-      activity  = user_create_thing_activity
-      activity2 = user_update_thing_activity
+      activity  = Helpers.user_create_thing_activity
+      activity2 = Helpers.user_update_thing_activity
 
       sa        = RealSelf::Stream::StreamActivity.new(
         owner,
