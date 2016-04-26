@@ -1,4 +1,4 @@
-# Realself::Stream [![Circle CI](https://circleci.com/gh/RealSelf/stream-ruby.svg?style=svg&circle-token=9bee1e8453fa503ca91bbfa034cdbfd8ebb68a66)](https://circleci.com/gh/RealSelf/stream-ruby)
+# Realself::Stream [![Circle CI](https://circleci.com/gh/RealSelf/stream-ruby.svg?style=svg&circle-token=9bee1e8453fa503ca91bbfa034cdbfd8ebb68a66)](https://circleci.com/gh/RealSelf/stream-ruby) [![Coverage Status](https://coveralls.io/repos/github/RealSelf/stream-ruby/badge.svg?branch=master)](https://coveralls.io/github/RealSelf/stream-ruby?branch=master)
 
 [Documentation](https://github.com/RealSelf/stream-ruby/wiki)
 

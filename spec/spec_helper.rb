@@ -1,6 +1,13 @@
+require 'simplecov'
+require 'coveralls'
+SimpleCov.formatter = Coveralls::SimpleCov::Formatter
+SimpleCov.start do
+  add_filter '/spec/'
+end
+Coveralls.wear!
+
 require 'rubygems'
 require 'rspec'
-require 'simplecov'
 
 require 'pry-byebug'
 require 'mongo'
@@ -19,6 +26,3 @@ require_relative './integration/realself/feed/redactable_shared_examples'
 require_relative './integration/realself/feed/unread_countable_shared_examples'
 require_relative './unit/realself/stream/digest/digest_spec'
 
-SimpleCov.start do
-  add_filter '/spec/'
-end

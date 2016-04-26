@@ -1,6 +1,8 @@
 require "bundler/gem_tasks"
 require 'rspec/core/rake_task'
+require 'coveralls/rake/task'
 
+Coveralls::RakeTask.new
 
 # This is a useful default task:
 task :default do
@@ -75,6 +77,8 @@ task :test do
   TEST_SUITES.each do |suite|
     Rake::Task["test:#{suite[:id]}"].invoke
   end
+
+  Rake::Task['coveralls:push'].invoke
 end
 
 
