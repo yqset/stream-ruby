@@ -2,7 +2,6 @@ require "bundler/gem_tasks"
 require 'rspec/core/rake_task'
 require 'coveralls/rake/task'
 
-Coveralls::RakeTask.new
 
 # This is a useful default task:
 task :default do

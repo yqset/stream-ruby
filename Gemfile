@@ -6,6 +6,6 @@ gemspec
 
 group :development, :test do
   gem 'coveralls', require: false
-  gem 'simplecov', '~> 0.7.1', :require => false, :group => :test
+  gem 'simplecov', '~> 0.11.2', :require => false
 end
 
