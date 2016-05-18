@@ -11,7 +11,7 @@ module Helpers
   def self.example_hash
     {
       :title      => "sample activity title",
-      :published  => "1970-01-01T00:00:00+00:00",
+      :published  => DateTime.parse("1970-01-01T00:00:00+00:00"),
       :actor      => {:type => "dr", :id => "1234"},
       :verb       => "author",
       :object     => {:type => "answer", :id => "2345"},
@@ -104,7 +104,7 @@ module Helpers
 
   def self.followed_activity_hash(actor_id)
     {
-      :published => "1970-01-01T00:00:00+00:00",
+      :published => DateTime.parse("1970-01-01T00:00:00+00:00"),
       :title => "QUEUE ITEM - dr(57433) author answer(1050916) about question(1048591)",
       :actor =>
       {
