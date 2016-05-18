@@ -12,7 +12,7 @@ module RealSelf
 
       def self.from_hash hash
         title       = hash[:title]
-        published   = DateTime.parse hash[:published]
+        published   = DateTime.parse hash[:published].to_s
         prototype   = hash[:prototype] || nil
         actor       = Objekt.from_hash hash[:actor]
         verb        = hash[:verb].to_s
@@ -89,7 +89,7 @@ module RealSelf
 
         hash = {
           :title      => @title,
-          :published  => @published.to_s,
+          :published  => @published,
           :actor      => @actor.to_h,
           :verb       => @verb,
           :object     => @object.to_h,

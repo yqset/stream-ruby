@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe RealSelf::Stream::FollowedActivity do
 
 
@@ -28,6 +30,13 @@ describe RealSelf::Stream::FollowedActivity do
   describe "::from_hash" do
     it "can create a followed_activity" do
       followed_activity = RealSelf::Stream::FollowedActivity.from_hash(Helpers.followed_activity_hash(1234))
+      expect(followed_activity).to be_an_instance_of RealSelf::Stream::FollowedActivity
+    end
+
+    it "can create a followed_activity with a date string in the hash" do
+      hash = Helpers.followed_activity_hash(1234)
+      hash[:published] = hash[:published].to_s
+      followed_activity = RealSelf::Stream::FollowedActivity.from_hash(hash)
       expect(followed_activity).to be_an_instance_of RealSelf::Stream::FollowedActivity
     end
   end

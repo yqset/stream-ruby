@@ -33,6 +33,14 @@ describe RealSelf::Stream::Activity do
       expect(activity).to be_an_instance_of RealSelf::Stream::Activity
       expect(activity.version).to eql 2
     end
+
+    it "can create an activity with a date string in the hash" do
+      hash = Helpers.example_hash
+      hash[:published] = hash[:published].to_s
+      activity = RealSelf::Stream::Activity.from_hash(hash)
+      expect(activity).to be_an_instance_of RealSelf::Stream::Activity
+      expect(activity.version).to eql 2
+    end
   end
 
 
