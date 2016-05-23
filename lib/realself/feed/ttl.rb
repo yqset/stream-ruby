@@ -17,7 +17,7 @@ module RealSelf
 
         collection.indexes.create_many([
           {
-            :key          => {:'activity.published' => Mongo::Index::ASCENDING},
+            :key          => {:'activity.published' => Mongo::Index::DESCENDING},
             :background   => background,
             :expire_after => self.class::FEED_TTL_SECONDS
           }

@@ -49,7 +49,7 @@ describe RealSelf::Feed::Ttl do
             'object.id'      => Mongo::Index::DESCENDING})
           expect(index[:unique]).to eql true
           index[:name]
-        when "activity.published_1"
+        when "activity.published_-1"
           expect(index[:expireAfterSeconds]).to eql @feed.class::FEED_TTL_SECONDS
           index[:name]
         end
