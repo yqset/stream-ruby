@@ -154,19 +154,14 @@ module RealSelf
       ##
       # Execute the mongo update
       def unread_count_do_update(owner, query, update)
-        begin
-          unread_count_collection(owner.type)
-            .find_one_and_update(query, update, {:upsert => true, :return_document => :after})
-        rescue Mongo::Error::OperationFailure => ex
-          raise ex unless ex.message =~ /#{self.class::MONGO_ERROR_DUPLICATE_KEY}/
-        end
+        state_do_update(owner, query, update)
       end
 
 
       ##
       # Get the mongo collection object
       def unread_count_collection(owner_type)
-        @mongo_db.collection("#{owner_type}.#{self.class::FEED_NAME}.unread_count")
+        state_collection(owner_type)
       end
 
 
@@ -175,6 +170,10 @@ module RealSelf
       def self.included(other)
         other.const_set('MAX_FEED_SIZE', MAX_UNREAD_COUNT) unless defined? other::MAX_FEED_SIZE
         other.const_set('MONGO_ERROR_DUPLICATE_KEY', MONGO_ERROR_DUPLICATE_KEY) unless defined? other::MONGO_ERROR_DUPLICATE_KEY
+        other.class_eval do
+          puts "Including Stateful from unread_countable"
+          include Stateful
+        end unless other.ancestors.include? RealSelf::Feed::Stateful
       end
     end
   end
