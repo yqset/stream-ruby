@@ -44,6 +44,11 @@ module RealSelf
         other.const_set('STATE_NAME', STATE_NAME) unless defined? other::STATE_NAME
         other.const_set('MAX_FEED_SIZE', MAX_UNREAD_COUNT) unless defined? other::MAX_FEED_SIZE
         other.const_set('MONGO_ERROR_DUPLICATE_KEY', MONGO_ERROR_DUPLICATE_KEY) unless defined? other::MONGO_ERROR_DUPLICATE_KEY
+        other.class_eval do
+          include State::UnreadCountable
+          include State::Bookmarkable
+          include State::Sessioned
+        end
       end
     end
   end
