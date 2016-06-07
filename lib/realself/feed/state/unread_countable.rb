@@ -9,7 +9,7 @@ module RealSelf
         #
         # @param [Objekt] The user whose unread count is being changed
         def decrement_unread_count(owner)
-          result = unread_count_do_update(
+          result = state_do_update(
             owner,
             {
             :owner_id => owner.id,
@@ -22,22 +22,6 @@ module RealSelf
           # if the update failed, assume the unread count is already at
           # zero, so return that.
           result ? result : {:owner_id => owner.id, :count => 0}
-        end
-
-
-        ##
-        # create indexes on the unread count collection if necessary
-        #
-        # @param [String] owner_type  The type of object that owns the feed
-        # @param [true | false]       Create the index in the background
-        def ensure_index(owner_type, background: true)
-          super if defined?(super)
-
-          collection = unread_count_collection(owner_type)
-
-          collection.indexes.create_one(
-            {:owner_id => Mongo::Index::DESCENDING},
-            :unique => true, :background => background)
         end
 
 
@@ -62,7 +46,7 @@ module RealSelf
           }
           }
 
-          result = unread_count_collection(owner_type).find(query)
+          result = state_collection(owner_type).find(query)
           .limit(limit)
           .to_a
 
@@ -84,9 +68,9 @@ module RealSelf
         #
         # @return [Hash] {:owner_id => [owner.id], :count => 0}
         def get_unread_count(owner)
-          result = unread_count_collection(owner.type).find(
+          result = state_collection(owner.type).find(
             {:owner_id => owner.id},
-            {:fields => {:_id => 0}}
+            {:fields => {:_id => 0, :count => 1}}
           ).limit(1)
 
           result.first ||  {:owner_id => owner.id, :count => 0}
@@ -99,7 +83,7 @@ module RealSelf
         #
         # @param [Objekt] The user whose unread count is being changed
         def increment_unread_count(owner)
-          result = unread_count_do_update(
+          result = state_do_update(
             owner,
             {
             :owner_id => owner.id,
@@ -130,7 +114,7 @@ module RealSelf
         #
         # @param [Objekt] The user whose unread count is being changed
         def set_unread_count(owner, count)
-          result = unread_count_do_update(
+          result = state_do_update(
             owner,
             {:owner_id => owner.id},
             {
@@ -140,23 +124,6 @@ module RealSelf
 
           # if the update failed, assume the unread count is already at the passed value
           result ? result : {:owner_id => owner.id, :count => count}
-        end
-
-
-        private
-
-
-        ##
-        # Execute the mongo update
-        def unread_count_do_update(owner, query, update)
-          state_do_update(owner, query, update)
-        end
-
-
-        ##
-        # Get the mongo collection object
-        def unread_count_collection(owner_type)
-          state_collection(owner_type)
         end
       end
     end
