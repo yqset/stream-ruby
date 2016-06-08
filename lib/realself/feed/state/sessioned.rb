@@ -11,11 +11,11 @@ module RealSelf
             {:fields => {:_id => 0, :last_acted_time => 1}}
           ).limit(1)
 
-          !result.nil? and !result["last_acted_time"].nil? and BSON::ObjectId.from_time(Time.now - self.class::SESSION_SECOND) < result["last_acted_time"]
+          !result.nil? and !result.first.nil? and BSON::ObjectId.from_time(Time.now - self.class::SESSION_SECOND) < result.first[:last_acted_time]
         end
 
         def expire_session(owner)
-          set_action_time(owner, time: nil)
+          set_action_time(owner, time: BSON::ObjectId.from_time(Time.now - self.class::SESSION_SECOND))
         end
 
         def touch_session(owner)
@@ -24,7 +24,7 @@ module RealSelf
 
         private
         
-        def set_action_time(owner, time: BSON::ObjectId.from_time(DateTime.now))
+        def set_action_time(owner, time: BSON::ObjectId.from_time(Time.now))
           raise(
             FeedError,
             "Illegal time: #{time}. time must be a legal BSON::ObjectId"

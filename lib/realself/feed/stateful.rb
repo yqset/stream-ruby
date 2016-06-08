@@ -9,6 +9,22 @@ module RealSelf
       MAX_UNREAD_COUNT = 2147483647.freeze
       MONGO_ERROR_DUPLICATE_KEY = 11000.freeze
 
+      ##
+      # create indexes on the state collection if necessary
+      #
+      # @param [String] owner_type  The type of object that owns the feed
+      # @param [true | false]       Create the index in the background
+      def ensure_index(owner_type, background: true)
+        super if defined?(super)
+
+        collection = state_collection(owner_type)
+
+        collection.indexes.create_one(
+          {:owner_id => Mongo::Index::DESCENDING},
+          :unique => true, :background => background)
+      end
+
+
       def get_state(owner)
           result = state_collection(owner.type).find(
             {:owner_id => owner.id}
