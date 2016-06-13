@@ -30,12 +30,23 @@ describe RealSelf::Stream::Publisher do
       expect(@bunny_session).to receive(:create_channel)
         .and_return(@bunny_channel)
 
+      expect(@bunny_channel).to receive(:open?)
+        .and_return(false)
+
+      expect(@bunny_channel).to receive(:open)
+        .and_return(@bunny_channel)
+
       expect(@bunny_channel).to receive(:topic)
-        .with(@exchange_name, :durable => true)
+        .with(@exchange_name, {:durable => true, :no_declare => true})
         .and_return(@bunny_exchange)
 
+      expect(@bunny_channel).to receive(:close)
 
-      publisher = RealSelf::Stream::Publisher.new(@rmq_config, @exchange_name)
+      publisher = RealSelf::Stream::Publisher.new(
+        @rmq_config,
+        @exchange_name,
+        {:durable => true, :no_declare => true})
+
       activity  = Helpers.user_create_thing_activity
 
       expect(@bunny_exchange).to receive(:publish)

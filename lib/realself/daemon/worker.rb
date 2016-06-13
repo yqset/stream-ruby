@@ -41,6 +41,9 @@ module RealSelf
           worker_options[:exchange]    = exchange_name
           worker_options[:routing_key] = Handler::Factory.registered_routing_keys(self.content_type)
 
+          # warn when no handlers registered for content type
+          RealSelf.logger.warn("No registered handlers found for content_type: #{self.content_type}, Worker: #{self.class.name}") if worker_options[:routing_key].empty?
+
           # enable DLX with default name if requested
           worker_options.merge!(
             :arguments   => {:'x-dead-letter-exchange' => "#{queue_name}-retry"}

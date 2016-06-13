@@ -3,20 +3,29 @@ require 'bunny'
 module RealSelf
   module Stream
     class Publisher
-      def initialize(config, exchange_name)
-        @publisher_session = Bunny.new(symbolize_keys(config))
-        @publisher_session.start
-        @publisher_channel = @publisher_session.create_channel
-        @publisher_exchange = @publisher_channel.topic(exchange_name, :durable => true)
+      def initialize(config, exchange_name, opts = {})
+        @exchange_name    = exchange_name
+        @exchange_options = opts # see: https://github.com/ruby-amqp/bunny/blob/master/lib/bunny/exchange.rb#L56-L86
+        session           = Bunny.new(symbolize_keys(config))
+
+        session.start
+
+        @channel  = session.create_channel
       end
 
       def publish(item, routing_key, content_type = 'application/json')
-        @publisher_exchange.publish(
+        @channel.open unless @channel.open?
+
+        exchange = @channel.topic(@exchange_name, @exchange_options)
+
+        exchange.publish(
           item.to_s,
           :content_type => content_type.to_s,
           :persistent => true,
           :routing_key => routing_key.to_s
         )
+
+        @channel.close
       end
 
       private

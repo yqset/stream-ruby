@@ -49,6 +49,19 @@ describe RealSelf::Daemon::Worker do
         :enable_retry  => true
       })
     end
+
+
+    it 'loggs a warning if there are no handlers registered' do
+      expect(RealSelf.logger).to receive(:warn)
+        .with(/stream_activity\+json/)
+
+      # StreamActivityWorker has no handlers in this context
+      RealSelf::Daemon::StreamActivityWorker.configure({
+        :exchange_name => 'test.exchange',
+        :queue_name    => 'test.queue',
+        :enable_retry  => true
+      })
+    end
   end
 
 
