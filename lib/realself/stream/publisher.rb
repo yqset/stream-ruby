@@ -3,32 +3,62 @@ require 'bunny'
 module RealSelf
   module Stream
     class Publisher
-      def initialize(config, exchange_name, opts = {})
-        @exchange_name    = exchange_name
-        @exchange_options = opts # see: https://github.com/ruby-amqp/bunny/blob/master/lib/bunny/exchange.rb#L56-L86
-        session           = Bunny.new(symbolize_keys(config))
+      MAX_CONNECTION_RETRY = 3
 
-        session.start
+      def initialize(config, exchange_name)
+        @exchange_name  = exchange_name
+        @rmq_config     = config
 
-        @channel  = session.create_channel
+        # default to single threded connections for publishing
+        # unless explicitly specified otherwise
+        @rmq_config[:threaded] = false unless config[:threaded]
+
+        initialize_connection
       end
 
       def publish(item, routing_key, content_type = 'application/json')
-        @channel.open unless @channel.open?
+        tries ||= 1
 
-        exchange = @channel.topic(@exchange_name, @exchange_options)
-
-        exchange.publish(
+        @publisher_exchange.publish(
           item.to_s,
           :content_type => content_type.to_s,
           :persistent => true,
-          :routing_key => routing_key.to_s
-        )
+          :routing_key => routing_key.to_s)
 
-        @channel.close
+      rescue ::Bunny::NetworkFailure, ::Bunny::NetworkErrorWrapper => nfe
+
+        if tries <= MAX_CONNECTION_RETRY
+
+          RealSelf::logger.warn "#{nfe.class.name} error detected.  Attempting reconnection #{tries}/#{MAX_CONNECTION_RETRY}"
+
+          @publisher_channel.maybe_kill_consumer_work_pool!
+
+          sleep tries # wait a little longer between each attempt
+
+          initialize_connection
+
+          tries += 1
+
+          retry
+        else
+
+          RealSelf::logger.error "#{nfe.class.name} detected.  Exhausted #{MAX_CONNECTION_RETRY} attempts.\n#{nfe.message}\n#{nfe.backtrace}"
+          raise nfe
+        end
       end
 
+
       private
+
+
+      def initialize_connection
+        @publisher_session  = Bunny.new(symbolize_keys(@rmq_config))
+        @publisher_session.start
+
+        @publisher_channel  = @publisher_session.create_channel
+        @publisher_exchange = @publisher_channel.topic(@exchange_name, :durable => true)
+      end
+
 
       def symbolize_keys(hash)
         hash.inject({}){|result, (key, value)|
