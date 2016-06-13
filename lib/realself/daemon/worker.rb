@@ -4,10 +4,11 @@ module RealSelf
 
       # default worker options
       WORKER_OPTIONS = {
-         :ack         => true,
-         :durable     => true,
-         :prefetch    => 1,
-         :threads     => 1
+         :ack               => true,
+         :durable           => true,
+         :prefetch          => 1,
+         :threads           => 1,
+         :timeout_job_after => 5
       }.freeze
 
 

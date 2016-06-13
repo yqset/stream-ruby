@@ -76,6 +76,5 @@ end
 
 desc "Replay messages from an error queue"
 task :replay_error_queue, :rmq_url, :original_queue_name, :content_type, :limit do |t, args|
-puts args
   RealSelf::Daemon::RakeTasks.process_errors args[:rmq_url], args[:original_queue_name], args[:content_type], args[:limit]
 end

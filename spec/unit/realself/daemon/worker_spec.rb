@@ -34,6 +34,7 @@ describe RealSelf::Daemon::Worker do
        :prefetch    => 1,
        :routing_key => ['test.activity'],
        :threads     => 1,
+       :timeout_job_after => 5,
        :arguments   => {:'x-dead-letter-exchange' => "test.queue-retry"}
     }
   end
