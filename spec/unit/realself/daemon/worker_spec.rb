@@ -34,7 +34,6 @@ describe RealSelf::Daemon::Worker do
        :prefetch    => 1,
        :routing_key => ['test.activity'],
        :threads     => 1,
-       :timeout_job_after => 5,
        :arguments   => {:'x-dead-letter-exchange' => "test.queue-retry"}
     }
   end
@@ -48,6 +47,22 @@ describe RealSelf::Daemon::Worker do
         :exchange_name => 'test.exchange',
         :queue_name    => 'test.queue',
         :enable_retry  => true
+      })
+    end
+
+    it 'honors passed worker param overriedes' do
+      @worker_options[:timeout_job_after] = 60
+
+      expect(RealSelf::Daemon::ActivityWorker).to receive(:from_queue)
+        .with('test.queue', @worker_options)
+
+      RealSelf::Daemon::ActivityWorker.configure({
+        :exchange_name => 'test.exchange',
+        :queue_name    => 'test.queue',
+        :enable_retry  => true,
+        :worker_options => {
+          :timeout_job_after => 60
+        }
       })
     end
 
