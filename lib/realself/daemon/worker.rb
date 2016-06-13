@@ -7,8 +7,7 @@ module RealSelf
          :ack               => true,
          :durable           => true,
          :prefetch          => 1,
-         :threads           => 1,
-         :timeout_job_after => 5
+         :threads           => 1
       }.freeze
 
 
