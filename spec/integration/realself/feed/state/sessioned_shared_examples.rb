@@ -32,7 +32,7 @@ shared_examples RealSelf::Feed::State::Sessioned do |feed|
 
       before_time = before_sess.generation_time.to_i
       after_time  = after_sess.generation_time.to_i
-      session_time = @feed.get_state(@owner)[:last_acted_time].generation_time.to_i
+      session_time = @feed.get_state(@owner)[:last_active].generation_time.to_i
 
       expect(session_time).to be_within(before_time).of(after_time)
       expect(@feed.is_session_alive?(@owner)).to eql true
