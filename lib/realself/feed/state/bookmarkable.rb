@@ -37,7 +37,7 @@ module RealSelf
             :'$set' => {:position => position}
           })
 
-          result
+          position if result
         end
 
         ##

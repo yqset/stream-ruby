@@ -16,8 +16,8 @@ shared_examples RealSelf::Feed::State::Bookmarkable do |feed|
   describe '#bookmark' do
     it 'bookmark/set a position with valid BSON::ObjectId' do
       position = BSON::ObjectId.from_time(Time.now)
-      set_pos = @feed.set_position(@owner, position)[:position]
-      get_pos = @feed.get_position(@owner)[:position]
+      set_pos = @feed.set_bookmark(@owner, position)
+      get_pos = @feed.get_bookmark(@owner)
 
       expect(set_pos).to eql get_pos
       expect(position).to eql set_pos
@@ -25,7 +25,7 @@ shared_examples RealSelf::Feed::State::Bookmarkable do |feed|
 
     it 'will not accept illegal BSON::ObjectId' do
       position = "It's a string!"
-      expect{ @feed.set_position(@owner, position) }.to raise_error(RealSelf::Feed::FeedError)
+      expect{ @feed.set_bookmark(@owner, position) }.to raise_error(RealSelf::Feed::FeedError)
     end
   end
 
