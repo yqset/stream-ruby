@@ -11,7 +11,7 @@ module RealSelf
             {:fields => {:_id => 0, :last_active => 1}}
           ).limit(1)
 
-          !result.nil? and !result.first.nil? and BSON::ObjectId.from_time(Time.now - self.class::SESSION_SECOND) < result.first[:last_active]
+          !result.nil? and !result.first.nil? and BSON::ObjectId.from_time(Time.now - self.class::SESSION_EXPIRE_AFTER_SECONDS) < result.first[:last_active]
         end
 
         def expire_session(owner)

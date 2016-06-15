@@ -13,7 +13,7 @@ shared_examples RealSelf::Feed::State::Sessioned do |feed|
   end
 
 
-  describe '#session' do
+  describe '#touch_session' do
     it 'creates a session' do
       expect(@feed.is_session_alive?(@owner)).to eql false
       @feed.touch_session(@owner)
@@ -37,14 +37,24 @@ shared_examples RealSelf::Feed::State::Sessioned do |feed|
       expect(session_time).to be_within(before_time).of(after_time)
       expect(@feed.is_session_alive?(@owner)).to eql true
     end
+  end
 
+  describe '#expire_session' do
     it 'should invalidate a session' do
       @feed.touch_session(@owner)
       expect(@feed.is_session_alive?(@owner)).to eql true
       @feed.expire_session(@owner)
       expect(@feed.is_session_alive?(@owner)).to eql false
     end
+  end
 
+  describe '#is_session_alive?' do
+    it 'should be dead initailly' do
+      expect(@feed.is_session_alive?(@owner)).to eql false
+    end
+  end
+
+  describe '#set_action_time' do
     it 'will not accept illegal BSON::ObjectId' do
       position = "It's a string!"
       expect{ @feed.send(:set_action_time, @owner, time: position) }.to raise_error(RealSelf::Feed::FeedError)

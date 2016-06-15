@@ -7,6 +7,7 @@ describe RealSelf::Feed::Capped do
     STATE_NAME = :state.freeze
     FEED_NAME = :stateful_capped_integration_test.freeze
     MAX_FEED_SIZE = 10.freeze
+    SESSION_EXPIRE_AFTER_SECONDS = 2.freeze
     include RealSelf::Feed::Stateful
   end
 
@@ -94,6 +95,16 @@ describe RealSelf::Feed::Capped do
     end
   end
 
+  describe "#is_session_alive?" do
+    it "should expire after 2 second" do
+      @feed.touch_session(@owner)
+      expect(@feed.is_session_alive?(@owner)).to be true
+      sleep(@feed.class::SESSION_EXPIRE_AFTER_SECONDS - 1)
+      expect(@feed.is_session_alive?(@owner)).to be true
+      sleep(1)
+      expect(@feed.is_session_alive?(@owner)).to be false
+    end
+  end
 
   describe '#insert' do
     it "limits the feed to the specified max size" do

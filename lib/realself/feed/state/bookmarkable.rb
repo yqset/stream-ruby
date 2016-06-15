@@ -17,7 +17,7 @@ module RealSelf
             {:fields => {:_id => 0, :position => 1}}
           ).limit(1)
 
-          result.first[:position]
+          result.first ? result.first[:position] : nil
         end
 
         ##
@@ -37,12 +37,12 @@ module RealSelf
             :'$set' => {:position => position}
           })
 
-          position if result
+          position
         end
 
         ##
         # Forget a position of a user
-        def forget_bookmark(owner)
+        def remove_bookmark(owner)
           state_do_update(owner, {:owner_id => owner.id}, {:'$unset' => {:position => ""}})
         end
       end

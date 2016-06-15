@@ -10,17 +10,23 @@ shared_examples RealSelf::Feed::State::Bookmarkable do |feed|
 
   before :each do
     @owner = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
+    @position = BSON::ObjectId.from_time(Time.now)
   end
 
 
-  describe '#bookmark' do
+  describe '#get_bookmark' do
+    it 'will return nil when there is no bookmark' do
+      expect(@feed.get_bookmark(@owner)).to be_nil
+    end
+  end
+
+  describe '#set_bookmark' do
     it 'bookmark/set a position with valid BSON::ObjectId' do
-      position = BSON::ObjectId.from_time(Time.now)
-      set_pos = @feed.set_bookmark(@owner, position)
+      set_pos = @feed.set_bookmark(@owner, @position)
       get_pos = @feed.get_bookmark(@owner)
 
       expect(set_pos).to eql get_pos
-      expect(position).to eql set_pos
+      expect(@position).to eql set_pos
     end
 
     it 'will not accept illegal BSON::ObjectId' do
@@ -29,6 +35,20 @@ shared_examples RealSelf::Feed::State::Bookmarkable do |feed|
     end
   end
 
+  describe '#remove_bookmark' do
+    it 'does nothing when there are no bookmark initially' do
+      expect(@feed.get_bookmark(@owner)).to be_nil
+      @feed.remove_bookmark(@owner)
+      expect(@feed.get_bookmark(@owner)).to be_nil
+    end
+
+    it 'removes a bookmark' do
+      @feed.set_bookmark(@owner, @position)
+      expect(@feed.get_bookmark(@owner)).to eql @position
+      @feed.remove_bookmark(@owner)
+      expect(@feed.get_bookmark(@owner)).to be_nil
+    end
+  end
 
   describe '#ensure_index' do
     it 'creates the correct indexes' do
