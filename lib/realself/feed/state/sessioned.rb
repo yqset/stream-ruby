@@ -5,6 +5,8 @@ module RealSelf
 
         ##
         # Check if a user's session is still alive
+        #
+        # @param [ Objekt ] the owner of the feed
         def is_session_alive?(owner)
           result = state_collection(owner.type).find(
             {:owner_id => owner.id},
@@ -14,10 +16,14 @@ module RealSelf
           !result.nil? and !result.first.nil? and BSON::ObjectId.from_time(Time.now - self.class::SESSION_EXPIRE_AFTER_SECONDS) < result.first[:last_active]
         end
 
+        ##
+        # Expires a user's session
         def expire_session(owner)
           state_do_update(owner, {:owner_id => owner.id}, {:'$unset' => {:last_active => ''}})
         end
 
+        ##
+        # Refreshes a user's session
         def touch_session(owner)
           set_action_time(owner)
         end

@@ -2,15 +2,13 @@ module RealSelf
   module Feed
     module State
       module Bookmarkable
-        ##
-        # Terminology
-        # "position"        => A marker that indicates where a particular users were on their feed
-        ##
 
         ##
-        # Retrieve the position of a user
+        # Retrieve bookmark position of a user
         #
-        # @return BSON::ObjectId | nil
+        # @param [ Objekt ] the owner of the bookmark
+        #
+        # @returns [ BSON::ObjectId ] The position expressed as a ObjectId. nil if no bookmark
         def get_bookmark(owner)
           result = state_collection(owner.type).find(
             {:owner_id => owner.id},
@@ -21,7 +19,12 @@ module RealSelf
         end
 
         ##
-        # Set the position of a user
+        # Place a bookmark position of a user
+        #
+        # @param [ Objekt ] the owner of the bookmark
+        # @param [ BSON::ObjectId ] the position to place the bookmark
+        #
+        # @returns [ BSON::ObjectId ] The position that has been set
         def set_bookmark(owner, position)
           raise(
             FeedError,
@@ -41,7 +44,7 @@ module RealSelf
         end
 
         ##
-        # Forget a position of a user
+        # Remove a bookmark position of a user
         def remove_bookmark(owner)
           state_do_update(owner, {:owner_id => owner.id}, {:'$unset' => {:position => ""}})
         end

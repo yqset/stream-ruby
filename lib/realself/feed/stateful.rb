@@ -7,7 +7,7 @@ module RealSelf
       STATE_NAME = :unread_count.freeze
       MAX_UNREAD_COUNT = 2147483647.freeze
       MONGO_ERROR_DUPLICATE_KEY = 11000.freeze
-      SESSION_EXPIRE_AFTER_SECONDS = 60 * 30.freeze # 30 minutes in seconds
+      SESSION_EXPIRE_AFTER_SECONDS = 60 * 30.freeze # 30 minutes
 
       ##
       # create indexes on the state collection if necessary
@@ -24,7 +24,10 @@ module RealSelf
           :unique => true, :background => background)
       end
 
-
+      ##
+      # Retrieve all available states for this user
+      #
+      # @param [ Objekt ] owner The owner of a state
       def get_state(owner)
           result = state_collection(owner.type).find(
             {:owner_id => owner.id}
