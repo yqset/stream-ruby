@@ -33,7 +33,7 @@ module RealSelf
             {:owner_id => owner.id}
           ).limit(1)
 
-          result.first ||  {:owner_id => owner.id}
+          result.first ||  {"owner_id" => owner.id}
       end
 
       private
