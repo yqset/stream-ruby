@@ -85,11 +85,16 @@ module RealSelf
         def increment_unread_count(owner)
           result = state_do_update(
             owner,
-            {
-            :owner_id => owner.id,
-            :count => { :'$lt' => self.class::MAX_FEED_SIZE }
-          },
-            {:'$inc' => {:count => 1}})
+            {:'$or' => [
+              {:owner_id => owner.id,
+              :count => { :'$lt' => self.class::MAX_FEED_SIZE }
+            },
+              {:owner_id => owner.id,
+               :count => { :'$exists' => false }
+            }]},
+            {:'$inc' => {:count => 1},
+             :'$setOnInsert' => {:owner_id => owner.id}}
+          )
 
           # if the update failed, assume the unread count is already at
           # the max value so return that.
