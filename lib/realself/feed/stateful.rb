@@ -4,7 +4,6 @@ module RealSelf
 
       attr_accessor :mongo_db
 
-      STATE_NAME = :unread_count.freeze
       MAX_UNREAD_COUNT = 2147483647.freeze
       MONGO_ERROR_DUPLICATE_KEY = 11000.freeze
       SESSION_EXPIRE_AFTER_SECONDS = 60 * 30.freeze # 30 minutes
@@ -53,14 +52,13 @@ module RealSelf
       ##
       # Get the mongo collection object
       def state_collection(owner_type)
-        @mongo_db.collection("#{owner_type}.#{self.class::FEED_NAME}.#{self.class::STATE_NAME}")
+        @mongo_db.collection("#{owner_type}.#{self.class::FEED_NAME}.state")
       end
 
 
       ##
       # set up consts for containing feed class
       def self.included(other)
-        other.const_set('STATE_NAME', STATE_NAME) unless defined? other::STATE_NAME
         other.const_set('MAX_FEED_SIZE', MAX_UNREAD_COUNT) unless defined? other::MAX_FEED_SIZE
         other.const_set('MONGO_ERROR_DUPLICATE_KEY', MONGO_ERROR_DUPLICATE_KEY) unless defined? other::MONGO_ERROR_DUPLICATE_KEY
         other.const_set('SESSION_EXPIRE_AFTER_SECONDS', SESSION_EXPIRE_AFTER_SECONDS) unless defined? other::SESSION_EXPIRE_AFTER_SECONDS

@@ -47,12 +47,12 @@ shared_examples RealSelf::Feed::Stateful do |feed|
 
         states = @feed.get_state(@owner)
         expect(states[:position]).to eql @bookmark
-        expect(states[:count]).to be_nil
+        expect(states[:unread_count]).to be_nil
 
         @feed.increment_unread_count @owner
         states = @feed.get_state(@owner)
         expect(states[:position]).to eql @bookmark
-        expect(states[:count]).to eql 1
+        expect(states[:unread_count]).to eql 1
       end
     end
   end

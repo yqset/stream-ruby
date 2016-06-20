@@ -15,16 +15,16 @@ shared_examples RealSelf::Feed::State::UnreadCountable do |feed|
 
   describe '#decrement_unread_count' do
     it 'decrements the unread count' do
-      set_count = @feed.set_unread_count(@owner, 10)[:count]
-      dec_count = @feed.decrement_unread_count(@owner)[:count]
+      set_count = @feed.set_unread_count(@owner, 10)[:unread_count]
+      dec_count = @feed.decrement_unread_count(@owner)[:unread_count]
 
       expect(set_count - 1).to eql dec_count
       expect(dec_count).to eql 9
     end
 
     it 'will not decrement below zero' do
-      set_count = @feed.set_unread_count(@owner, 0)[:count]
-      dec_count = @feed.decrement_unread_count(@owner)[:count]
+      set_count = @feed.set_unread_count(@owner, 0)[:unread_count]
+      dec_count = @feed.decrement_unread_count(@owner)[:unread_count]
 
       expect(set_count).to eql 0
       expect(dec_count).to eql 0
@@ -51,8 +51,8 @@ shared_examples RealSelf::Feed::State::UnreadCountable do |feed|
       @owner_2 = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
       @owner_3 = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
 
-      @feed.set_unread_count(@owner, 5)[:count]
-      @feed.set_unread_count(@owner_2, 10)[:count]
+      @feed.set_unread_count(@owner, 5)[:unread_count]
+      @feed.set_unread_count(@owner_2, 10)[:unread_count]
     end
     it 'finds objects with an unread count greater than zero' do
       owners = @feed.find_with_unread(:user)
@@ -100,8 +100,8 @@ shared_examples RealSelf::Feed::State::UnreadCountable do |feed|
 
   describe '#increment_unread_count' do
     it 'increments the unread count' do
-      set_count = @feed.set_unread_count(@owner, 5)[:count]
-      inc_count = @feed.increment_unread_count(@owner)[:count]
+      set_count = @feed.set_unread_count(@owner, 5)[:unread_count]
+      inc_count = @feed.increment_unread_count(@owner)[:unread_count]
 
       expect(set_count + 1).to eql inc_count
       expect(inc_count).to eql 6
@@ -109,8 +109,8 @@ shared_examples RealSelf::Feed::State::UnreadCountable do |feed|
 
 
     it 'will not increment beyond the max feed size' do
-      set_count = @feed.set_unread_count(@owner, @feed.class::MAX_FEED_SIZE)[:count]
-      inc_count = @feed.increment_unread_count(@owner)[:count]
+      set_count = @feed.set_unread_count(@owner, @feed.class::MAX_FEED_SIZE)[:unread_count]
+      inc_count = @feed.increment_unread_count(@owner)[:unread_count]
 
       expect(set_count).to eql @feed.class::MAX_FEED_SIZE
       expect(inc_count).to eql @feed.class::MAX_FEED_SIZE
@@ -120,9 +120,9 @@ shared_examples RealSelf::Feed::State::UnreadCountable do |feed|
 
   describe '#reset_unread_count' do
     it 'sets the unread count to zero' do
-      set_count   = @feed.set_unread_count(@owner, 5)[:count]
-      reset_count = @feed.reset_unread_count(@owner)[:count]
-      get_count   = @feed.get_unread_count(@owner)[:count]
+      set_count   = @feed.set_unread_count(@owner, 5)[:unread_count]
+      reset_count = @feed.reset_unread_count(@owner)[:unread_count]
+      get_count   = @feed.get_unread_count(@owner)[:unread_count]
 
       expect(5).to eql set_count
       expect(0).to eql reset_count
@@ -133,8 +133,8 @@ shared_examples RealSelf::Feed::State::UnreadCountable do |feed|
 
   describe '#set_unread_count' do
     it 'sets the unread count' do
-      set_count = @feed.set_unread_count(@owner, 5)[:count]
-      get_count = @feed.get_unread_count(@owner)[:count]
+      set_count = @feed.set_unread_count(@owner, 5)[:unread_count]
+      get_count = @feed.get_unread_count(@owner)[:unread_count]
 
       expect(5).to eql set_count
       expect(5).to eql get_count
@@ -142,8 +142,8 @@ shared_examples RealSelf::Feed::State::UnreadCountable do |feed|
 
 
     it 'will not set the unread count to less than zero' do
-      set_count = @feed.set_unread_count(@owner, -5)[:count]
-      get_count = @feed.get_unread_count(@owner)[:count]
+      set_count = @feed.set_unread_count(@owner, -5)[:unread_count]
+      get_count = @feed.get_unread_count(@owner)[:unread_count]
 
       expect(0).to eql set_count
       expect(0).to eql get_count
@@ -151,8 +151,8 @@ shared_examples RealSelf::Feed::State::UnreadCountable do |feed|
 
 
     it 'will not set the unread count to greater than MAX_FEED_SIZE' do
-      set_count = @feed.set_unread_count(@owner, @feed.class::MAX_FEED_SIZE + 1)[:count]
-      get_count = @feed.get_unread_count(@owner)[:count]
+      set_count = @feed.set_unread_count(@owner, @feed.class::MAX_FEED_SIZE + 1)[:unread_count]
+      get_count = @feed.get_unread_count(@owner)[:unread_count]
 
       expect(@feed.class::MAX_FEED_SIZE).to eql set_count
       expect(@feed.class::MAX_FEED_SIZE).to eql get_count

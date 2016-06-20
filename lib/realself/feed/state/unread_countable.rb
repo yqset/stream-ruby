@@ -13,15 +13,15 @@ module RealSelf
             owner,
             {
             :owner_id => owner.id,
-            :count => { :'$gt' => 0 }
+            :unread_count => { :'$gt' => 0 }
           },
             {
-            :'$inc' => { :count => -1 }
+            :'$inc' => { :unread_count => -1 }
           })
 
           # if the update failed, assume the unread count is already at
           # zero, so return that.
-          result ? result : {:owner_id => owner.id, :count => 0}
+          result ? result : {:owner_id => owner.id, :unread_count => 0}
         end
 
 
@@ -41,7 +41,7 @@ module RealSelf
             :_id => {
             :'$gt' => BSON::ObjectId.from_string(object_id)
           },
-            :count => {
+            :unread_count => {
             :'$gte' => min_unread_count
           }
           }
@@ -66,14 +66,14 @@ module RealSelf
         #
         # @param [Objekt] The feed owner
         #
-        # @return [Hash] {:owner_id => [owner.id], :count => 0}
+        # @return [Hash] {:owner_id => [owner.id], :unread_count => 0}
         def get_unread_count(owner)
           result = state_collection(owner.type).find(
             {:owner_id => owner.id},
-            {:fields => {:_id => 0, :count => 1}}
+            {:fields => {:_id => 0, :unread_count => 1}}
           ).limit(1)
 
-          result.first ||  {:owner_id => owner.id, :count => 0}
+          result.first ||  {:owner_id => owner.id, :unread_count => 0}
         end
 
 
@@ -87,18 +87,18 @@ module RealSelf
             owner,
             {:'$or' => [
               {:owner_id => owner.id,
-              :count => { :'$lt' => self.class::MAX_FEED_SIZE }
+              :unread_count => { :'$lt' => self.class::MAX_FEED_SIZE }
             },
               {:owner_id => owner.id,
-               :count => { :'$exists' => false }
+               :unread_count => { :'$exists' => false }
             }]},
-            {:'$inc' => {:count => 1},
+            {:'$inc' => {:unread_count => 1},
              :'$setOnInsert' => {:owner_id => owner.id}}
           )
 
           # if the update failed, assume the unread count is already at
           # the max value so return that.
-          result ? result : {:owner_id => owner.id, :count => self.class::MAX_FEED_SIZE}
+          result ? result : {:owner_id => owner.id, :unread_count => self.class::MAX_FEED_SIZE}
         end
 
 
@@ -124,11 +124,11 @@ module RealSelf
             {:owner_id => owner.id},
             {
             # keep the unread count between 0 and max feed size
-            :'$set' => { :count => [[0, count].max, self.class::MAX_FEED_SIZE].min }
+            :'$set' => { :unread_count => [[0, count].max, self.class::MAX_FEED_SIZE].min }
           })
 
           # if the update failed, assume the unread count is already at the passed value
-          result ? result : {:owner_id => owner.id, :count => count}
+          result ? result : {:owner_id => owner.id, :unread_count => count}
         end
       end
     end

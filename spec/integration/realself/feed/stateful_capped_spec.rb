@@ -4,7 +4,6 @@ require 'mongo'
 describe RealSelf::Feed::Capped do
 
   class StatefulCappedIntegrationTestFeed < RealSelf::Feed::Capped
-    STATE_NAME = :state.freeze
     FEED_NAME = :stateful_capped_integration_test.freeze
     MAX_FEED_SIZE = 10.freeze
     SESSION_EXPIRE_AFTER_SECONDS = 2.freeze
@@ -120,7 +119,7 @@ describe RealSelf::Feed::Capped do
 
       result = @feed.get @owner, StatefulCappedIntegrationTestFeed::MAX_FEED_SIZE + 1
 
-      expect(StatefulCappedIntegrationTestFeed::MAX_FEED_SIZE == result[:count])
+      expect(StatefulCappedIntegrationTestFeed::MAX_FEED_SIZE == result[:unread_count])
       expect(result[:stream_items].count).to eql StatefulCappedIntegrationTestFeed::MAX_FEED_SIZE
 
       stream_activities.reverse!
