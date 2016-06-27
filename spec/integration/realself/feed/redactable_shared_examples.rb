@@ -26,7 +26,7 @@ shared_examples RealSelf::Feed::Redactable do |feed|
     end
   end
 
-  describe '#redact' do
+  describe '#redact_by_uuid' do
     it "redacts activities" do
       owner     = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
       owner2    = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
@@ -62,7 +62,7 @@ shared_examples RealSelf::Feed::Redactable do |feed|
       result = @feed.get owner
       expect(result[:count]).to eql 2
 
-      @feed.redact :user, activity.uuid
+      @feed.redact_by_uuid :user, activity.uuid
 
       result = @feed.get owner
       expect(result[:count]).to eql 1
@@ -70,13 +70,109 @@ shared_examples RealSelf::Feed::Redactable do |feed|
       result =  @feed.get owner2
       expect(result[:count]).to eql 1
 
-      @feed.redact :user, activity2.uuid
+      @feed.redact_by_uuid :user, activity2.uuid
 
       result = @feed.get owner
       expect(result[:count]).to eql 0
 
       result =  @feed.get owner2
       expect(result[:count]).to eql 0
+    end
+  end
+
+  describe '#redact' do
+    context 'when unpublished content exist in feed' do
+      it 'should redact activity' do
+        owner     = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
+        owner2    = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
+        activity  = Helpers.user_create_thing_activity
+        activity2 = Helpers.user_update_thing_activity
+        unpub_activity = Helpers.user_unpublish_thing_activity(1234, activity.object.id)
+        unpub_activity2 = Helpers.user_unpublish_thing_activity(1234, activity2.object.id)
+
+        sa        = RealSelf::Stream::StreamActivity.new(
+          owner,
+          activity,
+          [owner])
+
+        sa2       = RealSelf::Stream::StreamActivity.new(
+          owner2,
+          activity,
+          [owner2])
+
+        @feed.insert owner, sa
+        @feed.insert owner2, sa2
+
+        sa        = RealSelf::Stream::StreamActivity.new(
+          owner,
+          activity2,
+          [owner])
+
+        sa2       = RealSelf::Stream::StreamActivity.new(
+          owner2,
+          activity2,
+          [owner2])
+
+        @feed.insert owner, sa
+        @feed.insert owner2, sa2
+
+        result = @feed.get owner
+        expect(result[:count]).to eql 2
+
+        expect(@feed.redact(:user, unpub_activity)).to eql 2
+
+        result = @feed.get owner
+        expect(result[:count]).to eql 1
+
+        result =  @feed.get owner2
+        expect(result[:count]).to eql 1
+
+        expect(@feed.redact(:user, unpub_activity2)).to eql 2
+
+        result = @feed.get owner
+        expect(result[:count]).to eql 0
+
+        result =  @feed.get owner2
+        expect(result[:count]).to eql 0
+
+      end
+    end
+
+    context 'when unpublished content does not exist in feed' do
+      it 'does nothing' do
+        owner     = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
+        owner2    = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
+        activity  = Helpers.user_create_thing_activity
+        unpub_activity = Helpers.user_unpublish_thing_activity(1234, "0") 
+
+        sa        = RealSelf::Stream::StreamActivity.new(
+          owner,
+          activity,
+          [owner])
+
+        sa2       = RealSelf::Stream::StreamActivity.new(
+          owner2,
+          activity,
+          [owner2])
+
+        @feed.insert owner, sa
+        @feed.insert owner2, sa2
+
+        result = @feed.get owner
+        expect(result[:count]).to eql 1
+
+        result =  @feed.get owner2
+        expect(result[:count]).to eql 1
+
+        expect(@feed.redact(:user, unpub_activity)).to eql 0
+
+        result = @feed.get owner
+        expect(result[:count]).to eql 1
+
+        result =  @feed.get owner2
+        expect(result[:count]).to eql 1
+
+      end
     end
   end
 end
