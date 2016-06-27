@@ -147,13 +147,13 @@ module RealSelf
       # @param [Activity] the unpublishing activity to consider for redacting
       #
       # @returns [Integer]  The number of owner_type feeds from which the activity was redacted
-      def redact_by_activity(owner_type, activity)
+      def redact_by_activity(owner_type, activity, redaction_criteria = nil)
 
         collection = get_collection(owner_type)
-        query = defined?(get_redact_query) ? get_redact_query(activity) : {:'feed.activity.object' => activity.object.to_h}
+        redaction_criteria ||= {:'feed.activity.object' => activity.object.to_h}
 
         #update all documents that matches the criteria
-        result = collection.find(query).limit(1).to_a
+        result = collection.find(redaction_criteria).limit(1).to_a
 
         uuid = nil
         result[0]['feed'].each do |item|
