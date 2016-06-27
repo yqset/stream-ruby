@@ -20,6 +20,7 @@ describe RealSelf::Feed::Capped do
   # shared examples
   it_should_behave_like '#insertable', @feed
   it_should_behave_like RealSelf::Feed::Getable, @feed
+  it_should_behave_like RealSelf::Feed::Redactable, @feed
   it_should_behave_like RealSelf::Feed::UnreadCountable, @feed
 
 

@@ -30,7 +30,7 @@ module RealSelf
       # @param [Hash]   query criteria hash of activities to redact
       #
       # @returns [int]  the number of feed owners for which this activity was redacted
-      def redact(owner_type, activity)
+      def redact_by_activity(owner_type, activity)
 
         collection = get_collection(owner_type)
         query = defined?(get_redact_query) ? get_redact_query(activity) : {:'activity.object' => activity.object.to_h}
@@ -40,7 +40,7 @@ module RealSelf
 
         uuid = result[0]['activity']['uuid'] unless result.empty?
 
-        uuid ? redact_by_uuid(owner_type, uuid) : 0
+        uuid ? redact(owner_type, uuid) : 0
       end
 
 
@@ -50,7 +50,7 @@ module RealSelf
       # @param [String]   the UUID of the activity to redact
       #
       # @returns [int]  the number of feed owners for which this activity was redacted
-      def redact_by_uuid(owner_type, activity_uuid)
+      def redact(owner_type, activity_uuid)
         raise(
           RealSelf::Feed::FeedError,
           "Invalid UUID: #{activity_uuid}"

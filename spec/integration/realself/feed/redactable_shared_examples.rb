@@ -26,7 +26,7 @@ shared_examples RealSelf::Feed::Redactable do |feed|
     end
   end
 
-  describe '#redact_by_uuid' do
+  describe '#redact' do
     it "redacts activities" do
       owner     = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
       owner2    = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
@@ -62,7 +62,7 @@ shared_examples RealSelf::Feed::Redactable do |feed|
       result = @feed.get owner
       expect(result[:count]).to eql 2
 
-      @feed.redact_by_uuid :user, activity.uuid
+      @feed.redact :user, activity.uuid
 
       result = @feed.get owner
       expect(result[:count]).to eql 1
@@ -70,7 +70,7 @@ shared_examples RealSelf::Feed::Redactable do |feed|
       result =  @feed.get owner2
       expect(result[:count]).to eql 1
 
-      @feed.redact_by_uuid :user, activity2.uuid
+      @feed.redact :user, activity2.uuid
 
       result = @feed.get owner
       expect(result[:count]).to eql 0
@@ -80,7 +80,7 @@ shared_examples RealSelf::Feed::Redactable do |feed|
     end
   end
 
-  describe '#redact' do
+  describe '#redact_by_activity' do
     context 'when unpublished content exist in feed' do
       it 'should redact activity' do
         owner     = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
@@ -119,7 +119,7 @@ shared_examples RealSelf::Feed::Redactable do |feed|
         result = @feed.get owner
         expect(result[:count]).to eql 2
 
-        expect(@feed.redact(:user, unpub_activity)).to eql 2
+        expect(@feed.redact_by_activity(:user, unpub_activity)).to eql 2
 
         result = @feed.get owner
         expect(result[:count]).to eql 1
@@ -127,7 +127,7 @@ shared_examples RealSelf::Feed::Redactable do |feed|
         result =  @feed.get owner2
         expect(result[:count]).to eql 1
 
-        expect(@feed.redact(:user, unpub_activity2)).to eql 2
+        expect(@feed.redact_by_activity(:user, unpub_activity2)).to eql 2
 
         result = @feed.get owner
         expect(result[:count]).to eql 0
@@ -164,7 +164,7 @@ shared_examples RealSelf::Feed::Redactable do |feed|
         result =  @feed.get owner2
         expect(result[:count]).to eql 1
 
-        expect(@feed.redact(:user, unpub_activity)).to eql 0
+        expect(@feed.redact_by_activity(:user, unpub_activity)).to eql 0
 
         result = @feed.get owner
         expect(result[:count]).to eql 1
