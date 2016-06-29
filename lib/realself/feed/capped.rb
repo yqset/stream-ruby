@@ -144,21 +144,33 @@ module RealSelf
       # documentation:
       # http://docs.mongodb.org/manual/reference/operator/update/positional
       #
-      # @param [Activity] the unpublishing activity to consider for redacting
+      # @param [Hash]     query criteria hash of activities to redact
       #
       # @returns [Integer]  The number of owner_type feeds from which the activity was redacted
-      def redact_by_activity(owner_type, activity, redaction_criteria = nil)
+      def redact_by_activity(owner_type, query)
+        raise(
+          RealSelf::Feed::FeedError,
+          "Invalid activity query: #{query}"
+        ) unless query.is_a?(Hash)
 
         collection = get_collection(owner_type)
-        redaction_criteria ||= {:'feed.activity.object' => activity.object.to_h}
 
-        #update all documents that matches the criteria
-        result = collection.find(redaction_criteria).limit(1).to_a
+        feed_query = {}
+        query.each do |k, v|
+          feed_query["feed.#{k}".to_sym] = v
+        end
+
+        aggregate_query = [
+          {:'$match'   => feed_query},
+          {:'$unwind'   => '$feed'},
+          {:'$match'   => feed_query},
+          {:'$limit'   => 1}
+        ]
 
         uuid = nil
-        result[0]['feed'].each do |item|
-          uuid = item['activity']['uuid'] if item['activity']['object']['type'] == activity.object.type && item['activity']['object']['id'] == activity.object.id
-        end unless result.empty?
+        collection.aggregate(aggregate_query).each do |item|
+          uuid = item['feed']['activity']['uuid']
+        end
 
         uuid ? redact(owner_type, uuid) : 0
       end
