@@ -34,12 +34,17 @@ module RealSelf
         raise(
           RealSelf::Feed::FeedError,
           "Invalid activity query: #{query}"
-        ) unless query.is_a?(Hash)
+        ) unless query.is_a?(Hash) && !query.empty?
 
         collection = get_collection(owner_type)
+        feed_query = {:redacted => {:'$ne' => true}}.merge(query) #omit redacted items
+        raise(
+          RealSelf::Feed::FeedError,
+          "Provided query returns more than 1 unique uuid to redact."
+        ) unless collection.distinct(:'activity.uuid', feed_query).size <= 1
 
         #update all documents that matches the criteria
-        result = collection.find(query).limit(1).to_a
+        result = collection.find(feed_query).limit(1).to_a
 
         uuid = result[0]['activity']['uuid'] unless result.empty?
 

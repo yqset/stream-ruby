@@ -151,26 +151,37 @@ module RealSelf
         raise(
           RealSelf::Feed::FeedError,
           "Invalid activity query: #{query}"
-        ) unless query.is_a?(Hash)
+        ) unless query.is_a?(Hash) && !query.empty?
 
         collection = get_collection(owner_type)
-
         feed_query = {}
         query.each do |k, v|
           feed_query["feed.#{k}".to_sym] = v
         end
 
+        exclude_redact = {:'feed.activity.redacted' => {:'$ne' => true}}.merge(feed_query)
+
+        uuid_query = [
+          {:'$match'   => feed_query},
+          {:'$unwind'  => '$feed'},
+          {:'$match'   => exclude_redact},
+          {:'$group'   => {:'_id' => '$feed.activity.uuid'}}
+        ]
+        items = collection.aggregate(uuid_query)
+
+        raise(
+          RealSelf::Feed::FeedError,
+          "Provided query returns more than 1 unique uuid to redact."
+        ) unless items.nil? || items.to_a.size <= 1
+
         aggregate_query = [
           {:'$match'   => feed_query},
-          {:'$unwind'   => '$feed'},
-          {:'$match'   => feed_query},
-          {:'$limit'   => 1}
+          {:'$unwind'  => '$feed'},
+          {:'$match'   => exclude_redact}
         ]
 
-        uuid = nil
-        collection.aggregate(aggregate_query).each do |item|
-          uuid = item['feed']['activity']['uuid']
-        end
+        item = collection.aggregate(aggregate_query).first
+        uuid = item['feed']['activity']['uuid'] if item
 
         uuid ? redact(owner_type, uuid) : 0
       end
