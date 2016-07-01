@@ -102,6 +102,21 @@ module Helpers
       'user.update.thing')
   end
 
+
+  def self.user_unpublish_thing_activity user_id = Random::rand(1000..9999), thing_id = Random::rand(1000..9999)
+    RealSelf::Stream::Activity.new(
+      "user(#{user_id}) update thing(#{thing_id}",
+      DateTime.parse('1970-01-01T00:00:00Z'),
+      RealSelf::Stream::Objekt.new('user', user_id),
+      'update',
+      RealSelf::Stream::Objekt.new('thing', thing_id),
+      nil,
+      nil,
+      SecureRandom.uuid,
+      'user.unpublish.thing')
+  end
+
+
   def self.followed_activity_hash(actor_id)
     {
       :published => DateTime.parse("1970-01-01T00:00:00+00:00"),
