@@ -225,4 +225,74 @@ shared_examples RealSelf::Feed::Redactable do |feed|
     end
   end
 
+  describe '#redact_by_id' do
+    it 'should redact item' do
+      owner     = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
+      activity  = Helpers.user_create_thing_activity
+      sa        = RealSelf::Stream::StreamActivity.new(
+        owner,
+        activity,
+        [owner])
+
+      @feed.insert(owner, sa)
+
+      result = @feed.get(owner)
+      expect(result[:count]).to eql 1
+
+      id = result[:stream_items][0][:id]
+      expect(@feed.redact_by_id(:user, id)).to eql 1
+
+      expect(@feed.get(owner)[:count]).to eql 0
+    end
+
+    it 'should only redact 1 item' do
+      owner     = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
+      activity  = Helpers.user_create_thing_activity
+      activity2 = Helpers.user_create_thing_activity
+
+      sa        = RealSelf::Stream::StreamActivity.new(
+        owner,
+        activity,
+        [owner])
+
+      sa2       = RealSelf::Stream::StreamActivity.new(
+        owner,
+        activity2,
+        [owner])
+
+      @feed.insert(owner, sa)
+      @feed.insert(owner, sa2)
+
+      result = @feed.get(owner)
+      expect(result[:count]).to eql 2
+
+      id = result[:stream_items][0][:id]
+
+      expect(@feed.redact_by_id(:user, id)).to eql 1
+
+      result2 = @feed.get(owner)
+      expect(result2[:count]).to eql 1
+
+      # make sure the other item is not redacted
+      expect(result2[:stream_items][0][:id]).not_to eql id
+    end
+
+    context 'when feed is empty' do
+      it 'does nothing and returns 0' do
+        owner     = RealSelf::Stream::Objekt.new('user', Random::rand(1000..99999))
+
+        expect(@feed.get(owner)[:count]).to eql 0
+
+        id = BSON::ObjectId.from_time(Time.now)
+        expect(@feed.redact_by_id(:user, id)).to eql 0
+      end
+    end
+
+    context 'when id passed is illegal' do
+      it 'should raise FeedError' do
+        expect{@feed.redact_by_id(:user, "not a legit bson object string")}
+          .to raise_error(RealSelf::Feed::FeedError, /Invalid/)
+      end
+    end
+  end
 end

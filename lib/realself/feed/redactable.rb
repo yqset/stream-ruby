@@ -25,6 +25,31 @@ module RealSelf
 
 
       ##
+      # marks a document as redacted.
+      #
+      # @param [ String ]   the unique bson id of activity to redact
+      #
+      # @returns [int]  the number activity that was redacted
+      def redact_by_id(owner_type, id_string)
+        raise(
+          RealSelf::Feed::FeedError,
+          "Invalid BSON::ObjectId string: #{id_string}"
+        ) unless BSON::ObjectId.legal?(id_string.to_s)
+
+        objectId = BSON::ObjectId.from_string(id_string)
+        collection = get_collection(owner_type)
+
+        #update a documents that contain the activity
+        result = collection.find({:_id => objectId})
+          .update_one(
+            {:'$set' => {:redacted => true}},
+            {:upsert => false, :multi => false})
+
+        result.modified_count
+      end
+
+
+      ##
       # marks all instances of an activity as redacted for all owners
       #
       # @param [Hash]   query criteria hash of activities to redact
