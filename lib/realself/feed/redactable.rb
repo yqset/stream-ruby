@@ -38,17 +38,14 @@ module RealSelf
 
         collection = get_collection(owner_type)
         feed_query = {:redacted => {:'$ne' => true}}.merge(query) #omit redacted items
+        distinct_uuid = collection.distinct(:'activity.uuid', feed_query)
+
         raise(
           RealSelf::Feed::FeedError,
           "Provided query returns more than 1 unique uuid to redact."
-        ) unless collection.distinct(:'activity.uuid', feed_query).size <= 1
+        ) unless distinct_uuid.size <= 1
 
-        #update all documents that matches the criteria
-        result = collection.find(feed_query).limit(1).to_a
-
-        uuid = result[0]['activity']['uuid'] unless result.empty?
-
-        uuid ? redact(owner_type, uuid) : 0
+        distinct_uuid.first ? redact(owner_type, distinct_uuid.first) : 0
       end
 
 

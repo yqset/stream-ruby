@@ -167,23 +167,14 @@ module RealSelf
           {:'$match'   => exclude_redact},
           {:'$group'   => {:'_id' => '$feed.activity.uuid'}}
         ]
-        items = collection.aggregate(uuid_query)
+        uuids = collection.aggregate(uuid_query).to_a
 
         raise(
           RealSelf::Feed::FeedError,
           "Provided query returns more than 1 unique uuid to redact."
-        ) unless items.nil? || items.to_a.size <= 1
+        ) unless uuids.nil? || uuids.size <= 1
 
-        aggregate_query = [
-          {:'$match'   => feed_query},
-          {:'$unwind'  => '$feed'},
-          {:'$match'   => exclude_redact}
-        ]
-
-        item = collection.aggregate(aggregate_query).first
-        uuid = item['feed']['activity']['uuid'] if item
-
-        uuid ? redact(owner_type, uuid) : 0
+        uuids.first ? redact(owner_type, uuids.first["_id"]) : 0
       end
 
 
