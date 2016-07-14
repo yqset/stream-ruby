@@ -100,7 +100,7 @@ describe RealSelf::Stream::Publisher do
       publisher.confirm_publish_end
     end
 
-    it 'logs an errror if a publish confirmation is not received' do
+    it 'raises an errror if a publish confirmation is not received' do
       expect(Bunny).to receive(:new)
         .with(@rmq_config)
         .and_return(@bunny_session)
@@ -156,7 +156,7 @@ describe RealSelf::Stream::Publisher do
       expect(RealSelf::logger).to receive(:error)
         .and_call_original
 
-      publisher.confirm_publish_end
+      expect{publisher.confirm_publish_end}.to raise_error RealSelf::Stream::PublisherError
     end
 
     it 'continues the confirmations after a network error' do

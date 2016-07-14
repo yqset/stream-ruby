@@ -2,6 +2,9 @@ require 'bunny'
 
 module RealSelf
   module Stream
+
+    class PublisherError < StandardError; end
+
     class Publisher
       MAX_CONNECTION_RETRY = 3
 
@@ -26,12 +29,18 @@ module RealSelf
         # any messages that failed to publish. Go find
         # the original item based on the hash code and
         # log it as an error.
-        @publisher_channel.nacked_set.each do |nack|
+        nacks = @publisher_channel.nacked_set
+
+        @publisher_channel.close if @publisher_channel.open?
+
+        nacks.each do |nack|
           failed_item = @batch.find { |item| item.hash == nack }
           RealSelf::logger.error("Failed to confirm publish for item.  activity=#{failed_item.to_s}")
         end
 
-        @publisher_channel.close if @publisher_channel.open?
+        unless nacks.empty?
+          raise PublisherError, "Failed to confirm #{nacks.count} published items."
+        end
 
         @batch = nil
       end
