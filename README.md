@@ -8,7 +8,7 @@
 
 Add this line to your application's Gemfile:
 
-    gem 'realself-stream', '~> 2.0.0', :git => 'ssh://git@github.com/RealSelf/stream-ruby.git'
+    gem 'realself-stream', '~> [version]', :git => 'ssh://git@github.com/RealSelf/stream-ruby.git'
 
 And then execute:
 
