@@ -17,7 +17,6 @@ module RealSelf
         @rmq_config[:threaded] = false
 
         initialize_connection
-        open_channel
       end
 
 
@@ -31,26 +30,29 @@ module RealSelf
         # log it as an error.
         nacks = @publisher_channel.nacked_set
 
-        @publisher_channel.close if @publisher_channel.open?
-
         nacks.each do |nack|
           failed_item = @batch.find { |item| item.hash == nack }
           RealSelf::logger.error("Failed to confirm publish for item.  activity=#{failed_item.to_s}")
         end
 
+        # clean up any open channel before raising any error
+        close_channel
+
+        # clean up the batch
+        @batch = nil
+
+        # raise an error if anything failed
         unless nacks.empty?
           raise PublisherError, "Failed to confirm #{nacks.count} published items."
         end
-
-        @batch = nil
       end
 
 
       def confirm_publish_start items
         @batch = [*items]
 
-        @publisher_channel.close if @publisher_channel and @publisher_channel.open?
-
+        # force a refresh of our channel before we start
+        close_channel
         open_channel
 
         # enable publish confirmation
@@ -61,7 +63,7 @@ module RealSelf
       def publish(item, routing_key, content_type = 'application/json')
         tries ||= 1
 
-        open_channel unless @publisher_channel and @publisher_channel.open?
+        open_channel
 
         @publisher_exchange.publish(
           item.to_s,
@@ -102,14 +104,27 @@ module RealSelf
 
 
       def initialize_connection
+        # clean up any open channel
+        close_channel
+
+        # start a new connection
         @publisher_session  = Bunny.new(symbolize_keys(@rmq_config))
         @publisher_session.start
       end
 
 
+      def close_channel
+        if @publisher_channel and @publisher_channel.open?
+          @publisher_channel.close
+        end
+      end
+
+
       def open_channel
-        @publisher_channel  = @publisher_session.create_channel
-        @publisher_exchange = @publisher_channel.topic(@exchange_name, :durable => true)
+        unless @publisher_channel and @publisher_channel.open?
+          @publisher_channel  = @publisher_session.create_channel
+          @publisher_exchange = @publisher_channel.topic(@exchange_name, :durable => true)
+        end
       end
 
 

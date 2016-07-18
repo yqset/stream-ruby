@@ -15,13 +15,15 @@ module RealSelf
         ch = connection.channel
         error_queue = ch.queue(error_queue_name, :durable => true)
 
+        limit         = error_queue.message_count if limit.to_i <=  0
         message_count = [limit.to_i, error_queue.message_count].min
+        processed     = 0;
+
         puts("#{error_queue_name} size: #{message_count}")
-        processed = 0;
 
         consumer = Bunny::Consumer.new(ch, error_queue, ch.generate_consumer_tag, false, true)
 
-        unless 0 >= message_count
+        if 0 < message_count
           consumer.on_delivery do |delivery_info, properties, payload|
             begin
               # attempt to parse the original message out of the error message wrapper
@@ -35,7 +37,6 @@ module RealSelf
                 :durable => true,
                 :arguments => {
                   :'x-dead-letter-exchange' => "#{queue_name}-retry"
-                   # :'x-message-ttl' => 10000  # must match value used in Sneakers.configure in bin/steelhead-daemon
                   })
 
               publish_queue.publish(activity.to_s, {:content_type => content_type})
