@@ -101,7 +101,6 @@ describe RealSelf::Stream::Publisher do
       publisher = RealSelf::Stream::Publisher.new(@rmq_config, @exchange_name)
       activity  = Helpers.user_create_thing_activity
 
-      expect(publisher).to receive(:close_channel)
       expect(publisher).to receive(:open_channel)
 
       publisher.instance_variable_set(:@publisher_channel, @bunny_channel)
@@ -136,7 +135,6 @@ describe RealSelf::Stream::Publisher do
       expect(@bunny_channel).to receive(:nacked_set)
         .and_return(Set.new)
 
-      expect(publisher).to receive(:close_channel)
 
       # end the transaction
       publisher.confirm_publish_end
@@ -153,7 +151,6 @@ describe RealSelf::Stream::Publisher do
       publisher = RealSelf::Stream::Publisher.new(@rmq_config, @exchange_name)
       activity  = Helpers.user_create_thing_activity
 
-      expect(publisher).to receive(:close_channel)
       expect(publisher).to receive(:open_channel)
 
       publisher.instance_variable_set(:@publisher_channel, @bunny_channel)
@@ -185,8 +182,6 @@ describe RealSelf::Stream::Publisher do
 
       expect(@bunny_channel).to receive(:nacked_set)
         .and_return(Set.new([activity.hash]))
-
-      expect(publisher).to receive(:close_channel)
 
       expect(RealSelf::logger).to receive(:error)
         .and_call_original
@@ -246,8 +241,6 @@ describe RealSelf::Stream::Publisher do
 
       expect(@bunny_channel).to receive(:nacked_set)
         .and_return(Set.new)
-
-      expect(publisher).to receive(:close_channel)
 
 
       # start the transaction
