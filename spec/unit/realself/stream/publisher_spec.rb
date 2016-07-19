@@ -135,7 +135,6 @@ describe RealSelf::Stream::Publisher do
       expect(@bunny_channel).to receive(:nacked_set)
         .and_return(Set.new)
 
-      expect(publisher).to receive(:close_channel)
 
       # end the transaction
       publisher.confirm_publish_end
@@ -183,8 +182,6 @@ describe RealSelf::Stream::Publisher do
 
       expect(@bunny_channel).to receive(:nacked_set)
         .and_return(Set.new([activity.hash]))
-
-      expect(publisher).to receive(:close_channel)
 
       expect(RealSelf::logger).to receive(:error)
         .and_call_original
@@ -244,8 +241,6 @@ describe RealSelf::Stream::Publisher do
 
       expect(@bunny_channel).to receive(:nacked_set)
         .and_return(Set.new)
-
-      expect(publisher).to receive(:close_channel)
 
 
       # start the transaction

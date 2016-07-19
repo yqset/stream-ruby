@@ -35,9 +35,6 @@ module RealSelf
           RealSelf::logger.error("Failed to confirm publish for item.  activity=#{failed_item.to_s}")
         end
 
-        # clean up any open channel before raising any error
-        close_channel
-
         # clean up the batch
         @batch = nil
 
