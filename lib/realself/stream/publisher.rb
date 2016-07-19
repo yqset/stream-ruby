@@ -51,8 +51,6 @@ module RealSelf
       def confirm_publish_start items
         @batch = [*items]
 
-        # force a refresh of our channel before we start
-        close_channel
         open_channel
 
         # enable publish confirmation

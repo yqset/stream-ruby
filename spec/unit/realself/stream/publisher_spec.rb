@@ -101,7 +101,6 @@ describe RealSelf::Stream::Publisher do
       publisher = RealSelf::Stream::Publisher.new(@rmq_config, @exchange_name)
       activity  = Helpers.user_create_thing_activity
 
-      expect(publisher).to receive(:close_channel)
       expect(publisher).to receive(:open_channel)
 
       publisher.instance_variable_set(:@publisher_channel, @bunny_channel)
@@ -153,7 +152,6 @@ describe RealSelf::Stream::Publisher do
       publisher = RealSelf::Stream::Publisher.new(@rmq_config, @exchange_name)
       activity  = Helpers.user_create_thing_activity
 
-      expect(publisher).to receive(:close_channel)
       expect(publisher).to receive(:open_channel)
 
       publisher.instance_variable_set(:@publisher_channel, @bunny_channel)
