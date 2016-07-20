@@ -1,4 +1,5 @@
 require 'bunny'
+require 'connection_pool'
 
 module RealSelf
   module Stream
@@ -8,64 +9,65 @@ module RealSelf
     class Publisher
       MAX_CONNECTION_RETRY = 3
 
-      def initialize(config, exchange_name)
-        @exchange_name  = exchange_name
-        @rmq_config     = config
+      def initialize(config, exchange_name, channel_pool_size=16)
+        @channel_pool_size  = channel_pool_size
+        @exchange_name      = exchange_name
+        @mutex              = Mutex.new
+        @rmq_config         = config
 
         # generally speaking, threading with publishing is not safe
         # just don't do it.
         @rmq_config[:threaded] = false
-
-        initialize_connection
       end
 
 
-      def confirm_publish_end
-        # this will block until RMQ responds
-        @publisher_channel.wait_for_confirms
-
-        # nacked_set returns Set containg the hash code of
-        # any messages that failed to publish. Go find
-        # the original item based on the hash code and
-        # log it as an error.
-        nacks = @publisher_channel.nacked_set
-
-        nacks.each do |nack|
-          failed_item = @batch.find { |item| item.hash == nack }
-          RealSelf::logger.error("Failed to confirm publish for item.  activity=#{failed_item.to_s}")
-        end
-
-        # clean up the batch
-        @batch = nil
-
-        # raise an error if anything failed
-        unless nacks.empty?
-          raise PublisherError, "Failed to confirm #{nacks.count} published items."
-        end
-      end
-
-
-      def confirm_publish_start items
-        @batch = [*items]
-
-        open_channel
-
-        # enable publish confirmation
-        @publisher_channel.confirm_select
-      end
-
-
-      def publish(item, routing_key, content_type = 'application/json')
+      def publish items, content_type = 'application/json'
         tries ||= 1
 
-        open_channel
+        @mutex.synchronize do
+          ensure_connection! unless connected?
+        end
 
-        @publisher_exchange.publish(
-          item.to_s,
-          :content_type => content_type.to_s,
-          :message_id   => item.hash,
-          :persistent   => true,
-          :routing_key  => routing_key.to_s)
+        # get a channel from the pool (threadsafe)
+        @channel_pool.with do |channel|
+          # put channel in publish confirm mode
+          channel.confirm_select
+
+          # get the exchange to use with this channel
+          # note - this method does not initiate network traffic
+          exchange  = channel.topic(@exchange_name, :durable => true)
+          items     = [*items]
+
+          # publish the items
+          items.each do |item|
+            exchange.publish(
+              item.to_s,
+              :content_type => content_type.to_s,
+              :message_id   => item.hash,
+              :persistent   => true,
+              :routing_key  => item.prototype.to_s)
+          end
+
+          # block until all confirms are returned
+          channel.wait_for_confirms
+
+          # check for nacks
+          # nacked_set returns Set containg the hash code of
+          # any messages that failed to publish. Go find
+          # the original item based on the hash code and
+          # log it as an error.
+          nacks = channel.nacked_set
+
+          nacks.each do |nack|
+            failed_item = items.find { |item| item.hash == nack }
+            RealSelf::logger.error("Failed to confirm publish for item.  activity=#{failed_item.to_s}")
+          end
+
+          # raise an error if anything failed
+          unless nacks.empty?
+            raise PublisherError, "Failed to confirm #{nacks.count} published items."
+          end
+        end
 
       rescue ::Bunny::NetworkFailure, ::Bunny::NetworkErrorWrapper => nfe
 
@@ -73,20 +75,15 @@ module RealSelf
 
           RealSelf::logger.warn "#{nfe.class.name} error detected.  Attempting reconnection #{tries}/#{MAX_CONNECTION_RETRY}"
 
-          @publisher_channel.maybe_kill_consumer_work_pool!
-
           sleep tries # wait a little longer between each attempt
 
-          initialize_connection
-
-          if @batch
-            RealSelf::logger.warn "Network error during confirmed batch publish.  Some messages were not confirmed.  Resuming batch."
-            confirm_publish_start @batch
-          end
+          # trash the connection to force a reconnect
+          @publisher_session = nil
 
           tries += 1
 
           retry
+
         else
 
           RealSelf::logger.error "#{nfe.class.name} detected.  Exhausted #{MAX_CONNECTION_RETRY} attempts.\n#{nfe.message}\n#{nfe.backtrace}"
@@ -98,28 +95,19 @@ module RealSelf
       private
 
 
-      def initialize_connection
-        # clean up any open channel
-        close_channel
-
+      def ensure_connection!
         # start a new connection
-        @publisher_session  = Bunny.new(symbolize_keys(@rmq_config))
+        @publisher_session  ||= Bunny.new(symbolize_keys(@rmq_config))
         @publisher_session.start
-      end
 
-
-      def close_channel
-        if @publisher_channel and @publisher_channel.open?
-          @publisher_channel.close
+        @channel_pool = ConnectionPool.new(size: @channel_pool_size) do
+          @publisher_session.create_channel
         end
       end
 
 
-      def open_channel
-        unless @publisher_channel and @publisher_channel.open?
-          @publisher_channel  = @publisher_session.create_channel
-          @publisher_exchange = @publisher_channel.topic(@exchange_name, :durable => true)
-        end
+      def connected?
+        @publisher_session && @publisher_session.connected?
       end
 
 

@@ -3,6 +3,7 @@ PATH
   specs:
     realself-stream (3.3.10)
       bunny
+      connection_pool (= 2.2.0)
       httparty
       json-schema
       multi_json
@@ -21,6 +22,7 @@ GEM
       columnize (= 0.9.0)
     coderay (1.1.0)
     columnize (0.9.0)
+    connection_pool (2.2.0)
     coveralls (0.7.1)
       multi_json (~> 1.3)
       rest-client
