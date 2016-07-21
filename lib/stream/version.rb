@@ -1,8 +1,8 @@
 module RealSelf
   module Stream
     MAJOR         = 3
-    MINOR         = 3
-    BUILD_NUMBER  = 10
+    MINOR         = 4
+    BUILD_NUMBER  = 0
 
     VERSION = "#{MAJOR}.#{MINOR}.#{BUILD_NUMBER}"
   end
