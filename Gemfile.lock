@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    realself-stream (3.3.10)
+    realself-stream (3.4.0)
       bunny
       connection_pool (= 2.2.0)
       httparty

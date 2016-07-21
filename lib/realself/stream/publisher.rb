@@ -15,9 +15,14 @@ module RealSelf
         @mutex              = Mutex.new
         @rmq_config         = config
 
-        # generally speaking, threading with publishing is not safe
-        # just don't do it.
-        @rmq_config[:threaded] = false
+        # This publisher is designed to support threading.
+        # Running with this set to true is the RMQ default.
+        # Using this flag in a non-threaded environment is
+        # benign.  But it MUST be set to true in threaded
+        # environments.  Just be safe and set it to true
+        # in all cases.
+        RealSelf::logger.warn 'Overriding :threaded config for Bunny' unless @rmq_config[:threaded] = true
+        @rmq_config[:threaded] = true
       end
 
 
