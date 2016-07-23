@@ -6,6 +6,7 @@ end
 require 'realself/feed/capped'
 require 'realself/feed/feed_error'
 require 'realself/feed/getable'
+require 'realself/feed/rollable'
 require 'realself/feed/permanent'
 require 'realself/feed/redactable'
 require 'realself/feed/ttl'
