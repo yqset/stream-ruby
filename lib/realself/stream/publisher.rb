@@ -27,11 +27,17 @@ module RealSelf
 
 
       def publish items, content_type = 'application/json'
+        items = [*items]
+
         tries ||= 1
 
         @mutex.synchronize do
           ensure_connection! unless connected?
         end
+
+        # scoped at this level to allow access
+        # from rescue block
+        activity = nil
 
         # get a channel from the pool (threadsafe)
         @channel_pool.with do |channel|
@@ -41,10 +47,11 @@ module RealSelf
           # get the exchange to use with this channel
           # note - this method does not initiate network traffic
           exchange  = channel.topic(@exchange_name, :durable => true)
-          items     = [*items]
 
           # publish the items
           items.each do |item|
+            activity = item
+
             exchange.publish(
               item.to_s,
               :content_type => content_type.to_s,
@@ -76,14 +83,14 @@ module RealSelf
 
       rescue ::Bunny::NetworkFailure, ::Bunny::NetworkErrorWrapper => nfe
 
+        # invalidate the connection and channels
+        @publisher_session = nil
+
         if tries <= MAX_CONNECTION_RETRY
 
           RealSelf::logger.warn "#{nfe.class.name} error detected.  Attempting reconnection #{tries}/#{MAX_CONNECTION_RETRY}"
 
           sleep tries # wait a little longer between each attempt
-
-          # trash the connection to force a reconnect
-          @publisher_session = nil
 
           tries += 1
 
@@ -92,8 +99,19 @@ module RealSelf
         else
 
           RealSelf::logger.error "#{nfe.class.name} detected.  Exhausted #{MAX_CONNECTION_RETRY} attempts.\n#{nfe.message}\n#{nfe.backtrace}"
+
           raise nfe
         end
+
+      rescue Timeout::Error => te
+
+        RealSelf::logger.error "Timeout encountered while publishing #{items.length} items.  activity=#{activity}"
+
+        # invalidate the connection and channels before allowing
+        # the error to bubble up
+        @publisher_session = nil
+
+        raise te
       end
 
 
