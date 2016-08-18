@@ -26,13 +26,13 @@ shared_examples RealSelf::Feed::Stateful do |feed|
 
     context 'when state exists' do
       it 'should return all states' do
-        @feed.set_bookmark(@owner, @bookmark)
+        @feed.set_bookmark(@owner, :position, @bookmark)
         states = @feed.get_state(@owner)
         expect(["_id", "owner_id", "position"] - states.keys).to be_empty
       end
 
       it 'should not affect other states' do
-        @feed.set_bookmark(@owner, @bookmark)
+        @feed.set_bookmark(@owner, :position, @bookmark)
         @feed.touch_session(@owner)
         states = @feed.get_state(@owner)
         expect(["_id", "owner_id", "position", "last_active"] - states.keys).to be_empty
@@ -43,7 +43,7 @@ shared_examples RealSelf::Feed::Stateful do |feed|
   describe '#increment_unread_count' do
     context 'when state document exists, and count field does not' do
       it 'will successfully create and increment count' do
-        @feed.set_bookmark @owner, @bookmark
+        @feed.set_bookmark(@owner, :position ,@bookmark)
 
         states = @feed.get_state(@owner)
         expect(states[:position]).to eql @bookmark
