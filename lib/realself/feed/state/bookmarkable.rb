@@ -2,7 +2,8 @@ module RealSelf
   module Feed
     module State
       module Bookmarkable
-        BOOKMARK_KEY = :bookmarks
+        TOP_LEVEL_KEY = :bookmarks
+        DEFAULT_BOOKMARK_KEY = :position
         ##
         # Retrieve bookmark position of a user
         #
@@ -10,14 +11,14 @@ module RealSelf
         # @param [ Symbol/String ] the key of a bookmark
         #
         # @returns [ BSON::ObjectId ] The position expressed as a ObjectId. nil if no bookmark
-        def get_bookmark(owner, key)
-          field_key = "#{BOOKMARK_KEY}.#{key}".to_sym
+        def get_bookmark(owner, key=DEFAULT_BOOKMARK_KEY)
+          field_key = "#{TOP_LEVEL_KEY}.#{key}".to_sym
           result = state_collection(owner.type).find(
             {:owner_id => owner.id},
             {:fields => {:_id => 0, field_key => 1}}
           ).limit(1)
 
-          result.first && result.first[BOOKMARK_KEY] ? result.first[BOOKMARK_KEY][key] : nil
+          result.first && result.first[TOP_LEVEL_KEY] ? result.first[TOP_LEVEL_KEY][key] : nil
         end
 
         ##
@@ -28,13 +29,13 @@ module RealSelf
         # @param [ BSON::ObjectId ] the position to place the bookmark
         #
         # @returns [ BSON::ObjectId ] The position that has been set
-        def set_bookmark(owner, key, position)
+        def set_bookmark(owner, position, key=DEFAULT_BOOKMARK_KEY)
           raise(
             FeedError,
             "Illegal position: #{position}. Position must be a legal BSON::ObjectId"
           ) unless position.is_a?(BSON::ObjectId) and BSON::ObjectId.legal?(position)
-          field_key = "#{BOOKMARK_KEY}.#{key}".to_sym
 
+          field_key = "#{TOP_LEVEL_KEY}.#{key}".to_sym
           result = state_do_update(
             owner,
             {
@@ -49,8 +50,8 @@ module RealSelf
 
         ##
         # Remove a bookmark position of a user
-        def remove_bookmark(owner, key)
-          field_key = "#{BOOKMARK_KEY}.#{key}".to_sym
+        def remove_bookmark(owner, key=DEFAULT_BOOKMARK_KEY)
+          field_key = "#{TOP_LEVEL_KEY}.#{key}".to_sym
           state_do_update(owner, {:owner_id => owner.id}, {:'$unset' => {field_key => ""}})
         end
       end

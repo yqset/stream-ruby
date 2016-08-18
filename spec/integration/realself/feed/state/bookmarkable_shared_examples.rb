@@ -22,7 +22,7 @@ shared_examples RealSelf::Feed::State::Bookmarkable do |feed|
 
   describe '#set_bookmark' do
     it 'bookmark/set a position with valid BSON::ObjectId' do
-      set_pos = @feed.set_bookmark(@owner, :test_cursor, @position)
+      set_pos = @feed.set_bookmark(@owner, @position, :test_cursor)
       get_pos = @feed.get_bookmark(@owner, :test_cursor)
 
       expect(set_pos).to eql get_pos
@@ -37,10 +37,10 @@ shared_examples RealSelf::Feed::State::Bookmarkable do |feed|
     it 'can handle multiple key with different position' do
       position_1 = BSON::ObjectId.from_time(Time.now)
       position_2 = BSON::ObjectId.from_time(Time.now + 2000)
-      @feed.set_bookmark(@owner, :now, position_1)
-      @feed.set_bookmark(@owner, :seconds_later, position_2)
+      @feed.set_bookmark(@owner, position_1)
+      @feed.set_bookmark(@owner, position_2, :seconds_later)
 
-      expect(@feed.get_bookmark(@owner, :now)).to eql position_1
+      expect(@feed.get_bookmark(@owner)).to eql position_1
       expect(@feed.get_bookmark(@owner, :seconds_later)).to eql position_2
     end
   end
@@ -53,7 +53,7 @@ shared_examples RealSelf::Feed::State::Bookmarkable do |feed|
     end
 
     it 'removes a bookmark' do
-      @feed.set_bookmark(@owner, :position, @position)
+      @feed.set_bookmark(@owner, @position, :position)
       expect(@feed.get_bookmark(@owner, :position)).to eql @position
       @feed.remove_bookmark(@owner, :position)
       expect(@feed.get_bookmark(@owner, :position)).to be_nil
@@ -62,8 +62,8 @@ shared_examples RealSelf::Feed::State::Bookmarkable do |feed|
     it 'should not remove another bookmark' do
       position_1 = BSON::ObjectId.from_time(Time.now)
       position_2 = BSON::ObjectId.from_time(Time.now + 2000)
-      @feed.set_bookmark(@owner, :time_now, position_1)
-      @feed.set_bookmark(@owner, :time_seconds_later, position_2)
+      @feed.set_bookmark(@owner, position_1, :time_now)
+      @feed.set_bookmark(@owner, position_2, :time_seconds_later)
 
       @feed.remove_bookmark(@owner, :time_now)
 
