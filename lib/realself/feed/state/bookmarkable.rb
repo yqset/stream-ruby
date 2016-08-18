@@ -2,7 +2,7 @@ module RealSelf
   module Feed
     module State
       module Bookmarkable
-
+        BOOKMARK_KEY = :bookmarks
         ##
         # Retrieve bookmark position of a user
         #
@@ -11,13 +11,13 @@ module RealSelf
         #
         # @returns [ BSON::ObjectId ] The position expressed as a ObjectId. nil if no bookmark
         def get_bookmark(owner, key)
-          key = key.to_sym
+          field_key = "#{BOOKMARK_KEY}.#{key}".to_sym
           result = state_collection(owner.type).find(
             {:owner_id => owner.id},
-            {:fields => {:_id => 0, key => 1}}
+            {:fields => {:_id => 0, field_key => 1}}
           ).limit(1)
 
-          result.first ? result.first[key] : nil
+          result.first && result.first[BOOKMARK_KEY] ? result.first[BOOKMARK_KEY][key] : nil
         end
 
         ##
@@ -33,7 +33,7 @@ module RealSelf
             FeedError,
             "Illegal position: #{position}. Position must be a legal BSON::ObjectId"
           ) unless position.is_a?(BSON::ObjectId) and BSON::ObjectId.legal?(position)
-          key = key.to_sym
+          field_key = "#{BOOKMARK_KEY}.#{key}".to_sym
 
           result = state_do_update(
             owner,
@@ -41,7 +41,7 @@ module RealSelf
             :owner_id => owner.id
           },
             {
-            :'$set' => {key => position}
+            :'$set' => {field_key => position}
           })
 
           position
@@ -50,8 +50,8 @@ module RealSelf
         ##
         # Remove a bookmark position of a user
         def remove_bookmark(owner, key)
-          key = key.to_sym
-          state_do_update(owner, {:owner_id => owner.id}, {:'$unset' => {key => ""}})
+          field_key = "#{BOOKMARK_KEY}.#{key}".to_sym
+          state_do_update(owner, {:owner_id => owner.id}, {:'$unset' => {field_key => ""}})
         end
       end
     end
