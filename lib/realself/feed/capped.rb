@@ -55,9 +55,7 @@ module RealSelf
         feed_query[:'feed._id']               = id_range if id_range
         feed_query[:'feed.activity.redacted'] = {:'$ne' => true}  # omit redacted items
 
-        query.each do |key, value|
-          feed_query["feed.#{key}".to_sym] = value
-        end
+        feed_query = feed_query.merge(capify_query(query))
 
         collection = get_collection(owner.type)
 
@@ -86,6 +84,23 @@ module RealSelf
         end
 
         return {:count => feed.length, :before => before, :after => after, :stream_items => feed}
+      end
+
+      ##
+      # Helper method to convert query format
+      def capify_query query
+        feed_query = {}
+        query.each do |key, value|
+          if key.to_s.start_with?('$') && value.kind_of?(Array)
+            feed_query[key.to_sym] = []
+            value.each do |q|
+              feed_query[key.to_sym] << capify_query(q)
+            end
+          else
+            feed_query["feed.#{key}".to_sym] = value
+          end
+        end
+        feed_query
       end
 
 
