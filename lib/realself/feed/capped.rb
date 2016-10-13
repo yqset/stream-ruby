@@ -201,6 +201,25 @@ module RealSelf
         uuid ? redact(owner_type, uuid) : 0
       end
 
+      ##
+      # marks all instances of activities that belongs to this owner that satisfies the query
+      #
+      # @param [RealSelf::Stream::Objekt]  owner object
+      # @param [Hash]                      mongo query
+      #
+      # @return [int]  the number of activities redacted
+      def redact_by_query(owner, query)
+        collection = get_collection(owner.type)
+        feed_query = capify_query(query).merge({:'object.id' => owner.id})
+
+        result = collection.find(feed_query)
+          .update_many(
+            {:'$set' => {:'feed.$.activity.redacted' => true}},
+            {:upsert => false, :multi => true})
+
+        result.modified_count
+      end
+
 
       private
 

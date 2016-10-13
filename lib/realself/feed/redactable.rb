@@ -23,6 +23,24 @@ module RealSelf
           }])
       end
 
+      ##
+      # marks all instances of activities that belongs to this owner that satisfies the query
+      #
+      # @param [RealSelf::Stream::Objekt]  owner object
+      # @param [Hash]                      mongo query
+      #
+      # @return [int]  the number of activities redacted
+      def redact_by_query(owner, query)
+        collection = get_collection(owner.type)
+        feed_query = query.merge({:'object.id' => owner.id})
+
+        result = collection.find(feed_query)
+          .update_many(
+            {:'$set' => {:redacted => true}},
+            {:upsert => false, :multi => true})
+
+        result.modified_count
+      end
 
       ##
       # marks all instances of an activity as redacted for all owners
@@ -48,7 +66,7 @@ module RealSelf
 
         uuid = result[0]['activity']['uuid'] unless result.empty?
 
-        uuid ? redact(owner_type, uuid) : 0
+        uuid ? redact(owner_type: owner_type, {:'activity.uuid' => uuid}) : 0
       end
 
 
@@ -58,16 +76,11 @@ module RealSelf
       # @param [String]   the UUID of the activity to redact
       #
       # @returns [int]  the number of feed owners for which this activity was redacted
-      def redact(owner_type, activity_uuid)
-        raise(
-          RealSelf::Feed::FeedError,
-          "Invalid UUID: #{activity_uuid}"
-        ) unless activity_uuid.match(RealSelf::Stream::Activity::UUID_REGEX)
-
+      def redact(owner_type: 'user', query: nil)
         collection = get_collection(owner_type)
 
         #update all documents that contain the activity
-        result = collection.find({:'activity.uuid' => activity_uuid})
+        result = collection.find(query)
           .update_many(
             {:'$set' => {:redacted => true}},
             {:upsert => false, :multi => true})
