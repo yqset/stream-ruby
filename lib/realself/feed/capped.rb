@@ -135,84 +135,20 @@ module RealSelf
       # @param [String] the UUID of the activity to redact
       #
       # @returns [Integer]  The number of owner_type feeds from which the activity was redacted
-      def redact(owner_type, activity_uuid)
-        raise(
-          FeedError,
-          "Invalid UUID: #{activity_uuid}"
-        ) unless activity_uuid.match(RealSelf::Stream::Activity::UUID_REGEX)
-
-        collection = get_collection(owner_type)
-
-        result = collection.find({:'feed.activity.uuid' => activity_uuid})
-          .update_many(
-            {:'$set' => {:'feed.$.activity.redacted' => true}},
-            {:upsert => false, :multi => true})
-
-        result.modified_count
-      end
-
-      ##
-      # Redact an activity from all feeds managed by this class
-      # Note: If a given owner's capped feed contains multiple
-      # instances of the same activity UUID, only one will be
-      # marked as redacted.  See '$' positional operator in mongodb
-      # documentation:
-      # http://docs.mongodb.org/manual/reference/operator/update/positional
-      #
-      # @param [Hash]     query criteria hash of activities to redact
-      #
-      # @returns [Integer]  The number of owner_type feeds from which the activity was redacted
-      def redact_by_activity(owner_type, query)
+      def redact(owner_type: 'user', query: {})
         raise(
           RealSelf::Feed::FeedError,
-          "Invalid activity query: #{query}"
+          "Invalid query: #{query}"
         ) unless query.is_a?(Hash) && !query.empty?
 
-        collection = get_collection(owner_type)
         feed_query = {}
-        query.each do |k, v|
-          feed_query["feed.#{k}".to_sym] = v
+        if query.has_key?(:'object.id')
+          feed_query[:'object.id'] = query[:'object.id']
+          query.delete(:'object.id')
         end
+        feed_query = feed_query.merge(capify_query(query))
 
-        exclude_redact = {:'feed.activity.redacted' => {:'$ne' => true}}.merge(feed_query)
-
-        uuid_query = [
-          {:'$match'   => feed_query},
-          {:'$unwind'  => '$feed'},
-          {:'$match'   => exclude_redact},
-          {:'$group'   => {:'_id' => '$feed.activity.uuid'}}
-        ]
-        items = collection.aggregate(uuid_query)
-
-        raise(
-          RealSelf::Feed::FeedError,
-          "Provided query returns more than 1 unique uuid to redact."
-        ) unless items.nil? || items.to_a.size <= 1
-
-        aggregate_query = [
-          {:'$match'   => feed_query},
-          {:'$unwind'  => '$feed'},
-          {:'$match'   => exclude_redact}
-        ]
-
-        item = collection.aggregate(aggregate_query).first
-        uuid = item['feed']['activity']['uuid'] if item
-
-        uuid ? redact(owner_type, uuid) : 0
-      end
-
-      ##
-      # marks all instances of activities that belongs to this owner that satisfies the query
-      #
-      # @param [RealSelf::Stream::Objekt]  owner object
-      # @param [Hash]                      mongo query
-      #
-      # @return [int]  the number of activities redacted
-      def redact_by_query(owner, query)
-        collection = get_collection(owner.type)
-        feed_query = capify_query(query).merge({:'object.id' => owner.id})
-
-        result = collection.find(feed_query)
+        result = get_collection(owner_type).find(feed_query)
           .update_many(
             {:'$set' => {:'feed.$.activity.redacted' => true}},
             {:upsert => false, :multi => true})

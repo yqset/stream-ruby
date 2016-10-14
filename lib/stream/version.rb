@@ -1,6 +1,6 @@
 module RealSelf
   module Stream
-    MAJOR         = 3
+    MAJOR         = 4
     MINOR         = 5
     BUILD_NUMBER  = 3
 
