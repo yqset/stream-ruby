@@ -142,18 +142,34 @@ module RealSelf
         ) unless query.is_a?(Hash) && !query.empty?
 
         feed_query = {}
+
         if query.has_key?(:'object.id')
           feed_query[:'object.id'] = query[:'object.id']
           query.delete(:'object.id')
         end
+
         feed_query = feed_query.merge(capify_query(query))
+        exclude_redacted = {:'feed.activity.redacted' => {:'$ne' => true}}.merge(feed_query)
 
-        result = get_collection(owner_type).find(feed_query)
-          .update_many(
-            {:'$set' => {:'feed.$.activity.redacted' => true}},
-            {:upsert => false, :multi => true})
+        pipeline = [
+          {:'$match' => feed_query},
+          {:'$unwind' => '$feed'},
+          {:'$match' => exclude_redacted}
+        ]
 
-        result.modified_count
+        modified_count = 0
+        get_collection(owner_type).aggregate(pipeline).map do |item|
+          condition = {:'feed._id' => BSON::ObjectId.from_string(item['feed']['_id'].to_s)}
+          condition[:'object.id'] = feed_query[:'object.id']
+          result = get_collection(owner_type).find(condition)
+            .update_one(
+              {:'$set' => {:'feed.$.activity.redacted' => true}},
+              {:upsert => false, :multi => true})
+
+          modified_count += result.modified_count
+        end
+
+        modified_count
       end
 
 
