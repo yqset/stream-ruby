@@ -160,7 +160,7 @@ module RealSelf
         modified_count = 0
         get_collection(owner_type).aggregate(pipeline).map do |item|
           condition = {:'feed._id' => BSON::ObjectId.from_string(item['feed']['_id'].to_s)}
-          condition[:'object.id'] = feed_query[:'object.id']
+          condition[:'object.id'] = feed_query[:'object.id'] if feed_query[:'object.id']
           result = get_collection(owner_type).find(condition)
             .update_one(
               {:'$set' => {:'feed.$.activity.redacted' => true}},
