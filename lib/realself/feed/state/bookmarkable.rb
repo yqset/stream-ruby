@@ -30,10 +30,7 @@ module RealSelf
         #
         # @returns [ BSON::ObjectId ] The position that has been set
         def set_bookmark(owner, position, key=DEFAULT_BOOKMARK_KEY)
-          raise(
-            FeedError,
-            "Illegal position: #{position}. Position must be a legal BSON::ObjectId"
-          ) unless position.is_a?(BSON::ObjectId) and BSON::ObjectId.legal?(position)
+          position = BSON::ObjectId.from_string(position) if position.is_a?(String) && BSON::ObjectId.legal?(position)
 
           field_key = "#{TOP_LEVEL_KEY}.#{key}".to_sym
           result = state_do_update(

@@ -29,9 +29,24 @@ shared_examples RealSelf::Feed::State::Bookmarkable do |feed|
       expect(@position).to eql set_pos
     end
 
-    it 'will not accept illegal BSON::ObjectId' do
-      position = "It's a string!"
-      expect{ @feed.set_bookmark(@owner, :cursor, position) }.to raise_error(RealSelf::Feed::FeedError)
+    it 'will auto convert legal bson object id string into bson object id' do
+      bson_str = @position.to_s
+      @feed.set_bookmark(@owner, bson_str, :test_key)
+      expect(@feed.get_bookmark(@owner, :test_key)).to eql @position
+    end
+
+    it 'should accept int data type' do
+      offset = 20
+      expect(@feed.get_bookmark(@owner, :offset)).to be nil
+      @feed.set_bookmark(@owner, offset, :offset)
+      expect(@feed.get_bookmark(@owner, :offset)).to eql offset
+    end
+
+    it 'should accept String data type' do
+      bookmark = "test_value"
+      expect(@feed.get_bookmark(@owner, :test_key)).to be nil
+      @feed.set_bookmark(@owner, bookmark, :test_key)
+      expect(@feed.get_bookmark(@owner, :test_key)).to eql bookmark
     end
 
     it 'can handle multiple key with different position' do
