@@ -81,7 +81,7 @@ module RealSelf
           end
         end
 
-      rescue ::Bunny::NetworkFailure, ::Bunny::NetworkErrorWrapper => nfe
+      rescue ::Bunny::NetworkFailure, ::Bunny::NetworkErrorWrapper, ::Bunny::ChannelError, Timeout::Error => nfe
 
         # invalidate the connection and channels
         @publisher_session = nil
@@ -102,16 +102,6 @@ module RealSelf
 
           raise nfe
         end
-
-      rescue Timeout::Error => te
-
-        RealSelf::logger.error "Timeout encountered while publishing #{items.length} items.  activity=#{activity}"
-
-        # invalidate the connection and channels before allowing
-        # the error to bubble up
-        @publisher_session = nil
-
-        raise te
       end
 
 

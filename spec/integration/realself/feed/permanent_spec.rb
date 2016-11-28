@@ -6,7 +6,7 @@ describe RealSelf::Feed::Permanent do
   class TestPermanent < RealSelf::Feed::Permanent
     FEED_NAME = :permanent_integrtion_test.freeze
     include RealSelf::Feed::Redactable
-    include RealSelf::Feed::UnreadCountable
+    include RealSelf::Feed::Stateful
   end
 
 
@@ -19,7 +19,7 @@ describe RealSelf::Feed::Permanent do
   it_should_behave_like '#insertable', @feed
   it_should_behave_like RealSelf::Feed::Getable, @feed
   it_should_behave_like RealSelf::Feed::Redactable, @feed
-  it_should_behave_like RealSelf::Feed::UnreadCountable, @feed
+  it_should_behave_like RealSelf::Feed::Stateful, @feed
 
 
   before :each do
