@@ -89,87 +89,56 @@ describe RealSelf::Stream::Publisher do
 
 
   context '#publish with network error' do
-    it 'retries the publish if a network error is encountered' do
-      @activity   = Helpers.user_create_thing_activity
-      @nfe        = ::Bunny::NetworkFailure.new("a bad thing happened", nil)
-      @publisher  = RealSelf::Stream::Publisher.new(@rmq_config, @exchange_name)
+    it 'invalidates the connection and retries the publish if specified errors are encountered' do
+      RETRY_ON_ERRORS = [
+        ::Bunny::NetworkFailure.new("a bad thing happened", nil),
+        ::Bunny::NetworkErrorWrapper.new(::Bunny::NetworkFailure.new("a bad thing happened", nil)),
+        ::Bunny::ChannelError.new("a bad thing happened", nil, nil),
+        Timeout::Error.new("a bad thing happened")]
 
-      expect(Bunny).to receive(:new)
-        .exactly(4)
-        .times
-        .with(@rmq_config)
-        .and_return(@bunny_session)
+      RETRY_ON_ERRORS.each do |error|
+        @activity   = Helpers.user_create_thing_activity
+        @publisher  = RealSelf::Stream::Publisher.new(@rmq_config, @exchange_name)
 
-      expect(@bunny_session).to receive(:start)
-        .exactly(4)
-        .times
+        expect(Bunny).to receive(:new)
+          .exactly(4)
+          .times
+          .with(@rmq_config)
+          .and_return(@bunny_session)
 
-
-      expect(@bunny_session).to receive(:create_channel)
-        .exactly(4)
-        .times
-        .and_return(@bunny_channel)
-
-      expect(@bunny_channel).to receive(:confirm_select)
-        .exactly(4)
-        .times
-
-      expect(@bunny_channel).to receive(:topic)
-        .exactly(4)
-        .times
-        .with(@exchange_name, :durable => true)
-        .and_return(@bunny_exchange)
-
-      expect(@bunny_exchange).to receive(:publish)
-        .exactly(4)
-        .times
-        .with(
-          @activity.to_s,
-          :content_type => 'application/json',
-          :message_id   => @activity.hash,
-          :persistent   => true,
-          :routing_key  => @activity.prototype)
-        .and_raise(@nfe)
-
-      expect{@publisher.publish(@activity)}.to raise_error(@nfe)
-    end
-  end
-
-  context '#publish with timeout error' do
-    it 'invalidates the connection and then raises the Timeout::Error' do
-      @activity   = Helpers.user_create_thing_activity
-      @te         = ::Timeout::Error.new("the publish timed out")
-      @publisher  = RealSelf::Stream::Publisher.new(@rmq_config, @exchange_name)
+        expect(@bunny_session).to receive(:start)
+          .exactly(4)
+          .times
 
 
-      expect(Bunny).to receive(:new)
-        .with(@rmq_config)
-        .and_return(@bunny_session)
+        expect(@bunny_session).to receive(:create_channel)
+          .exactly(4)
+          .times
+          .and_return(@bunny_channel)
 
-      expect(@bunny_session).to receive(:start)
+        expect(@bunny_channel).to receive(:confirm_select)
+          .exactly(4)
+          .times
 
-      expect(@bunny_session).to receive(:create_channel)
-        .once
-        .and_return(@bunny_channel)
+        expect(@bunny_channel).to receive(:topic)
+          .exactly(4)
+          .times
+          .with(@exchange_name, :durable => true)
+          .and_return(@bunny_exchange)
 
-      expect(@bunny_channel).to receive(:confirm_select)
+        expect(@bunny_exchange).to receive(:publish)
+          .exactly(4)
+          .times
+          .with(
+            @activity.to_s,
+            :content_type => 'application/json',
+            :message_id   => @activity.hash,
+            :persistent   => true,
+            :routing_key  => @activity.prototype)
+          .and_raise(error)
 
-      expect(@bunny_channel).to receive(:topic)
-        .with(@exchange_name, :durable => true)
-        .and_return(@bunny_exchange)
-
-      allow(@bunny_exchange).to receive(:publish)
-        .with(
-          @activity.to_s,
-          :content_type => 'application/json',
-          :message_id   => @activity.hash,
-          :persistent   => true,
-          :routing_key  => @activity.prototype)
-
-      expect(@bunny_channel).to receive(:wait_for_confirms)
-        .and_raise(@te)
-
-      expect{@publisher.publish(@activity)}.to raise_error(@te)
+        expect{@publisher.publish(@activity)}.to raise_error(error)
+      end
     end
   end
 end

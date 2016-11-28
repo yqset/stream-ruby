@@ -6,7 +6,7 @@ describe RealSelf::Feed::Ttl do
   class TestTtl < RealSelf::Feed::Ttl
     FEED_NAME = :ttl_integrtion_test.freeze
     FEED_TTL_SECONDS = 60.freeze
-    include RealSelf::Feed::UnreadCountable
+    include RealSelf::Feed::Stateful
     include RealSelf::Feed::Redactable
   end
 
@@ -20,7 +20,7 @@ describe RealSelf::Feed::Ttl do
   it_should_behave_like '#insertable', @feed
   it_should_behave_like RealSelf::Feed::Getable, @feed
   it_should_behave_like RealSelf::Feed::Redactable, @feed
-  it_should_behave_like RealSelf::Feed::UnreadCountable, @feed
+  it_should_behave_like RealSelf::Feed::Stateful, @feed
 
 
   before :each do

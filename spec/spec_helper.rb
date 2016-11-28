@@ -29,7 +29,6 @@ require_relative './integration/realself/feed/getable_shared_examples'
 require_relative './integration/realself/feed/stateful_shared_examples'
 require_relative './integration/realself/feed/insertable_shared_examples'
 require_relative './integration/realself/feed/redactable_shared_examples'
-require_relative './integration/realself/feed/unread_countable_shared_examples'
 
 require_relative './integration/realself/feed/state/bookmarkable_shared_examples'
 require_relative './integration/realself/feed/state/sessioned_shared_examples'
